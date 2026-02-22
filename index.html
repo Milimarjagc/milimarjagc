@@ -4,42 +4,146 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Milimar | Oficina Virtual</title>
+    <!-- Fuentes modernas -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700;900&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/5.7.2/ethers.umd.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        body { background: #0a0a0a; font-family: 'Inter', sans-serif; }
-        h1, h2, h3 { font-family: 'Poppins', sans-serif; font-weight: 900; letter-spacing: -0.02em; }
-        .glass-card { background: rgba(0,0,0,0.4); backdrop-filter: blur(8px); border: 1px solid rgba(255,255,255,0.1); border-radius: 1.5rem; }
-        .node { width: 56px; height: 56px; border-radius: 50%; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 14px; font-weight: bold; transition: 0.3s; margin: 0 4px; font-family: 'Poppins', sans-serif; }
-        .node-filled { background: #eab308; color: black; border: 2px solid white; box-shadow: 0 0 15px #eab308; }
-        .node-empty { border: 2px dashed #374151; color: #9ca3af; background: transparent; }
-        .toast { position: fixed; bottom: 20px; right: 20px; z-index: 1000; transition: opacity 0.3s; }
-        .btn { @apply font-black py-3 px-6 rounded-xl transition-all transform hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed; font-family: 'Poppins', sans-serif; }
-        .tutorial-step { @apply bg-white/5 p-3 rounded-lg mb-2 text-sm; }
+        /* Estilo Aurora - degradado animado */
+        body {
+            background: linear-gradient(125deg, #0f172a 0%, #1e3a5f 35%, #2b5e4e 70%, #7c4d1f 100%);
+            background-size: 400% 400%;
+            animation: aurora 15s ease infinite;
+            font-family: 'Inter', sans-serif;
+        }
+        @keyframes aurora {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        h1, h2, h3, .font-display {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 900;
+            letter-spacing: -0.02em;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 1.5rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+        }
+        .node {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: bold;
+            transition: 0.3s;
+            margin: 0 4px;
+            font-family: 'Poppins', sans-serif;
+        }
+        .node-filled {
+            background: linear-gradient(145deg, #fbbf24, #f59e0b);
+            color: black;
+            border: 2px solid white;
+            box-shadow: 0 0 20px #fbbf24;
+        }
+        .node-empty {
+            border: 2px dashed rgba(255, 255, 255, 0.3);
+            color: rgba(255, 255, 255, 0.5);
+            background: transparent;
+        }
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1000;
+            transition: opacity 0.3s;
+        }
+        .btn {
+            @apply font-black py-3 px-6 rounded-xl transition-all transform hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed;
+            font-family: 'Poppins', sans-serif;
+        }
+        .tutorial-step {
+            @apply bg-white/10 p-3 rounded-lg mb-2 text-sm border border-white/20;
+        }
+        /* Botón de Telegram flotante (opcional, si lo quieres) */
+        .telegram-button {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            z-index: 50;
+            background: linear-gradient(145deg, #2AABEE, #229ED9);
+            padding: 12px 24px;
+            border-radius: 50px;
+            color: white;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 20px rgba(42, 171, 238, 0.5);
+            transition: all 0.3s;
+            font-family: 'Poppins', sans-serif;
+            border: 1px solid rgba(255,255,255,0.3);
+            text-decoration: none;
+        }
+        .telegram-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 25px rgba(42, 171, 238, 0.7);
+        }
     </style>
 </head>
-<body class="bg-[#0a0a0a] text-white antialiased p-4 min-h-screen">
-    <div id="toast" class="toast glass-card p-4 hidden"><p id="toastMsg" class="text-sm"></p></div>
+<body class="text-white antialiased p-4 min-h-screen relative">
+
+    <!-- Botón flotante de Telegram (opcional, con tu grupo) -->
+    <a id="telegramLink" href="https://t.me/+z7wwfx0ocho1NzI5" target="_blank" class="telegram-button hidden">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="white"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69.01-.03.02-.15-.05-.22-.07-.07-.18-.05-.26-.03-.11.02-1.85 1.17-5.22 3.45-.5.34-.95.5-1.36.49-.45-.01-1.3-.25-1.94-.46-.78-.26-1.4-.4-1.35-.85.03-.23.27-.47.74-.72 2.91-1.27 4.86-2.11 5.83-2.52 2.78-1.16 3.35-1.36 3.73-1.36.08 0 .27.02.39.12.1.08.13.19.14.27-.01.08-.02.25-.04.4z"/></svg>
+        <span>Grupo Oficial Milimar</span>
+    </a>
+
+    <div id="toast" class="toast glass-card p-4 hidden">
+        <p id="toastMsg" class="text-sm"></p>
+    </div>
+
     <div class="max-w-3xl mx-auto">
-        <header class="text-center py-6">
-            <h1 class="text-5xl font-black text-yellow-500 italic tracking-tight">MILIMAR</h1>
-            <p class="text-xs text-gray-500 uppercase tracking-widest font-bold mt-1">Oficina Virtual · BSC</p>
+        <header class="text-center py-8">
+            <h1 class="text-6xl font-black text-white drop-shadow-2xl mb-2 tracking-tighter" style="text-shadow: 0 0 20px rgba(251,191,36,0.5);">MILIMAR</h1>
+            <p class="text-sm text-white/80 uppercase tracking-[0.3em] font-light">Oficina Virtual · BSC</p>
         </header>
-        <div id="conBox" class="glass-card p-8 text-center mb-6">
-            <button id="btnConnect" class="btn bg-yellow-500 text-black w-full max-w-md mx-auto">CONECTAR BILLETERA</button>
+
+        <div id="conBox" class="glass-card p-10 text-center mb-6">
+            <button id="btnConnect" class="btn bg-white text-black w-full max-w-md mx-auto hover:bg-yellow-300 transition">CONECTAR BILLETERA</button>
         </div>
+
         <div id="dash" class="hidden space-y-6">
             <!-- Tarjetas de resumen -->
             <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
-                <div class="glass-card p-4 border-l-4 border-green-500"><p class="text-[10px] text-gray-400 uppercase font-bold">Saldo Pendiente</p><p id="valSaldo" class="text-xl font-black text-green-400">0.00</p></div>
-                <div class="glass-card p-4 border-r-4 border-yellow-500 text-right"><p class="text-[10px] text-gray-400 uppercase font-bold">Red Total</p><p id="valRed" class="text-xl font-black text-yellow-500">0</p></div>
-                <div class="glass-card p-4 border-l-4 border-blue-500"><p class="text-[10px] text-gray-400 uppercase font-bold">Directos</p><p id="valDir" class="text-xl font-black text-blue-400">0</p></div>
-                <div class="glass-card p-4 border-r-4 border-purple-500 text-right"><p class="text-[10px] text-gray-400 uppercase font-bold">Días activo</p><p id="valDias" class="text-xl font-black text-purple-400">0</p></div>
+                <div class="glass-card p-4 border-l-4 border-green-400">
+                    <p class="text-[10px] text-white/60 uppercase font-bold">Saldo Pendiente</p>
+                    <p id="valSaldo" class="text-xl font-black text-green-300">0.00</p>
+                </div>
+                <div class="glass-card p-4 border-r-4 border-yellow-400 text-right">
+                    <p class="text-[10px] text-white/60 uppercase font-bold">Red Total</p>
+                    <p id="valRed" class="text-xl font-black text-yellow-300">0</p>
+                </div>
+                <div class="glass-card p-4 border-l-4 border-blue-400">
+                    <p class="text-[10px] text-white/60 uppercase font-bold">Directos</p>
+                    <p id="valDir" class="text-xl font-black text-blue-300">0</p>
+                </div>
+                <div class="glass-card p-4 border-r-4 border-purple-400 text-right">
+                    <p class="text-[10px] text-white/60 uppercase font-bold">Días activo</p>
+                    <p id="valDias" class="text-xl font-black text-purple-300">0</p>
+                </div>
             </div>
-            <!-- Visualización de 5 niveles -->
+
+            <!-- Visualización de 5 niveles de red -->
             <div class="glass-card p-6 text-center">
-                <p class="text-yellow-400 text-sm font-bold mb-4">📊 TUS 5 NIVELES DE RED</p>
+                <p class="text-white text-sm font-bold mb-4 drop-shadow">📊 TUS 5 NIVELES DE RED</p>
                 <div class="flex flex-wrap justify-center gap-2">
                     <div id="n1" class="node node-empty">N1<br><span class="text-[10px]">0</span></div>
                     <div id="n2" class="node node-empty">N2<br><span class="text-[10px]">0</span></div>
@@ -47,61 +151,99 @@
                     <div id="n4" class="node node-empty">N4<br><span class="text-[10px]">0</span></div>
                     <div id="n5" class="node node-empty">N5<br><span class="text-[10px]">0</span></div>
                 </div>
-                <p class="text-[10px] text-gray-500 mt-4">Cada círculo muestra la cantidad de personas en ese nivel.</p>
+                <p class="text-[10px] text-white/50 mt-4">Cada círculo muestra la cantidad de personas en ese nivel.</p>
             </div>
-            <!-- Detalles por nivel y ganancias -->
+
+            <!-- Detalles por nivel y ganancias (con botón recargar) -->
             <div class="grid md:grid-cols-2 gap-4">
                 <div class="glass-card p-4">
-                    <div class="flex justify-between items-center mb-2"><h3 class="text-yellow-500 font-bold text-sm">📊 SOCIOS POR NIVEL</h3><button id="btnReloadDetails" class="text-xs bg-gray-700 hover:bg-gray-600 px-2 py-1 rounded transition">⟳ Recargar</button></div>
-                    <div id="redNiveles" class="space-y-1 text-xs"><p class="text-gray-400">Cargando...</p></div>
+                    <div class="flex justify-between items-center mb-2">
+                        <h3 class="text-white font-bold text-sm drop-shadow">📊 SOCIOS POR NIVEL</h3>
+                        <button id="btnReloadDetails" class="text-xs bg-white/20 hover:bg-white/30 px-2 py-1 rounded transition">⟳ Recargar</button>
+                    </div>
+                    <div id="redNiveles" class="space-y-1 text-xs"><p class="text-white/50">Cargando...</p></div>
                 </div>
                 <div class="glass-card p-4">
-                    <div class="flex justify-between items-center mb-2"><h3 class="text-green-500 font-bold text-sm">💰 GANANCIAS ACUMULADAS</h3><button id="btnReloadGanancias" class="text-xs bg-gray-700 hover:bg-gray-600 px-2 py-1 rounded transition">⟳ Recargar</button></div>
-                    <div id="gananciasNiveles" class="space-y-1 text-xs"><p class="text-gray-400">Cargando...</p></div>
+                    <div class="flex justify-between items-center mb-2">
+                        <h3 class="text-white font-bold text-sm drop-shadow">💰 GANANCIAS ACUMULADAS</h3>
+                        <button id="btnReloadGanancias" class="text-xs bg-white/20 hover:bg-white/30 px-2 py-1 rounded transition">⟳ Recargar</button>
+                    </div>
+                    <div id="gananciasNiveles" class="space-y-1 text-xs"><p class="text-white/50">Cargando...</p></div>
                 </div>
             </div>
+
             <!-- Botones de acción -->
             <div class="grid grid-cols-2 gap-3">
-                <button id="btnApprove" class="btn bg-blue-600 text-white">1. AUTORIZAR USDT</button>
-                <button id="btnJoin" class="btn bg-yellow-500 text-black">2. ACTIVAR</button>
-                <button id="btnRenew" class="btn bg-indigo-600 text-white">RENOVAR</button>
-                <button id="btnWithdraw" class="btn bg-green-600 text-white">RETIRAR</button>
+                <button id="btnApprove" class="btn bg-blue-600 text-white hover:bg-blue-500">1. AUTORIZAR USDT</button>
+                <button id="btnJoin" class="btn bg-yellow-500 text-black hover:bg-yellow-400">2. ACTIVAR</button>
+                <button id="btnRenew" class="btn bg-indigo-600 text-white hover:bg-indigo-500">RENOVAR</button>
+                <button id="btnWithdraw" class="btn bg-green-600 text-white hover:bg-green-500">RETIRAR</button>
             </div>
-            <!-- Panel Admin -->
+
+            <!-- Panel Admin (solo visible para admin) -->
             <div id="adminSection" class="hidden glass-card p-4 border border-yellow-500/50">
-                <h2 class="text-yellow-400 font-bold mb-3 text-sm uppercase tracking-wider">⚙️ Panel Admin</h2>
+                <h2 class="text-white font-bold mb-3 text-sm uppercase tracking-wider drop-shadow">⚙️ Panel Admin</h2>
                 <div class="grid grid-cols-2 gap-2">
-                    <button id="btnPausa" class="btn bg-red-600 text-white text-sm py-2">PAUSAR/REANUDAR</button>
-                    <button id="btnCupos" class="btn bg-purple-600 text-white text-sm py-2">OTORGAR CUPOS</button>
-                    <button id="btnPremiar" class="btn bg-pink-600 text-white text-sm py-2">PREMIAR LÍDER</button>
-                    <button id="btnRecuperar" class="btn bg-orange-600 text-white text-sm py-2">RECUPERAR TOKEN</button>
+                    <button id="btnPausa" class="btn bg-red-600 text-white text-sm py-2 hover:bg-red-500">PAUSAR/REANUDAR</button>
+                    <button id="btnCupos" class="btn bg-purple-600 text-white text-sm py-2 hover:bg-purple-500">OTORGAR CUPOS</button>
+                    <button id="btnPremiar" class="btn bg-pink-600 text-white text-sm py-2 hover:bg-pink-500">PREMIAR LÍDER</button>
+                    <button id="btnRecuperar" class="btn bg-orange-600 text-white text-sm py-2 hover:bg-orange-500">RECUPERAR TOKEN</button>
                 </div>
-                <div class="mt-2 text-[10px] text-gray-500">Usa estas funciones con responsabilidad.</div>
+                <div class="mt-2 text-[10px] text-white/50">Usa estas funciones con responsabilidad.</div>
             </div>
-            <!-- Link de invitación -->
+
+            <!-- Enlace de invitación con botón copiar -->
             <div class="glass-card p-4 text-center">
-                <p class="text-[10px] text-gray-400 mb-1 uppercase font-bold">TU ENLACE DE INVITACIÓN</p>
+                <p class="text-[10px] text-white/50 mb-1 uppercase font-bold">TU ENLACE DE INVITACIÓN</p>
                 <div class="flex items-center gap-2">
-                    <input id="refLink" readonly class="w-full bg-transparent border border-gray-700 rounded-lg p-2 text-center text-yellow-500 text-xs outline-none">
-                    <button id="copyLinkBtn" class="bg-yellow-500 text-black font-bold py-2 px-4 rounded-lg text-sm hover:bg-yellow-400 transition">Copiar</button>
+                    <input id="refLink" readonly class="w-full bg-white/10 border border-white/30 rounded-lg p-2 text-center text-white text-xs outline-none">
+                    <button id="copyLinkBtn" class="bg-white text-black font-bold py-2 px-4 rounded-lg text-sm hover:bg-yellow-300 transition">Copiar</button>
                 </div>
-                <p id="copyMsg" class="text-[10px] text-gray-500 mt-2 hidden">¡Link copiado!</p>
+                <p id="copyMsg" class="text-[10px] text-green-300 mt-2 hidden">¡Link copiado!</p>
             </div>
-            <!-- Tutoriales -->
+
+            <!-- Tutoriales rápidos (opcional, puedes incluirlos si quieres) -->
             <div class="glass-card p-4">
-                <details class="cursor-pointer"><summary class="text-yellow-400 font-bold text-sm list-none flex justify-between items-center">📘 TUTORIALES RÁPIDOS <span class="text-xs">(clic para expandir)</span></summary>
-                    <div class="mt-4 space-y-3"> ... (contenido) ... </div>
+                <details class="cursor-pointer">
+                    <summary class="text-white font-bold text-sm list-none flex justify-between items-center drop-shadow">
+                        📘 TUTORIALES RÁPIDOS
+                        <span class="text-xs text-white/60">(clic para expandir)</span>
+                    </summary>
+                    <div class="mt-4 space-y-3">
+                        <div class="tutorial-step">
+                            <p class="font-bold text-yellow-300">🔹 Autorizar USDT</p>
+                            <p class="text-xs text-white/80">1. Asegúrate de tener USDT en tu wallet.<br>2. Haz clic en "AUTORIZAR USDT".<br>3. Confirma la transacción (solo gas).</p>
+                        </div>
+                        <div class="tutorial-step">
+                            <p class="font-bold text-yellow-300">🔹 Activar suscripción</p>
+                            <p class="text-xs text-white/80">1. Después de autorizar, haz clic en "ACTIVAR".<br>2. Ingresa la dirección de tu patrocinador (si no viene por link).<br>3. Confirma la transacción (20 USDT + gas).</p>
+                        </div>
+                        <div class="tutorial-step">
+                            <p class="font-bold text-yellow-300">🔹 Renovar</p>
+                            <p class="text-xs text-white/80">Paga 20 USDT para extender tu membresía 30 días más.</p>
+                        </div>
+                        <div class="tutorial-step">
+                            <p class="font-bold text-yellow-300">🔹 Retirar ganancias</p>
+                            <p class="text-xs text-white/80">Solo cuando tengas al menos 4 directos y saldo ≥20 USDT.</p>
+                        </div>
+                        <div class="tutorial-step">
+                            <p class="font-bold text-yellow-300">🔹 Invitar</p>
+                            <p class="text-xs text-white/80">Comparte tu link de invitación. Cuando alguien se registre con él, será tu referido directo.</p>
+                        </div>
+                    </div>
                 </details>
             </div>
         </div>
     </div>
+
     <script>
-        // Configuración
+        // 🟢 CONFIGURACIÓN (VERIFICA QUE ESTAS DIRECCIONES SEAN CORRECTAS)
         const TELEGRAM_GRUPO = "https://t.me/+z7wwfx0ocho1NzI5";
         const CONTRACT_ADDR = "0x1E32861CEcCc350361bD4B6D811c0A5450e5e06B";
         const USDT_ADDR = "0x55d398326f99059fF775485246999027B3197955";
         const BSC_CHAIN_ID = 56;
 
+        // ABIs completos (con premiarLider correcto)
         const abi = [
             "function consultarEstado(address) view returns (uint256,uint256,uint256,uint256,uint256,uint256)",
             "function unirse(address)",
@@ -115,8 +257,11 @@
             "function premiarLider(address,uint256)",
             "function recuperarTokenExterno(address,uint256)"
         ];
-        const usdtAbi = ["function approve(address spender, uint256 amount) returns (bool)"];
+        const usdtAbi = [
+            "function approve(address spender, uint256 amount) returns (bool)"
+        ];
 
+        // Estado
         let provider, signer, userAddress, contract, usdtContract;
         let isAdmin = false;
         let toastTimeout;
@@ -126,13 +271,15 @@
         const copyLinkBtn = document.getElementById('copyLinkBtn');
         const refLink = document.getElementById('refLink');
         const copyMsg = document.getElementById('copyMsg');
-        const telegramLink = document.createElement('a'); // no se usa realmente, pero lo dejamos
+        const telegramLink = document.getElementById('telegramLink');
+
+        telegramLink.href = TELEGRAM_GRUPO;
 
         function showToast(msg, isError = false) {
             clearTimeout(toastTimeout);
             toast.classList.remove('hidden');
             toastMsg.innerText = msg;
-            toast.style.backgroundColor = isError ? 'rgba(127,29,29,0.9)' : 'rgba(6,78,59,0.9)';
+            toast.style.backgroundColor = isError ? 'rgba(127, 29, 29, 0.9)' : 'rgba(6, 78, 59, 0.9)';
             toastTimeout = setTimeout(() => toast.classList.add('hidden'), 4000);
         }
 
@@ -142,15 +289,23 @@
             navigator.clipboard.writeText(refLink.value).then(() => {
                 copyMsg.classList.remove('hidden');
                 setTimeout(() => copyMsg.classList.add('hidden'), 2000);
-            }).catch(() => showToast('Error al copiar', true));
+            }).catch(() => {
+                showToast('Error al copiar', true);
+            });
         });
 
         async function checkNetwork() {
             const network = await provider.getNetwork();
             if (network.chainId !== BSC_CHAIN_ID) {
                 try {
-                    await window.ethereum.request({ method: 'wallet_switchEthereumChain', params: [{ chainId: '0x38' }] });
-                } catch { showToast('Cambia a BSC Mainnet en tu wallet', true); return false; }
+                    await window.ethereum.request({
+                        method: 'wallet_switchEthereumChain',
+                        params: [{ chainId: '0x38' }]
+                    });
+                } catch {
+                    showToast('Cambia a BSC Mainnet en tu wallet', true);
+                    return false;
+                }
             }
             return true;
         }
@@ -164,8 +319,13 @@
                         const node = document.getElementById('n' + (j+1));
                         const cantidad = red[j].toNumber();
                         node.innerHTML = `N${j+1}<br><span class="text-[10px]">${cantidad}</span>`;
-                        if (cantidad > 0) { node.classList.add('node-filled'); node.classList.remove('node-empty'); }
-                        else { node.classList.add('node-empty'); node.classList.remove('node-filled'); }
+                        if (cantidad > 0) {
+                            node.classList.add('node-filled');
+                            node.classList.remove('node-empty');
+                        } else {
+                            node.classList.add('node-empty');
+                            node.classList.remove('node-filled');
+                        }
                     }
                     let redHtml = '', ganHtml = '';
                     for (let j = 0; j < 5; j++) {
@@ -176,11 +336,13 @@
                     document.getElementById('gananciasNiveles').innerHTML = ganHtml;
                     return;
                 } catch (e) {
-                    if (i === intentos-1) {
+                    if (i === intentos - 1) {
                         document.getElementById('redNiveles').innerHTML = '<p class="text-red-400">Error al cargar. Intenta recargar manualmente.</p>';
                         document.getElementById('gananciasNiveles').innerHTML = '<p class="text-red-400">Error al cargar.</p>';
                         showToast('No se pudieron cargar los detalles de la red', true);
-                    } else await new Promise(r => setTimeout(r, 1000));
+                    } else {
+                        await new Promise(resolve => setTimeout(resolve, 1000));
+                    }
                 }
             }
         }
@@ -193,7 +355,10 @@
                 document.getElementById('valRed').innerText = data[4].toString();
                 document.getElementById('valDias').innerText = data[5].toString();
                 await loadRedYGanancias();
-            } catch (e) { showToast('Error al cargar datos básicos', true); }
+            } catch (e) {
+                console.error('Error en consultarEstado:', e);
+                showToast('Error al cargar datos básicos', true);
+            }
         }
 
         async function connect() {
@@ -203,6 +368,7 @@
                 await provider.send("eth_requestAccounts", []);
                 signer = provider.getSigner();
                 userAddress = await signer.getAddress();
+
                 if (!await checkNetwork()) return;
 
                 contract = new ethers.Contract(CONTRACT_ADDR, abi, signer);
@@ -210,6 +376,7 @@
 
                 document.getElementById('conBox').classList.add('hidden');
                 document.getElementById('dash').classList.remove('hidden');
+                telegramLink.classList.remove('hidden');
                 refLink.value = window.location.origin + window.location.pathname + "?ref=" + userAddress;
 
                 const adminAddr = await contract.admin();
@@ -217,57 +384,101 @@
                 if (isAdmin) document.getElementById('adminSection').classList.remove('hidden');
 
                 await loadUserData();
-            } catch (e) { showToast('Error conectando: ' + e.message, true); }
+            } catch (e) {
+                showToast('Error conectando: ' + e.message, true);
+            }
         }
 
         document.getElementById('btnConnect').onclick = connect;
+
         document.getElementById('btnApprove').onclick = async () => {
-            try { const tx = await usdtContract.approve(CONTRACT_ADDR, ethers.utils.parseUnits("100", 18)); showToast('Autorizando...'); await tx.wait(); showToast('✅ USDT autorizado'); } catch (e) { showToast('Error: ' + e.message, true); }
+            try {
+                const tx = await usdtContract.approve(CONTRACT_ADDR, ethers.utils.parseUnits("100", 18));
+                showToast('Autorizando...');
+                await tx.wait();
+                showToast('✅ USDT autorizado');
+            } catch (e) { showToast('Error: ' + e.message, true); }
         };
+
         document.getElementById('btnJoin').onclick = async () => {
             try {
                 const urlParams = new URLSearchParams(window.location.search);
                 let sponsor = urlParams.get('ref');
-                if (!sponsor || sponsor === userAddress) sponsor = prompt('Dirección del patrocinador:');
-                if (!sponsor) return;
+                if (!sponsor || sponsor === userAddress) {
+                    sponsor = prompt('Dirección del patrocinador:');
+                    if (!sponsor) return;
+                }
                 const tx = await contract.unirse(sponsor);
-                showToast('Activando...'); await tx.wait(); showToast('✅ Registro exitoso'); await loadUserData();
+                showToast('Activando...');
+                await tx.wait();
+                showToast('✅ Registro exitoso');
+                await loadUserData();
             } catch (e) { showToast('Error: ' + e.message, true); }
         };
+
         document.getElementById('btnRenew').onclick = async () => {
-            try { const tx = await contract.renovarSuscripcion(); showToast('Renovando...'); await tx.wait(); showToast('✅ Suscripción renovada'); await loadUserData(); } catch (e) { showToast('Error: ' + e.message, true); }
+            try {
+                const tx = await contract.renovarSuscripcion();
+                showToast('Renovando...');
+                await tx.wait();
+                showToast('✅ Suscripción renovada');
+                await loadUserData();
+            } catch (e) { showToast('Error: ' + e.message, true); }
         };
+
         document.getElementById('btnWithdraw').onclick = async () => {
-            try { const tx = await contract.retirarGanancias(); showToast('Retirando...'); await tx.wait(); showToast('✅ Retiro exitoso'); await loadUserData(); } catch (e) { showToast('Error: ' + e.message, true); }
+            try {
+                const tx = await contract.retirarGanancias();
+                showToast('Retirando...');
+                await tx.wait();
+                showToast('✅ Retiro exitoso');
+                await loadUserData();
+            } catch (e) { showToast('Error: ' + e.message, true); }
         };
+
         document.getElementById('btnReloadDetails').onclick = loadRedYGanancias;
         document.getElementById('btnReloadGanancias').onclick = loadRedYGanancias;
 
+        // Admin functions (corregidas)
         document.getElementById('btnPausa').onclick = async () => {
             if (!isAdmin || !confirm('¿Cambiar estado de pausa?')) return;
             try { await (await contract.togglePausa()).wait(); showToast('✅ Pausa cambiada'); } catch (e) { showToast('Error: ' + e.message, true); }
         };
         document.getElementById('btnCupos').onclick = async () => {
             if (!isAdmin) return;
-            const lider = prompt('Dirección del líder:'); const cant = prompt('Cantidad de cupos:');
+            const lider = prompt('Dirección del líder:');
+            const cant = prompt('Cantidad de cupos:');
             if (!lider || !cant) return;
             try { await (await contract.otorgarCuposExtra(lider, cant)).wait(); showToast('✅ Cupos otorgados'); } catch (e) { showToast('Error: ' + e.message, true); }
         };
         document.getElementById('btnPremiar').onclick = async () => {
             if (!isAdmin) return;
-            const lider = prompt('Dirección del líder:'); const monto = prompt('Monto en USDT:');
+            const lider = prompt('Dirección del líder:');
+            const monto = prompt('Monto en USDT:');
             if (!lider || !monto) return;
-            try { await (await contract.premiarLider(lider, ethers.utils.parseUnits(monto, 18))).wait(); showToast('✅ Premio enviado'); } catch (e) { showToast('Error: ' + e.message, true); }
+            try {
+                const tx = await contract.premiarLider(lider, ethers.utils.parseUnits(monto, 18));
+                await tx.wait();
+                showToast('✅ Premio enviado');
+            } catch (e) { showToast('Error: ' + e.message, true); }
         };
         document.getElementById('btnRecuperar').onclick = async () => {
             if (!isAdmin) return;
-            const token = prompt('Dirección del token (no USDT):'); const cant = prompt('Cantidad:');
+            const token = prompt('Dirección del token (no USDT):');
+            const cant = prompt('Cantidad:');
             if (!token || !cant) return;
-            try { await (await contract.recuperarTokenExterno(token, ethers.utils.parseUnits(cant, 18))).wait(); showToast('✅ Tokens recuperados'); } catch (e) { showToast('Error: ' + e.message, true); }
+            try {
+                const tx = await contract.recuperarTokenExterno(token, ethers.utils.parseUnits(cant, 18));
+                await tx.wait();
+                showToast('✅ Tokens recuperados');
+            } catch (e) { showToast('Error: ' + e.message, true); }
         };
 
-        window.addEventListener('load', () => { if (window.ethereum && window.ethereum.selectedAddress) connect(); });
+        window.addEventListener('load', () => {
+            if (window.ethereum && window.ethereum.selectedAddress) connect();
+        });
     </script>
     <footer class="text-center text-[10px] text-gray-500 mt-4">Milimar Protocol © 2024 · Binance Smart Chain</footer>
 </body>
 </html>
+
