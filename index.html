@@ -1,133 +1,211 @@
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Milimar | Oficina Virtual</title>
+    <!-- Tipografía moderna: Inter para texto, Poppins para títulos -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700;900&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/5.7.2/ethers.umd.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        .glass-card { background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 1.5rem; }
-        .node { width: 56px; height: 56px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: bold; transition: 0.3s; margin: 0 4px; }
-        .node-filled { background: #eab308; color: black; border: 2px solid white; box-shadow: 0 0 15px #eab308; }
-        .node-empty { border: 2px dashed #374151; color: #9ca3af; background: transparent; }
-        .toast { position: fixed; bottom: 20px; right: 20px; z-index: 1000; transition: opacity 0.3s; padding: 1rem; border-radius: 1rem; color: white; font-weight: bold; }
-        .btn { font-weight: 900; padding: 0.75rem 1.5rem; border-radius: 0.75rem; transition: all 0.2s; text-transform: uppercase; }
-        .btn:hover { transform: scale(1.03); }
-        .btn:active { transform: scale(0.95); }
+        body {
+            background: #0a0a0a;
+            font-family: 'Inter', sans-serif;
+        }
+        h1, h2, h3, .font-display {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 900;
+            letter-spacing: -0.02em;
+        }
+        .glass-card {
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 1.5rem;
+        }
+        .node {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: bold;
+            transition: 0.3s;
+            margin: 0 4px;
+            font-family: 'Poppins', sans-serif;
+        }
+        .node-filled {
+            background: #eab308;
+            color: black;
+            border: 2px solid white;
+            box-shadow: 0 0 15px #eab308;
+        }
+        .node-empty {
+            border: 2px dashed #374151;
+            color: #9ca3af;
+            background: transparent;
+        }
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1000;
+            transition: opacity 0.3s;
+        }
+        .btn {
+            @apply font-black py-3 px-6 rounded-xl transition-all transform hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed;
+            font-family: 'Poppins', sans-serif;
+        }
+        .tutorial-step {
+            @apply bg-white/5 p-3 rounded-lg mb-2 text-sm;
+        }
     </style>
 </head>
 <body class="bg-[#0a0a0a] text-white font-sans antialiased p-4 min-h-screen">
 
-    <!-- Notificaciones Estilo Toast -->
-    <div id="toast" class="toast glass-card hidden">
+    <div id="toast" class="toast glass-card p-4 hidden">
         <p id="toastMsg" class="text-sm"></p>
     </div>
 
     <div class="max-w-3xl mx-auto">
-        <!-- Header -->
         <header class="text-center py-6">
             <h1 class="text-5xl font-black text-yellow-500 italic tracking-tight">MILIMAR</h1>
-            <p class="text-xs text-gray-500 uppercase tracking-widest font-bold mt-1">Oficina Virtual · BNB Smart Chain</p>
+            <p class="text-xs text-gray-500 uppercase tracking-widest font-bold mt-1">Oficina Virtual · BSC</p>
         </header>
 
-        <!-- Caja de Conexión -->
-        <div id="conBox" class="glass-card p-8 text-center mb-6 border border-yellow-500/20">
-            <h2 class="text-xl font-bold mb-4">Bienvenido, Líder</h2>
-            <p class="text-gray-400 text-sm mb-6">Conecta tu billetera para acceder a tu red y ganancias.</p>
-            <button id="btnConnect" class="btn bg-yellow-500 text-black w-full max-w-md mx-auto shadow-lg shadow-yellow-500/20">CONECTAR BILLETERA</button>
+        <div id="conBox" class="glass-card p-8 text-center mb-6">
+            <button id="btnConnect" class="btn bg-yellow-500 text-black w-full max-w-md mx-auto">CONECTAR BILLETERA</button>
         </div>
 
-        <!-- Dashboard Principal -->
         <div id="dash" class="hidden space-y-6">
-            
-            <!-- Tarjetas de Saldo y Red -->
+            <!-- Tarjetas de resumen -->
             <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
                 <div class="glass-card p-4 border-l-4 border-green-500">
-                    <p class="text-[10px] text-gray-400 uppercase font-bold text-center">Saldo Disponible</p>
-                    <p id="valSaldo" class="text-xl font-black text-green-400 text-center">0.00</p>
+                    <p class="text-[10px] text-gray-400 uppercase font-bold">Saldo Pendiente</p>
+                    <p id="valSaldo" class="text-xl font-black text-green-400">0.00</p>
                 </div>
-                <div class="glass-card p-4 border-r-4 border-yellow-500">
-                    <p class="text-[10px] text-gray-400 uppercase font-bold text-center">Red Total</p>
-                    <p id="valRed" class="text-xl font-black text-yellow-500 text-center">0</p>
+                <div class="glass-card p-4 border-r-4 border-yellow-500 text-right">
+                    <p class="text-[10px] text-gray-400 uppercase font-bold">Red Total</p>
+                    <p id="valRed" class="text-xl font-black text-yellow-500">0</p>
                 </div>
                 <div class="glass-card p-4 border-l-4 border-blue-500">
-                    <p class="text-[10px] text-gray-400 uppercase font-bold text-center">Directos</p>
-                    <p id="valDir" class="text-xl font-black text-blue-400 text-center">0</p>
+                    <p class="text-[10px] text-gray-400 uppercase font-bold">Directos</p>
+                    <p id="valDir" class="text-xl font-black text-blue-400">0</p>
                 </div>
-                <div class="glass-card p-4 border-r-4 border-purple-500">
-                    <p class="text-[10px] text-gray-400 uppercase font-bold text-center">Días Activo</p>
-                    <p id="valDias" class="text-xl font-black text-purple-400 text-center">0</p>
+                <div class="glass-card p-4 border-r-4 border-purple-500 text-right">
+                    <p class="text-[10px] text-gray-400 uppercase font-bold">Días activo</p>
+                    <p id="valDias" class="text-xl font-black text-purple-400">0</p>
                 </div>
             </div>
 
-            <!-- Mapa Visual de Niveles -->
-            <div class="glass-card p-6 text-center shadow-xl">
-                <p class="text-yellow-400 text-sm font-bold mb-6 tracking-widest uppercase">Estructura de Red (N1 al N5)</p>
-                <div class="flex flex-wrap justify-center gap-3">
+            <!-- Visualización de 5 niveles de red -->
+            <div class="glass-card p-6 text-center">
+                <p class="text-yellow-400 text-sm font-bold mb-4">📊 TUS 5 NIVELES DE RED</p>
+                <div class="flex flex-wrap justify-center gap-2">
                     <div id="n1" class="node node-empty">N1<br><span class="text-[10px]">0</span></div>
                     <div id="n2" class="node node-empty">N2<br><span class="text-[10px]">0</span></div>
                     <div id="n3" class="node node-empty">N3<br><span class="text-[10px]">0</span></div>
                     <div id="n4" class="node node-empty">N4<br><span class="text-[10px]">0</span></div>
                     <div id="n5" class="node node-empty">N5<br><span class="text-[10px]">0</span></div>
                 </div>
-                <p class="text-[10px] text-gray-500 mt-6 italic">Cada nodo muestra la cantidad de socios en ese nivel.</p>
+                <p class="text-[10px] text-gray-500 mt-4">Cada círculo muestra la cantidad de personas en ese nivel.</p>
             </div>
 
-            <!-- Tablas de Detalle -->
+            <!-- Detalles por nivel y ganancias (con botón recargar) -->
             <div class="grid md:grid-cols-2 gap-4">
-                <div class="glass-card p-5">
-                    <h3 class="text-yellow-500 font-bold mb-3 text-xs uppercase tracking-widest border-b border-white/10 pb-2">Socios por Nivel</h3>
-                    <div id="redNiveles" class="space-y-2 text-xs"></div>
+                <div class="glass-card p-4">
+                    <div class="flex justify-between items-center mb-2">
+                        <h3 class="text-yellow-500 font-bold text-sm">📊 SOCIOS POR NIVEL</h3>
+                        <button id="btnReloadDetails" class="text-xs bg-gray-700 hover:bg-gray-600 px-2 py-1 rounded transition">⟳ Recargar</button>
+                    </div>
+                    <div id="redNiveles" class="space-y-1 text-xs"><p class="text-gray-400">Cargando...</p></div>
                 </div>
-                <div class="glass-card p-5">
-                    <h3 class="text-green-500 font-bold mb-3 text-xs uppercase tracking-widest border-b border-white/10 pb-2">Ganancias Acumuladas</h3>
-                    <div id="gananciasNiveles" class="space-y-2 text-xs"></div>
+                <div class="glass-card p-4">
+                    <div class="flex justify-between items-center mb-2">
+                        <h3 class="text-green-500 font-bold text-sm">💰 GANANCIAS ACUMULADAS</h3>
+                        <button id="btnReloadGanancias" class="text-xs bg-gray-700 hover:bg-gray-600 px-2 py-1 rounded transition">⟳ Recargar</button>
+                    </div>
+                    <div id="gananciasNiveles" class="space-y-1 text-xs"><p class="text-gray-400">Cargando...</p></div>
                 </div>
             </div>
 
-            <!-- Botonera -->
+            <!-- Botones de acción -->
             <div class="grid grid-cols-2 gap-3">
-                <button id="btnApprove" class="btn bg-blue-600 text-white shadow-lg">1. Autorizar</button>
-                <button id="btnJoin" class="btn bg-yellow-500 text-black shadow-lg">2. Activar</button>
-                <button id="btnRenew" class="btn bg-indigo-600 text-white shadow-lg">Renovar Mes</button>
-                <button id="btnWithdraw" class="btn bg-green-600 text-white shadow-lg">Retirar</button>
+                <button id="btnApprove" class="btn bg-blue-600 text-white">1. AUTORIZAR USDT</button>
+                <button id="btnJoin" class="btn bg-yellow-500 text-black">2. ACTIVAR</button>
+                <button id="btnRenew" class="btn bg-indigo-600 text-white">RENOVAR</button>
+                <button id="btnWithdraw" class="btn bg-green-600 text-white">RETIRAR</button>
             </div>
 
-            <!-- Link de Referido -->
-            <div class="glass-card p-4 text-center">
-                <p class="text-[10px] text-gray-400 mb-2 uppercase font-bold">Tu Enlace de Invitación</p>
-                <div class="flex items-center gap-2 bg-black/40 p-2 rounded-xl border border-white/5">
-                    <input id="refLink" readonly class="flex-1 bg-transparent text-yellow-500 text-xs outline-none px-2 text-center" value="Conecta tu wallet para ver el link">
-                    <button id="copyLinkBtn" class="bg-yellow-500 text-black font-bold py-1 px-3 rounded-lg text-[10px]">COPIAR</button>
-                </div>
-            </div>
-
-            <!-- Panel Admin -->
-            <div id="adminSection" class="hidden glass-card p-5 border-2 border-red-500/30">
-                <h2 class="text-red-500 font-black mb-4 text-xs uppercase tracking-widest text-center">⚙️ MODO ADMINISTRADOR</h2>
+            <!-- Panel Admin (solo visible para admin) -->
+            <div id="adminSection" class="hidden glass-card p-4 border border-yellow-500/50">
+                <h2 class="text-yellow-400 font-bold mb-3 text-sm uppercase tracking-wider">⚙️ Panel Admin</h2>
                 <div class="grid grid-cols-2 gap-2">
-                    <button id="btnPausa" class="btn bg-red-800 text-white text-[10px]">PAUSAR SISTEMA</button>
-                    <button id="btnCupos" class="btn bg-slate-800 text-white text-[10px]">DAR CUPOS</button>
-                    <button id="btnPremiar" class="btn bg-purple-900 text-white text-[10px]">PREMIAR LÍDER</button>
-                    <button id="btnRecuperar" class="btn bg-zinc-700 text-white text-[10px]">RESCATAR TOKEN</button>
+                    <button id="btnPausa" class="btn bg-red-600 text-white text-sm py-2">PAUSAR/REANUDAR</button>
+                    <button id="btnCupos" class="btn bg-purple-600 text-white text-sm py-2">OTORGAR CUPOS</button>
+                    <button id="btnPremiar" class="btn bg-pink-600 text-white text-sm py-2">PREMIAR LÍDER</button>
+                    <button id="btnRecuperar" class="btn bg-orange-600 text-white text-sm py-2">RECUPERAR TOKEN</button>
                 </div>
+                <div class="mt-2 text-[10px] text-gray-500">Usa estas funciones con responsabilidad.</div>
+            </div>
+
+            <!-- Link de invitación con botón copiar -->
+            <div class="glass-card p-4 text-center">
+                <p class="text-[10px] text-gray-400 mb-1 uppercase font-bold">TU ENLACE DE INVITACIÓN</p>
+                <div class="flex items-center gap-2">
+                    <input id="refLink" readonly class="w-full bg-transparent border border-gray-700 rounded-lg p-2 text-center text-yellow-500 text-xs outline-none">
+                    <button id="copyLinkBtn" class="bg-yellow-500 text-black font-bold py-2 px-4 rounded-lg text-sm hover:bg-yellow-400 transition">Copiar</button>
+                </div>
+                <p id="copyMsg" class="text-[10px] text-gray-500 mt-2 hidden">¡Link copiado!</p>
+            </div>
+
+            <!-- Sección de tutoriales (colapsable) -->
+            <div class="glass-card p-4">
+                <details class="cursor-pointer">
+                    <summary class="text-yellow-400 font-bold text-sm list-none flex justify-between items-center">
+                        📘 TUTORIALES RÁPIDOS
+                        <span class="text-xs">(clic para expandir)</span>
+                    </summary>
+                    <div class="mt-4 space-y-3">
+                        <div class="tutorial-step">
+                            <p class="font-bold text-yellow-300">🔹 Autorizar USDT</p>
+                            <p class="text-xs text-gray-300">1. Asegúrate de tener USDT en tu wallet.<br>2. Haz clic en "AUTORIZAR USDT".<br>3. Confirma la transacción (solo gas).</p>
+                        </div>
+                        <div class="tutorial-step">
+                            <p class="font-bold text-yellow-300">🔹 Activar suscripción</p>
+                            <p class="text-xs text-gray-300">1. Después de autorizar, haz clic en "ACTIVAR".<br>2. Ingresa la dirección de tu patrocinador (si no viene por link).<br>3. Confirma la transacción (20 USDT + gas).</p>
+                        </div>
+                        <div class="tutorial-step">
+                            <p class="font-bold text-yellow-300">🔹 Renovar</p>
+                            <p class="text-xs text-gray-300">Paga 20 USDT para extender tu membresía 30 días más.</p>
+                        </div>
+                        <div class="tutorial-step">
+                            <p class="font-bold text-yellow-300">🔹 Retirar ganancias</p>
+                            <p class="text-xs text-gray-300">Solo cuando tengas al menos 4 directos y saldo ≥20 USDT.</p>
+                        </div>
+                        <div class="tutorial-step">
+                            <p class="font-bold text-yellow-300">🔹 Invitar</p>
+                            <p class="text-xs text-gray-300">Comparte tu link de invitación. Cuando alguien se registre con él, será tu referido directo.</p>
+                        </div>
+                    </div>
+                </details>
             </div>
         </div>
-        
-        <footer class="py-10 text-center opacity-30 text-[10px]">
-            MILIMAR Protocol © 2024 · Binance Smart Chain
-        </footer>
     </div>
 
     <script>
-        // ----------------------------------------------------
-        // CONFIGURACIÓN DEL CONTRATO
-        // ----------------------------------------------------
-        const CONTRACT_ADDR = "0xB198a83E05042dc32ea994523BAa3A5A7C61DA9c";
+        // 🟢 CONFIGURACIÓN (VERIFICA QUE ESTAS DIRECCIONES SEAN CORRECTAS)
+        const TELEGRAM_GRUPO = "https://t.me/+z7wwfx0ocho1NzI5";
+        const CONTRACT_ADDR = "0x1E32861CEcCc350361bD4B6D811c0A5450e5e06B";
         const USDT_ADDR = "0x55d398326f99059fF775485246999027B3197955";
         const BSC_CHAIN_ID = 56;
 
+        // ABIs completos (corregido: premiarLider, no premierLider)
         const abi = [
             "function consultarEstado(address) view returns (uint256,uint256,uint256,uint256,uint256,uint256)",
             "function unirse(address)",
@@ -141,132 +219,227 @@
             "function premiarLider(address,uint256)",
             "function recuperarTokenExterno(address,uint256)"
         ];
-        const usdtAbi = ["function approve(address spender, uint256 amount) returns (bool)"];
+        const usdtAbi = [
+            "function approve(address spender, uint256 amount) returns (bool)"
+        ];
 
+        // Estado
         let provider, signer, userAddress, contract, usdtContract;
         let isAdmin = false;
+        let toastTimeout;
 
-        // ----------------------------------------------------
-        // FUNCIONES DE INTERFAZ
-        // ----------------------------------------------------
+        const toast = document.getElementById('toast');
+        const toastMsg = document.getElementById('toastMsg');
+        const copyLinkBtn = document.getElementById('copyLinkBtn');
+        const refLink = document.getElementById('refLink');
+        const copyMsg = document.getElementById('copyMsg');
+        const telegramLink = document.getElementById('telegramLink');
+
+        telegramLink.href = TELEGRAM_GRUPO;
+
         function showToast(msg, isError = false) {
-            const t = document.getElementById('toast');
-            t.classList.remove('hidden');
-            document.getElementById('toastMsg').innerText = msg;
-            t.style.backgroundColor = isError ? 'rgba(153, 27, 27, 0.9)' : 'rgba(20, 83, 45, 0.9)';
-            setTimeout(() => t.classList.add('hidden'), 4000);
+            clearTimeout(toastTimeout);
+            toast.classList.remove('hidden');
+            toastMsg.innerText = msg;
+            toast.style.backgroundColor = isError ? 'rgba(127, 29, 29, 0.9)' : 'rgba(6, 78, 59, 0.9)';
+            toastTimeout = setTimeout(() => toast.classList.add('hidden'), 4000);
+        }
+
+        copyLinkBtn.addEventListener('click', () => {
+            refLink.select();
+            refLink.setSelectionRange(0, 99999);
+            navigator.clipboard.writeText(refLink.value).then(() => {
+                copyMsg.classList.remove('hidden');
+                setTimeout(() => copyMsg.classList.add('hidden'), 2000);
+            }).catch(() => {
+                showToast('Error al copiar', true);
+            });
+        });
+
+        async function checkNetwork() {
+            const network = await provider.getNetwork();
+            if (network.chainId !== BSC_CHAIN_ID) {
+                try {
+                    await window.ethereum.request({
+                        method: 'wallet_switchEthereumChain',
+                        params: [{ chainId: '0x38' }]
+                    });
+                } catch {
+                    showToast('Cambia a BSC Mainnet en tu wallet', true);
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        async function loadRedYGanancias(intentos = 3) {
+            for (let i = 0; i < intentos; i++) {
+                try {
+                    const red = await contract.verDetalleRed(userAddress);
+                    const ganancias = await contract.verDetalleGanancias(userAddress);
+                    for (let j = 0; j < 5; j++) {
+                        const node = document.getElementById('n' + (j+1));
+                        const cantidad = red[j].toNumber();
+                        node.innerHTML = `N${j+1}<br><span class="text-[10px]">${cantidad}</span>`;
+                        if (cantidad > 0) {
+                            node.classList.add('node-filled');
+                            node.classList.remove('node-empty');
+                        } else {
+                            node.classList.add('node-empty');
+                            node.classList.remove('node-filled');
+                        }
+                    }
+                    let redHtml = '', ganHtml = '';
+                    for (let j = 0; j < 5; j++) {
+                        redHtml += `<div class="flex justify-between"><span>Nivel ${j+1}:</span><span class="font-bold">${red[j].toString()}</span></div>`;
+                        ganHtml += `<div class="flex justify-between"><span>Nivel ${j+1}:</span><span class="font-bold">${ethers.utils.formatUnits(ganancias[j], 18)} USDT</span></div>`;
+                    }
+                    document.getElementById('redNiveles').innerHTML = redHtml;
+                    document.getElementById('gananciasNiveles').innerHTML = ganHtml;
+                    return;
+                } catch (e) {
+                    if (i === intentos - 1) {
+                        document.getElementById('redNiveles').innerHTML = '<p class="text-red-400">Error al cargar. Intenta recargar manualmente.</p>';
+                        document.getElementById('gananciasNiveles').innerHTML = '<p class="text-red-400">Error al cargar.</p>';
+                        showToast('No se pudieron cargar los detalles de la red', true);
+                    } else {
+                        await new Promise(resolve => setTimeout(resolve, 1000));
+                    }
+                }
+            }
         }
 
         async function loadUserData() {
             try {
                 const data = await contract.consultarEstado(userAddress);
                 document.getElementById('valSaldo').innerText = ethers.utils.formatUnits(data[0], 18);
-                document.getElementById('valDir').innerText = data[3].toString() + " / 4";
+                document.getElementById('valDir').innerText = data[3].toString();
                 document.getElementById('valRed').innerText = data[4].toString();
                 document.getElementById('valDias').innerText = data[5].toString();
-
-                const red = await contract.verDetalleRed(userAddress);
-                const gan = await contract.verDetalleGanancias(userAddress);
-
-                let redHtml = '', ganHtml = '';
-                for (let i = 0; i < 5; i++) {
-                    const count = red[i].toNumber();
-                    const node = document.getElementById('n' + (i+1));
-                    node.innerHTML = `N${i+1}<br><span class="text-[10px]">${count}</span>`;
-                    if (count > 0) { node.classList.add('node-filled'); node.classList.remove('node-empty'); }
-                    
-                    redHtml += `<div class="flex justify-between p-1"><span>Nivel ${i+1}:</span><span class="font-bold">${count}</span></div>`;
-                    ganHtml += `<div class="flex justify-between p-1"><span>Nivel ${i+1}:</span><span class="font-bold text-green-500">${ethers.utils.formatUnits(gan[i], 18)} USDT</span></div>`;
-                }
-                document.getElementById('redNiveles').innerHTML = redHtml;
-                document.getElementById('gananciasNiveles').innerHTML = ganHtml;
-            } catch (e) { showToast("Error al sincronizar con blockchain", true); }
+                await loadRedYGanancias();
+            } catch (e) {
+                console.error('Error en consultarEstado:', e);
+                showToast('Error al cargar datos básicos', true);
+            }
         }
 
         async function connect() {
-            if (!window.ethereum) return showToast("Usa el navegador de MetaMask/OKX", true);
+            if (!window.ethereum) return showToast('Instala MetaMask/OKX Wallet', true);
             try {
                 provider = new ethers.providers.Web3Provider(window.ethereum);
                 await provider.send("eth_requestAccounts", []);
                 signer = provider.getSigner();
                 userAddress = await signer.getAddress();
 
+                if (!await checkNetwork()) return;
+
                 contract = new ethers.Contract(CONTRACT_ADDR, abi, signer);
                 usdtContract = new ethers.Contract(USDT_ADDR, usdtAbi, signer);
 
                 document.getElementById('conBox').classList.add('hidden');
                 document.getElementById('dash').classList.remove('hidden');
-                document.getElementById('refLink').value = window.location.origin + window.location.pathname + "?ref=" + userAddress;
+                telegramLink.classList.remove('hidden');
+                refLink.value = window.location.origin + window.location.pathname + "?ref=" + userAddress;
 
-                const adm = await contract.admin();
-                if (adm.toLowerCase() === userAddress.toLowerCase()) document.getElementById('adminSection').classList.remove('hidden');
+                const adminAddr = await contract.admin();
+                isAdmin = (adminAddr.toLowerCase() === userAddress.toLowerCase());
+                if (isAdmin) document.getElementById('adminSection').classList.remove('hidden');
 
                 await loadUserData();
-                showToast("Conexión exitosa");
-            } catch (e) { showToast("Error de conexión", true); }
+            } catch (e) {
+                showToast('Error conectando: ' + e.message, true);
+            }
         }
 
-        // ----------------------------------------------------
-        // BOTONES DE ACCIÓN
-        // ----------------------------------------------------
         document.getElementById('btnConnect').onclick = connect;
 
         document.getElementById('btnApprove').onclick = async () => {
             try {
-                const tx = await usdtContract.approve(CONTRACT_ADDR, ethers.utils.parseUnits("1000", 18));
-                showToast("Procesando aprobación...");
+                const tx = await usdtContract.approve(CONTRACT_ADDR, ethers.utils.parseUnits("100", 18));
+                showToast('Autorizando...');
                 await tx.wait();
-                showToast("✅ USDT Autorizado");
-            } catch (e) { showToast("Error en autorización", true); }
+                showToast('✅ USDT autorizado');
+            } catch (e) { showToast('Error: ' + e.message, true); }
         };
 
         document.getElementById('btnJoin').onclick = async () => {
             try {
                 const urlParams = new URLSearchParams(window.location.search);
                 let sponsor = urlParams.get('ref');
-                if (!sponsor) sponsor = prompt("Ingresa la billetera de tu patrocinador:");
-                if (!sponsor) return;
+                if (!sponsor || sponsor === userAddress) {
+                    sponsor = prompt('Dirección del patrocinador:');
+                    if (!sponsor) return;
+                }
                 const tx = await contract.unirse(sponsor);
-                showToast("Activando cuenta...");
+                showToast('Activando...');
                 await tx.wait();
-                showToast("✅ ¡Bienvenido a Milimar!");
-                loadUserData();
-            } catch (e) { showToast("Error en activación", true); }
-        };
-
-        document.getElementById('btnWithdraw').onclick = async () => {
-            try {
-                const tx = await contract.retirarGanancias();
-                showToast("Enviando fondos a tu wallet...");
-                await tx.wait();
-                showToast("✅ Retiro completado");
-                loadUserData();
-            } catch (e) { showToast("Error: Verifica requisitos", true); }
+                showToast('✅ Registro exitoso');
+                await loadUserData();
+            } catch (e) { showToast('Error: ' + e.message, true); }
         };
 
         document.getElementById('btnRenew').onclick = async () => {
             try {
                 const tx = await contract.renovarSuscripcion();
-                showToast("Renovando membresía...");
+                showToast('Renovando...');
                 await tx.wait();
-                showToast("✅ Mes renovado");
-                loadUserData();
-            } catch (e) { showToast("Error en renovación", true); }
+                showToast('✅ Suscripción renovada');
+                await loadUserData();
+            } catch (e) { showToast('Error: ' + e.message, true); }
         };
 
-        document.getElementById('copyLinkBtn').onclick = () => {
-            const input = document.getElementById('refLink');
-            input.select();
-            navigator.clipboard.writeText(input.value);
-            showToast("¡Link copiado al portapapeles!");
+        document.getElementById('btnWithdraw').onclick = async () => {
+            try {
+                const tx = await contract.retirarGanancias();
+                showToast('Retirando...');
+                await tx.wait();
+                showToast('✅ Retiro exitoso');
+                await loadUserData();
+            } catch (e) { showToast('Error: ' + e.message, true); }
         };
 
-        // Escuchar cambio de cuenta
-        if (window.ethereum) {
-            window.ethereum.on('accountsChanged', () => window.location.reload());
-            window.ethereum.on('chainChanged', () => window.location.reload());
-        }
+        document.getElementById('btnReloadDetails').onclick = loadRedYGanancias;
+        document.getElementById('btnReloadGanancias').onclick = loadRedYGanancias;
+
+        // Admin functions (corregidas)
+        document.getElementById('btnPausa').onclick = async () => {
+            if (!isAdmin || !confirm('¿Cambiar estado de pausa?')) return;
+            try { await (await contract.togglePausa()).wait(); showToast('✅ Pausa cambiada'); } catch (e) { showToast('Error: ' + e.message, true); }
+        };
+        document.getElementById('btnCupos').onclick = async () => {
+            if (!isAdmin) return;
+            const lider = prompt('Dirección del líder:');
+            const cant = prompt('Cantidad de cupos:');
+            if (!lider || !cant) return;
+            try { await (await contract.otorgarCuposExtra(lider, cant)).wait(); showToast('✅ Cupos otorgados'); } catch (e) { showToast('Error: ' + e.message, true); }
+        };
+        document.getElementById('btnPremiar').onclick = async () => {
+            if (!isAdmin) return;
+            const lider = prompt('Dirección del líder:');
+            const monto = prompt('Monto en USDT:');
+            if (!lider || !monto) return;
+            try {
+                const tx = await contract.premiarLider(lider, ethers.utils.parseUnits(monto, 18));
+                await tx.wait();
+                showToast('✅ Premio enviado');
+            } catch (e) { showToast('Error: ' + e.message, true); }
+        };
+        document.getElementById('btnRecuperar').onclick = async () => {
+            if (!isAdmin) return;
+            const token = prompt('Dirección del token (no USDT):');
+            const cant = prompt('Cantidad:');
+            if (!token || !cant) return;
+            try {
+                const tx = await contract.recuperarTokenExterno(token, ethers.utils.parseUnits(cant, 18));
+                await tx.wait();
+                showToast('✅ Tokens recuperados');
+            } catch (e) { showToast('Error: ' + e.message, true); }
+        };
+
+        window.addEventListener('load', () => {
+            if (window.ethereum && window.ethereum.selectedAddress) connect();
+        });
     </script>
+    <footer class="text-center text-[10px] text-gray-500 mt-4">Milimar Protocol © 2024 · Binance Smart Chain</footer>
 </body>
-
 </html>
