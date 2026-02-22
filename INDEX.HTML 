@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Milimar | Oficina Virtual</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/5.7.2/ethers.umd.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .glass-card { background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 1.5rem; }
+        .node { width: 56px; height: 56px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: bold; transition: 0.3s; margin: 0 4px; }
+        .node-filled { background: #eab308; color: black; border: 2px solid white; box-shadow: 0 0 15px #eab308; }
+        .node-empty { border: 2px dashed #374151; color: #9ca3af; background: transparent; }
+        .toast { position: fixed; bottom: 20px; right: 20px; z-index: 1000; transition: opacity 0.3s; padding: 1rem; border-radius: 1rem; color: white; font-weight: bold; }
+        .btn { font-weight: 900; padding: 0.75rem 1.5rem; border-radius: 0.75rem; transition: all 0.2s; text-transform: uppercase; }
+        .btn:hover { transform: scale(1.03); }
+        .btn:active { transform: scale(0.95); }
+    </style>
+</head>
+<body class="bg-[#0a0a0a] text-white font-sans antialiased p-4 min-h-screen">
+
+    <!-- Notificaciones Estilo Toast -->
+    <div id="toast" class="toast glass-card hidden">
+        <p id="toastMsg" class="text-sm"></p>
+    </div>
+
+    <div class="max-w-3xl mx-auto">
+        <!-- Header -->
+        <header class="text-center py-6">
+            <h1 class="text-5xl font-black text-yellow-500 italic tracking-tight">MILIMAR</h1>
+            <p class="text-xs text-gray-500 uppercase tracking-widest font-bold mt-1">Oficina Virtual · BNB Smart Chain</p>
+        </header>
+
+        <!-- Caja de Conexión -->
+        <div id="conBox" class="glass-card p-8 text-center mb-6 border border-yellow-500/20">
+            <h2 class="text-xl font-bold mb-4">Bienvenido, Líder</h2>
+            <p class="text-gray-400 text-sm mb-6">Conecta tu billetera para acceder a tu red y ganancias.</p>
+            <button id="btnConnect" class="btn bg-yellow-500 text-black w-full max-w-md mx-auto shadow-lg shadow-yellow-500/20">CONECTAR BILLETERA</button>
+        </div>
+
+        <!-- Dashboard Principal -->
+        <div id="dash" class="hidden space-y-6">
+            
+            <!-- Tarjetas de Saldo y Red -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+                <div class="glass-card p-4 border-l-4 border-green-500">
+                    <p class="text-[10px] text-gray-400 uppercase font-bold text-center">Saldo Disponible</p>
+                    <p id="valSaldo" class="text-xl font-black text-green-400 text-center">0.00</p>
+                </div>
+                <div class="glass-card p-4 border-r-4 border-yellow-500">
+                    <p class="text-[10px] text-gray-400 uppercase font-bold text-center">Red Total</p>
+                    <p id="valRed" class="text-xl font-black text-yellow-500 text-center">0</p>
+                </div>
+                <div class="glass-card p-4 border-l-4 border-blue-500">
+                    <p class="text-[10px] text-gray-400 uppercase font-bold text-center">Directos</p>
+                    <p id="valDir" class="text-xl font-black text-blue-400 text-center">0</p>
+                </div>
+                <div class="glass-card p-4 border-r-4 border-purple-500">
+                    <p class="text-[10px] text-gray-400 uppercase font-bold text-center">Días Activo</p>
+                    <p id="valDias" class="text-xl font-black text-purple-400 text-center">0</p>
+                </div>
+            </div>
+
+            <!-- Mapa Visual de Niveles -->
+            <div class="glass-card p-6 text-center shadow-xl">
+                <p class="text-yellow-400 text-sm font-bold mb-6 tracking-widest uppercase">Estructura de Red (N1 al N5)</p>
+                <div class="flex flex-wrap justify-center gap-3">
+                    <div id="n1" class="node node-empty">N1<br><span class="text-[10px]">0</span></div>
+                    <div id="n2" class="node node-empty">N2<br><span class="text-[10px]">0</span></div>
+                    <div id="n3" class="node node-empty">N3<br><span class="text-[10px]">0</span></div>
+                    <div id="n4" class="node node-empty">N4<br><span class="text-[10px]">0</span></div>
+                    <div id="n5" class="node node-empty">N5<br><span class="text-[10px]">0</span></div>
+                </div>
+                <p class="text-[10px] text-gray-500 mt-6 italic">Cada nodo muestra la cantidad de socios en ese nivel.</p>
+            </div>
+
+            <!-- Tablas de Detalle -->
+            <div class="grid md:grid-cols-2 gap-4">
+                <div class="glass-card p-5">
+                    <h3 class="text-yellow-500 font-bold mb-3 text-xs uppercase tracking-widest border-b border-white/10 pb-2">Socios por Nivel</h3>
+                    <div id="redNiveles" class="space-y-2 text-xs"></div>
+                </div>
+                <div class="glass-card p-5">
+                    <h3 class="text-green-500 font-bold mb-3 text-xs uppercase tracking-widest border-b border-white/10 pb-2">Ganancias Acumuladas</h3>
+                    <div id="gananciasNiveles" class="space-y-2 text-xs"></div>
+                </div>
+            </div>
+
+            <!-- Botonera -->
+            <div class="grid grid-cols-2 gap-3">
+                <button id="btnApprove" class="btn bg-blue-600 text-white shadow-lg">1. Autorizar</button>
+                <button id="btnJoin" class="btn bg-yellow-500 text-black shadow-lg">2. Activar</button>
+                <button id="btnRenew" class="btn bg-indigo-600 text-white shadow-lg">Renovar Mes</button>
+                <button id="btnWithdraw" class="btn bg-green-600 text-white shadow-lg">Retirar</button>
+            </div>
+
+            <!-- Link de Referido -->
+            <div class="glass-card p-4 text-center">
+                <p class="text-[10px] text-gray-400 mb-2 uppercase font-bold">Tu Enlace de Invitación</p>
+                <div class="flex items-center gap-2 bg-black/40 p-2 rounded-xl border border-white/5">
+                    <input id="refLink" readonly class="flex-1 bg-transparent text-yellow-500 text-xs outline-none px-2 text-center" value="Conecta tu wallet para ver el link">
+                    <button id="copyLinkBtn" class="bg-yellow-500 text-black font-bold py-1 px-3 rounded-lg text-[10px]">COPIAR</button>
+                </div>
+            </div>
+
+            <!-- Panel Admin -->
+            <div id="adminSection" class="hidden glass-card p-5 border-2 border-red-500/30">
+                <h2 class="text-red-500 font-black mb-4 text-xs uppercase tracking-widest text-center">⚙️ MODO ADMINISTRADOR</h2>
+                <div class="grid grid-cols-2 gap-2">
+                    <button id="btnPausa" class="btn bg-red-800 text-white text-[10px]">PAUSAR SISTEMA</button>
+                    <button id="btnCupos" class="btn bg-slate-800 text-white text-[10px]">DAR CUPOS</button>
+                    <button id="btnPremiar" class="btn bg-purple-900 text-white text-[10px]">PREMIAR LÍDER</button>
+                    <button id="btnRecuperar" class="btn bg-zinc-700 text-white text-[10px]">RESCATAR TOKEN</button>
+                </div>
+            </div>
+        </div>
+        
+        <footer class="py-10 text-center opacity-30 text-[10px]">
+            MILIMAR Protocol © 2024 · Binance Smart Chain
+        </footer>
+    </div>
+
+    <script>
+        // ----------------------------------------------------
+        // CONFIGURACIÓN DEL CONTRATO
+        // ----------------------------------------------------
+        const CONTRACT_ADDR = "0xB198a83E05042dc32ea994523BAa3A5A7C61DA9c";
+        const USDT_ADDR = "0x55d398326f99059fF775485246999027B3197955";
+        const BSC_CHAIN_ID = 56;
+
+        const abi = [
+            "function consultarEstado(address) view returns (uint256,uint256,uint256,uint256,uint256,uint256)",
+            "function unirse(address)",
+            "function renovarSuscripcion()",
+            "function retirarGanancias()",
+            "function verDetalleRed(address) view returns (uint256[5] memory)",
+            "function verDetalleGanancias(address) view returns (uint256[5] memory)",
+            "function admin() view returns (address)",
+            "function togglePausa()",
+            "function otorgarCuposExtra(address,uint256)",
+            "function premiarLider(address,uint256)",
+            "function recuperarTokenExterno(address,uint256)"
+        ];
+        const usdtAbi = ["function approve(address spender, uint256 amount) returns (bool)"];
+
+        let provider, signer, userAddress, contract, usdtContract;
+        let isAdmin = false;
+
+        // ----------------------------------------------------
+        // FUNCIONES DE INTERFAZ
+        // ----------------------------------------------------
+        function showToast(msg, isError = false) {
+            const t = document.getElementById('toast');
+            t.classList.remove('hidden');
+            document.getElementById('toastMsg').innerText = msg;
+            t.style.backgroundColor = isError ? 'rgba(153, 27, 27, 0.9)' : 'rgba(20, 83, 45, 0.9)';
+            setTimeout(() => t.classList.add('hidden'), 4000);
+        }
+
+        async function loadUserData() {
+            try {
+                const data = await contract.consultarEstado(userAddress);
+                document.getElementById('valSaldo').innerText = ethers.utils.formatUnits(data[0], 18);
+                document.getElementById('valDir').innerText = data[3].toString() + " / 4";
+                document.getElementById('valRed').innerText = data[4].toString();
+                document.getElementById('valDias').innerText = data[5].toString();
+
+                const red = await contract.verDetalleRed(userAddress);
+                const gan = await contract.verDetalleGanancias(userAddress);
+
+                let redHtml = '', ganHtml = '';
+                for (let i = 0; i < 5; i++) {
+                    const count = red[i].toNumber();
+                    const node = document.getElementById('n' + (i+1));
+                    node.innerHTML = `N${i+1}<br><span class="text-[10px]">${count}</span>`;
+                    if (count > 0) { node.classList.add('node-filled'); node.classList.remove('node-empty'); }
+                    
+                    redHtml += `<div class="flex justify-between p-1"><span>Nivel ${i+1}:</span><span class="font-bold">${count}</span></div>`;
+                    ganHtml += `<div class="flex justify-between p-1"><span>Nivel ${i+1}:</span><span class="font-bold text-green-500">${ethers.utils.formatUnits(gan[i], 18)} USDT</span></div>`;
+                }
+                document.getElementById('redNiveles').innerHTML = redHtml;
+                document.getElementById('gananciasNiveles').innerHTML = ganHtml;
+            } catch (e) { showToast("Error al sincronizar con blockchain", true); }
+        }
+
+        async function connect() {
+            if (!window.ethereum) return showToast("Usa el navegador de MetaMask/OKX", true);
+            try {
+                provider = new ethers.providers.Web3Provider(window.ethereum);
+                await provider.send("eth_requestAccounts", []);
+                signer = provider.getSigner();
+                userAddress = await signer.getAddress();
+
+                contract = new ethers.Contract(CONTRACT_ADDR, abi, signer);
+                usdtContract = new ethers.Contract(USDT_ADDR, usdtAbi, signer);
+
+                document.getElementById('conBox').classList.add('hidden');
+                document.getElementById('dash').classList.remove('hidden');
+                document.getElementById('refLink').value = window.location.origin + window.location.pathname + "?ref=" + userAddress;
+
+                const adm = await contract.admin();
+                if (adm.toLowerCase() === userAddress.toLowerCase()) document.getElementById('adminSection').classList.remove('hidden');
+
+                await loadUserData();
+                showToast("Conexión exitosa");
+            } catch (e) { showToast("Error de conexión", true); }
+        }
+
+        // ----------------------------------------------------
+        // BOTONES DE ACCIÓN
+        // ----------------------------------------------------
+        document.getElementById('btnConnect').onclick = connect;
+
+        document.getElementById('btnApprove').onclick = async () => {
+            try {
+                const tx = await usdtContract.approve(CONTRACT_ADDR, ethers.utils.parseUnits("1000", 18));
+                showToast("Procesando aprobación...");
+                await tx.wait();
+                showToast("✅ USDT Autorizado");
+            } catch (e) { showToast("Error en autorización", true); }
+        };
+
+        document.getElementById('btnJoin').onclick = async () => {
+            try {
+                const urlParams = new URLSearchParams(window.location.search);
+                let sponsor = urlParams.get('ref');
+                if (!sponsor) sponsor = prompt("Ingresa la billetera de tu patrocinador:");
+                if (!sponsor) return;
+                const tx = await contract.unirse(sponsor);
+                showToast("Activando cuenta...");
+                await tx.wait();
+                showToast("✅ ¡Bienvenido a Milimar!");
+                loadUserData();
+            } catch (e) { showToast("Error en activación", true); }
+        };
+
+        document.getElementById('btnWithdraw').onclick = async () => {
+            try {
+                const tx = await contract.retirarGanancias();
+                showToast("Enviando fondos a tu wallet...");
+                await tx.wait();
+                showToast("✅ Retiro completado");
+                loadUserData();
+            } catch (e) { showToast("Error: Verifica requisitos", true); }
+        };
+
+        document.getElementById('btnRenew').onclick = async () => {
+            try {
+                const tx = await contract.renovarSuscripcion();
+                showToast("Renovando membresía...");
+                await tx.wait();
+                showToast("✅ Mes renovado");
+                loadUserData();
+            } catch (e) { showToast("Error en renovación", true); }
+        };
+
+        document.getElementById('copyLinkBtn').onclick = () => {
+            const input = document.getElementById('refLink');
+            input.select();
+            navigator.clipboard.writeText(input.value);
+            showToast("¡Link copiado al portapapeles!");
+        };
+
+        // Escuchar cambio de cuenta
+        if (window.ethereum) {
+            window.ethereum.on('accountsChanged', () => window.location.reload());
+            window.ethereum.on('chainChanged', () => window.location.reload());
+        }
+    </script>
+</body>
+</html>
