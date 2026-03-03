@@ -3,169 +3,40 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Milimar Vault - Testnet (ABI corregido)</title>
-    <!-- Font Awesome -->
+    <title>Milimar Vault - Testnet (vía getVaultInfo)</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <!-- Ethers.js -->
     <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #0b1a2e, #1a3b5e);
-            min-height: 100vh;
-            color: #e0e0e0;
-            padding: 20px;
-        }
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-        }
-        .header {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-        .header h1 {
-            font-size: 2.5rem;
-            color: #ffd700;
-            text-shadow: 0 0 15px rgba(255,215,0,0.5);
-        }
-        .header p {
-            color: #aaa;
-            font-size: 1rem;
-        }
-        .card {
-            background: rgba(20, 30, 45, 0.9);
-            backdrop-filter: blur(10px);
-            border-radius: 20px;
-            padding: 25px;
-            margin-bottom: 20px;
-            border: 1px solid rgba(255,215,0,0.2);
-            box-shadow: 0 8px 32px rgba(0,0,0,0.4);
-        }
-        .wallet-info {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 15px;
-        }
-        .btn {
-            background: #ffd700;
-            color: #0b1a2e;
-            border: none;
-            padding: 12px 25px;
-            border-radius: 12px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: all 0.3s;
-            font-size: 1rem;
-            box-shadow: 0 4px 15px rgba(255,215,0,0.3);
-        }
-        .btn:hover {
-            background: #ffc800;
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(255,215,0,0.5);
-        }
-        .btn-secondary {
-            background: #2a3f5e;
-            color: white;
-            box-shadow: none;
-        }
-        .btn-secondary:hover {
-            background: #3a4f6e;
-        }
-        .btn-danger {
-            background: #d32f2f;
-            color: white;
-        }
-        .btn-danger:hover {
-            background: #b71c1c;
-        }
-        .stats {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 15px;
-            margin: 20px 0;
-        }
-        .stat-item {
-            background: rgba(0,0,0,0.3);
-            border-radius: 15px;
-            padding: 15px;
-            text-align: center;
-        }
-        .stat-label {
-            color: #aaa;
-            font-size: 0.85rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-        .stat-value {
-            color: #ffd700;
-            font-size: 1.8rem;
-            font-weight: bold;
-        }
-        .stat-value small {
-            font-size: 0.9rem;
-            color: #ccc;
-        }
-        .form-group {
-            margin: 15px 0;
-        }
-        .form-group label {
-            display: block;
-            margin-bottom: 5px;
-            color: #ddd;
-        }
-        .form-group input {
-            width: 100%;
-            padding: 12px;
-            border-radius: 10px;
-            border: 1px solid #3a4f6e;
-            background: #1e2f40;
-            color: white;
-            font-size: 1rem;
-        }
-        .form-group input:focus {
-            outline: none;
-            border-color: #ffd700;
-        }
-        .message {
-            background: #1e3a5f;
-            border-left: 4px solid #ffd700;
-            padding: 15px;
-            border-radius: 10px;
-            margin: 20px 0;
-        }
-        .message.error {
-            border-left-color: #d32f2f;
-            background: #3a1e1e;
-        }
-        .message.success {
-            border-left-color: #2e7d32;
-            background: #1e3a2e;
-        }
-        .footer {
-            text-align: center;
-            margin-top: 40px;
-            color: #aaa;
-            font-size: 0.9rem;
-        }
-        .hidden {
-            display: none;
-        }
-        .loading {
-            text-align: center;
-            padding: 40px;
-        }
-        .loading i {
-            font-size: 3rem;
-            color: #ffd700;
-        }
+        /* (mismos estilos que antes, por brevedad se omiten pero deben ir igual) */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', sans-serif; background: linear-gradient(135deg, #0b1a2e, #1a3b5e); min-height: 100vh; color: #e0e0e0; padding: 20px; }
+        .container { max-width: 800px; margin: 0 auto; }
+        .header { text-align: center; margin-bottom: 30px; }
+        .header h1 { font-size: 2.5rem; color: #ffd700; text-shadow: 0 0 15px rgba(255,215,0,0.5); }
+        .header p { color: #aaa; font-size: 1rem; }
+        .card { background: rgba(20,30,45,0.9); backdrop-filter: blur(10px); border-radius: 20px; padding: 25px; margin-bottom: 20px; border: 1px solid rgba(255,215,0,0.2); box-shadow: 0 8px 32px rgba(0,0,0,0.4); }
+        .wallet-info { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; }
+        .btn { background: #ffd700; color: #0b1a2e; border: none; padding: 12px 25px; border-radius: 12px; font-weight: bold; cursor: pointer; transition: all 0.3s; font-size: 1rem; box-shadow: 0 4px 15px rgba(255,215,0,0.3); }
+        .btn:hover { background: #ffc800; transform: translateY(-2px); box-shadow: 0 6px 20px rgba(255,215,0,0.5); }
+        .btn-secondary { background: #2a3f5e; color: white; box-shadow: none; }
+        .btn-secondary:hover { background: #3a4f6e; }
+        .btn-danger { background: #d32f2f; color: white; }
+        .btn-danger:hover { background: #b71c1c; }
+        .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin: 20px 0; }
+        .stat-item { background: rgba(0,0,0,0.3); border-radius: 15px; padding: 15px; text-align: center; }
+        .stat-label { color: #aaa; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px; }
+        .stat-value { color: #ffd700; font-size: 1.8rem; font-weight: bold; }
+        .form-group { margin: 15px 0; }
+        .form-group label { display: block; margin-bottom: 5px; color: #ddd; }
+        .form-group input { width: 100%; padding: 12px; border-radius: 10px; border: 1px solid #3a4f6e; background: #1e2f40; color: white; font-size: 1rem; }
+        .form-group input:focus { outline: none; border-color: #ffd700; }
+        .message { background: #1e3a5f; border-left: 4px solid #ffd700; padding: 15px; border-radius: 10px; margin: 20px 0; }
+        .message.error { border-left-color: #d32f2f; background: #3a1e1e; }
+        .message.success { border-left-color: #2e7d32; background: #1e3a2e; }
+        .footer { text-align: center; margin-top: 40px; color: #aaa; font-size: 0.9rem; }
+        .hidden { display: none; }
+        .loading { text-align: center; padding: 40px; }
+        .loading i { font-size: 3rem; color: #ffd700; }
     </style>
 </head>
 <body>
@@ -175,7 +46,6 @@
             <p>Prueba el vault con USDT de prueba en BSC Testnet</p>
         </div>
 
-        <!-- Conexión -->
         <div class="card">
             <div class="wallet-info">
                 <div>
@@ -187,10 +57,8 @@
             <div id="networkInfo" class="hidden">Red: <span id="networkName"></span></div>
         </div>
 
-        <!-- Mensajes -->
         <div id="messageBox" class="message hidden"></div>
 
-        <!-- Datos del Vault -->
         <div id="vaultData" class="hidden">
             <div class="card">
                 <h2><i class="fas fa-chart-line"></i> Estadísticas del Vault</h2>
@@ -253,38 +121,30 @@
     </div>
 
     <script>
-        // ---------- CONFIGURACIÓN ----------
         const CONFIG = {
-            vaultAddress: "0x09b3A8338471718e25b19E37d0669FfdE250CD37",   // Tu contrato Vault en testnet
-            usdtAddress: "0x337610d27c682e347c9cd60bd4b3b107c9d34d",      // Dirección correcta del USDT de prueba
-            chainId: 97,                                                  // BSC Testnet
+            vaultAddress: "0x09b3A8338471718e25b19E37d0669FfdE250CD37",
+            usdtAddress: "0x337610d27c682e347c9cd60bd4b3b107c9d34d",
+            chainId: 97,
             rpcUrl: "https://data-seed-prebsc-1-s1.binance.org:8545/",
             explorer: "https://testnet.bscscan.com"
         };
 
-        // ABI del Vault (CORREGIDO y más robusto)
+        // ABI actualizado: usamos getVaultInfo() para obtener todos los datos en una sola llamada
         const VAULT_ABI = [
-            // Variables de estado públicas (generan getters automáticos)
-            "function totalAssets() view returns (uint256)",
-            "function totalShares() view returns (uint256)",
-            "function sharePrice() view returns (uint256)",
+            "function getVaultInfo() view returns (uint256 totalAssets_, uint256 totalShares_, uint256 sharePrice_, uint256 managementFee_, uint256 accruedFees_, uint256 maxTotalAssets_, bool emergencyMode_, uint256 emergencyDeadline_, address strategy_, uint256 referralPool_, uint256 referralPercent_, uint256 level1Percent_, uint256 level2Percent_, uint256 level3Percent_)",
             "function shares(address) view returns (uint256)",
-            "function emergencyMode() view returns (bool)",
-            // Funciones de interacción
+            "function balanceOf(address) view returns (uint256)",
             "function deposit(uint256 _amount) returns (bool)",
             "function emergencyWithdraw()",
-            // Evento para escuchar depósitos (opcional)
             "event Deposited(address indexed user, uint256 amount, uint256 shares, uint256 timestamp)"
         ];
 
-        // ABI del USDT (balance y approve)
         const USDT_ABI = [
             "function balanceOf(address) view returns (uint256)",
             "function approve(address spender, uint256 amount) returns (bool)",
             "function allowance(address owner, address spender) view returns (uint256)"
         ];
 
-        // Variables globales
         let provider, signer, userAddress, vaultContract, usdtContract;
 
         // Elementos DOM
@@ -306,7 +166,6 @@
         const depositBtn = document.getElementById('depositBtn');
         const emergencyWithdrawBtn = document.getElementById('emergencyWithdrawBtn');
 
-        // Utilidades
         function showMessage(text, type = 'info') {
             messageBox.classList.remove('hidden', 'error', 'success');
             messageBox.innerHTML = `<i class="fas ${type === 'error' ? 'fa-exclamation-circle' : type === 'success' ? 'fa-check-circle' : 'fa-info-circle'}"></i> ${text}`;
@@ -321,13 +180,9 @@
             return ethers.utils.parseUnits(amount, decimals);
         }
 
-        // Cambiar a BSC Testnet
         async function switchToTestnet() {
             try {
-                await window.ethereum.request({
-                    method: 'wallet_switchEthereumChain',
-                    params: [{ chainId: '0x61' }] // 97 en hex
-                });
+                await window.ethereum.request({ method: 'wallet_switchEthereumChain', params: [{ chainId: '0x61' }] });
                 return true;
             } catch (switchError) {
                 if (switchError.code === 4902) {
@@ -344,7 +199,6 @@
                         });
                         return true;
                     } catch (addError) {
-                        console.error(addError);
                         return false;
                     }
                 }
@@ -352,12 +206,8 @@
             }
         }
 
-        // Conectar wallet
         async function connect() {
-            if (!window.ethereum) {
-                alert('No se detectó ninguna wallet. Instala MetaMask o OKX Wallet.');
-                return;
-            }
+            if (!window.ethereum) return alert('No se detectó ninguna wallet.');
             try {
                 provider = new ethers.providers.Web3Provider(window.ethereum);
                 await provider.send("eth_requestAccounts", []);
@@ -365,15 +215,13 @@
                 userAddress = await signer.getAddress();
                 const network = await provider.getNetwork();
 
-                // Verificar red
                 if (network.chainId !== CONFIG.chainId) {
                     showMessage('Cambiando a BSC Testnet...', 'info');
                     const switched = await switchToTestnet();
                     if (!switched) {
-                        showMessage('Por favor cambia manualmente a BSC Testnet en tu wallet.', 'error');
+                        showMessage('Cambia manualmente a BSC Testnet.', 'error');
                         return;
                     }
-                    // Recargar provider después del cambio
                     provider = new ethers.providers.Web3Provider(window.ethereum);
                     signer = provider.getSigner();
                 }
@@ -383,15 +231,12 @@
                 networkInfo.classList.remove('hidden');
                 networkName.textContent = 'BSC Testnet';
 
-                // Inicializar contratos
                 vaultContract = new ethers.Contract(CONFIG.vaultAddress, VAULT_ABI, signer);
                 usdtContract = new ethers.Contract(CONFIG.usdtAddress, USDT_ABI, signer);
 
-                // Cargar datos
                 await loadVaultData();
                 vaultData.classList.remove('hidden');
 
-                // Escuchar eventos de cambio de cuenta/red
                 window.ethereum.on('accountsChanged', (accounts) => {
                     if (accounts.length === 0) {
                         connectionStatus.innerHTML = 'Desconectado';
@@ -406,18 +251,20 @@
                 window.ethereum.on('chainChanged', () => window.location.reload());
 
             } catch (error) {
-                console.error(error);
                 showMessage('Error al conectar: ' + error.message, 'error');
             }
         }
 
-        // Cargar datos del vault y del usuario
         async function loadVaultData() {
             try {
-                // Datos globales
-                const totalAssets = await vaultContract.totalAssets();
-                const totalShares = await vaultContract.totalShares();
-                const sharePrice = await vaultContract.sharePrice();
+                // Usamos getVaultInfo() para obtener todo de una vez
+                const info = await vaultContract.getVaultInfo();
+                // info es una tupla con 14 elementos
+                const totalAssets = info.totalAssets_;
+                const totalShares = info.totalShares_;
+                const sharePrice = info.sharePrice_;
+                const emergency = info.emergencyMode_;
+
                 totalAssetsEl.textContent = formatUnits(totalAssets) + ' USDT';
                 totalSharesEl.textContent = formatUnits(totalShares, 18);
                 sharePriceEl.textContent = formatUnits(sharePrice);
@@ -428,12 +275,9 @@
                 mySharesEl.textContent = formatUnits(shares, 18);
                 myBalanceEl.textContent = formatUnits(balance) + ' USDT';
 
-                // Saldo USDT en wallet
                 const usdtBal = await usdtContract.balanceOf(userAddress);
                 usdtBalanceEl.textContent = formatUnits(usdtBal) + ' USDT';
 
-                // Verificar modo emergencia
-                const emergency = await vaultContract.emergencyMode();
                 if (emergency) {
                     emergencyWithdrawBtn.disabled = false;
                     emergencyWithdrawBtn.title = '';
@@ -447,7 +291,6 @@
             }
         }
 
-        // Aprobar USDT
         approveBtn.addEventListener('click', async () => {
             try {
                 const amount = depositAmount.value;
@@ -459,13 +302,12 @@
                 const tx = await usdtContract.approve(CONFIG.vaultAddress, amountWei);
                 showMessage('Autorizando... Confirma en tu wallet.', 'info');
                 await tx.wait();
-                showMessage('✅ Autorización exitosa. Ahora puedes depositar.', 'success');
+                showMessage('✅ Autorización exitosa.', 'success');
             } catch (error) {
                 showMessage('Error: ' + error.message, 'error');
             }
         });
 
-        // Depositar
         depositBtn.addEventListener('click', async () => {
             try {
                 const amount = depositAmount.value;
@@ -475,27 +317,21 @@
                 }
                 const amountWei = parseUnits(amount);
                 const tx = await vaultContract.deposit(amountWei);
-                showMessage('Depositando... Confirma en tu wallet.', 'info');
+                showMessage('Depositando... Confirma.', 'info');
                 await tx.wait();
                 showMessage('✅ Depósito exitoso.', 'success');
                 await loadVaultData();
             } catch (error) {
-                // Mostrar error más amigable si es de membresía
-                if (error.message.includes("Solo miembros activos de Milimar")) {
-                    showMessage('❌ Solo miembros activos de Milimar pueden depositar. Verifica tu membresía.', 'error');
-                } else {
-                    showMessage('Error: ' + error.message, 'error');
-                }
+                showMessage('Error: ' + error.message, 'error');
             }
         });
 
-        // Retiro de emergencia
         emergencyWithdrawBtn.addEventListener('click', async () => {
             try {
                 const tx = await vaultContract.emergencyWithdraw();
                 showMessage('Procesando retiro de emergencia...', 'info');
                 await tx.wait();
-                showMessage('✅ Retiro de emergencia completado.', 'success');
+                showMessage('✅ Retiro completado.', 'success');
                 await loadVaultData();
             } catch (error) {
                 showMessage('Error: ' + error.message, 'error');
