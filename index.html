@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Milimar Vault - Testnet</title>
+    <title>Milimar Vault - Testnet (corregido)</title>
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <!-- Ethers.js -->
@@ -253,31 +253,28 @@
     </div>
 
     <script>
-        // Configuración de la red de prueba
+        // ---------- CONFIGURACIÓN CORREGIDA ----------
         const CONFIG = {
-            vaultAddress: "0x09b3A8338471718e25b19E37d0669FfdE250CD37",
-            usdtAddress: "0x337610d27c682e347c9cd60bd4b3b107c9d34d",
-            chainId: 97, // BSC Testnet
+            vaultAddress: "0x09b3A8338471718e25b19E37d0669FfdE250CD37",   // Tu contrato Vault en testnet
+            usdtAddress: "0x337610d27c682e347c9cd60bd4b3b107c9d34d",      // Dirección CORRECTA del USDT de prueba
+            chainId: 97,                                                  // BSC Testnet
             rpcUrl: "https://data-seed-prebsc-1-s1.binance.org:8545/",
             explorer: "https://testnet.bscscan.com"
         };
 
-        // ABIs
+        // ABI del Vault (funciones necesarias)
         const VAULT_ABI = [
-            // Funciones de consulta
             "function totalAssets() view returns (uint256)",
             "function totalShares() view returns (uint256)",
             "function sharePrice() view returns (uint256)",
             "function balanceOf(address) view returns (uint256)",
             "function shares(address) view returns (uint256)",
-            "function getVaultInfo() view returns (uint256 totalAssets_, uint256 totalShares_, uint256 sharePrice_, uint256 managementFee_, uint256 accruedFees_, uint256 maxTotalAssets_, bool emergencyMode_, uint256 emergencyDeadline_, address strategy_, uint256 referralPool_, uint256 referralPercent_, uint256 level1Percent_, uint256 level2Percent_, uint256 level3Percent_)",
             "function emergencyMode() view returns (bool)",
-            // Funciones de interacción
-            "function deposit(uint256 _amount, address _referrer) external",
-            "function deposit(uint256 _amount) external returns (bool)",
-            "function emergencyWithdraw() external"
+            "function deposit(uint256 _amount) returns (bool)",
+            "function emergencyWithdraw()"
         ];
 
+        // ABI del USDT (solo balance y approve)
         const USDT_ABI = [
             "function balanceOf(address) view returns (uint256)",
             "function approve(address spender, uint256 amount) returns (bool)",
@@ -307,7 +304,7 @@
         const depositBtn = document.getElementById('depositBtn');
         const emergencyWithdrawBtn = document.getElementById('emergencyWithdrawBtn');
 
-        // Mostrar mensajes
+        // Utilidades
         function showMessage(text, type = 'info') {
             messageBox.classList.remove('hidden', 'error', 'success');
             messageBox.innerHTML = `<i class="fas ${type === 'error' ? 'fa-exclamation-circle' : type === 'success' ? 'fa-check-circle' : 'fa-info-circle'}"></i> ${text}`;
@@ -475,18 +472,13 @@
                     return;
                 }
                 const amountWei = parseUnits(amount);
-                const tx = await vaultContract.deposit(amountWei); // versión sin referido
+                const tx = await vaultContract.deposit(amountWei);
                 showMessage('Depositando... Confirma en tu wallet.', 'info');
                 await tx.wait();
                 showMessage('✅ Depósito exitoso.', 'success');
                 await loadVaultData();
             } catch (error) {
-                // Si el error es por el modificador onlyMilimarMember, mostramos mensaje amigable
-                if (error.message.includes("Solo miembros activos de Milimar")) {
-                    showMessage('❌ Solo miembros activos de Milimar pueden depositar. Verifica tu membresía.', 'error');
-                } else {
-                    showMessage('Error: ' + error.message, 'error');
-                }
+                showMessage('Error: ' + error.message, 'error');
             }
         });
 
