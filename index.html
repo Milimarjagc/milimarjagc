@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Milimar Vault - Testnet (corregido)</title>
+    <title>Milimar Vault - Testnet (ABI corregido)</title>
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <!-- Ethers.js -->
@@ -253,28 +253,31 @@
     </div>
 
     <script>
-        // ---------- CONFIGURACIÓN CORREGIDA ----------
+        // ---------- CONFIGURACIÓN ----------
         const CONFIG = {
             vaultAddress: "0x09b3A8338471718e25b19E37d0669FfdE250CD37",   // Tu contrato Vault en testnet
-            usdtAddress: "0x337610d27c682e347c9cd60bd4b3b107c9d34d",      // Dirección CORRECTA del USDT de prueba
+            usdtAddress: "0x337610d27c682e347c9cd60bd4b3b107c9d34d",      // Dirección correcta del USDT de prueba
             chainId: 97,                                                  // BSC Testnet
             rpcUrl: "https://data-seed-prebsc-1-s1.binance.org:8545/",
             explorer: "https://testnet.bscscan.com"
         };
 
-        // ABI del Vault (funciones necesarias)
+        // ABI del Vault (CORREGIDO y más robusto)
         const VAULT_ABI = [
+            // Variables de estado públicas (generan getters automáticos)
             "function totalAssets() view returns (uint256)",
             "function totalShares() view returns (uint256)",
             "function sharePrice() view returns (uint256)",
-            "function balanceOf(address) view returns (uint256)",
             "function shares(address) view returns (uint256)",
             "function emergencyMode() view returns (bool)",
+            // Funciones de interacción
             "function deposit(uint256 _amount) returns (bool)",
-            "function emergencyWithdraw()"
+            "function emergencyWithdraw()",
+            // Evento para escuchar depósitos (opcional)
+            "event Deposited(address indexed user, uint256 amount, uint256 shares, uint256 timestamp)"
         ];
 
-        // ABI del USDT (solo balance y approve)
+        // ABI del USDT (balance y approve)
         const USDT_ABI = [
             "function balanceOf(address) view returns (uint256)",
             "function approve(address spender, uint256 amount) returns (bool)",
@@ -283,7 +286,6 @@
 
         // Variables globales
         let provider, signer, userAddress, vaultContract, usdtContract;
-        let toastTimeout;
 
         // Elementos DOM
         const connectBtn = document.getElementById('connectBtn');
@@ -478,7 +480,12 @@
                 showMessage('✅ Depósito exitoso.', 'success');
                 await loadVaultData();
             } catch (error) {
-                showMessage('Error: ' + error.message, 'error');
+                // Mostrar error más amigable si es de membresía
+                if (error.message.includes("Solo miembros activos de Milimar")) {
+                    showMessage('❌ Solo miembros activos de Milimar pueden depositar. Verifica tu membresía.', 'error');
+                } else {
+                    showMessage('Error: ' + error.message, 'error');
+                }
             }
         });
 
