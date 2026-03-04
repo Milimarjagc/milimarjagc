@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
-    <title>Milimar Vault · Neón</title>
+    <title>MILIMAR_JAGC · Vault</title>
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <!-- Google Fonts: Playfair Display (cursiva elegante) + Inter (auxiliar) -->
@@ -36,7 +36,7 @@
             margin: 0 auto;
             width: 100%;
         }
-        /* Botones flotantes pequeños */
+        /* Botones flotantes pequeños (Telegram y WhatsApp) */
         .floating-buttons {
             position: fixed;
             bottom: 20px;
@@ -99,7 +99,7 @@
             border: 1px solid rgba(200, 130, 255, 0.4);
             box-shadow: 0 0 15px rgba(170, 0, 255, 0.3);
         }
-        /* Tarjetas glassmorphism purpura */
+        /* Tarjetas glassmorphism púrpura */
         .card {
             background: rgba(48, 16, 64, 0.5);
             backdrop-filter: blur(12px);
@@ -325,7 +325,7 @@
             background: #bf7aff;
             color: black;
         }
-        /* Panel admin */
+        /* Panel admin (visible solo para owner) */
         .admin-panel {
             border-top: 2px solid #bf7aff;
             margin-top: 30px;
@@ -336,6 +336,41 @@
             margin-top: 50px;
             color: #aa99cc;
             font-size: 0.8rem;
+        }
+        /* Sección informativa (explicación del vault) */
+        .info-section {
+            background: rgba(128, 0, 255, 0.15);
+            border-radius: 24px;
+            padding: 20px;
+            margin: 20px 0;
+            border-left: 4px solid #bf7aff;
+            backdrop-filter: blur(4px);
+        }
+        .info-section h3 {
+            color: #e6ccff;
+            font-family: 'Playfair Display', serif;
+            font-style: italic;
+            margin-bottom: 12px;
+        }
+        .info-section p, .info-section li {
+            color: #d9c0ff;
+            line-height: 1.5;
+            font-size: 0.95rem;
+        }
+        .info-section ul {
+            list-style: none;
+            margin-top: 10px;
+        }
+        .info-section li {
+            margin-bottom: 8px;
+            padding-left: 24px;
+            position: relative;
+        }
+        .info-section li:before {
+            content: "✨";
+            position: absolute;
+            left: 0;
+            color: #bf7aff;
         }
     </style>
 </head>
@@ -352,11 +387,11 @@
 
     <div class="container">
         <div class="header">
-            <h1>⚡ MILIMAR VAULT</h1>
-            <p>Inversión automatizada · BSC</p>
+            <h1>⚡ MILIMAR_JAGC</h1>
+            <p>Vault de inversiones · BSC</p>
         </div>
 
-        <!-- Conexión -->
+        <!-- Conexión (único botón) -->
         <div class="card" style="text-align: center;">
             <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px;">
                 <div>
@@ -375,7 +410,7 @@
             <p>Cargando datos...</p>
         </div>
 
-        <!-- Panel principal -->
+        <!-- Panel principal (visible al conectar) -->
         <div id="mainPanel" class="hidden">
             <!-- Estadísticas globales -->
             <div class="card">
@@ -394,6 +429,19 @@
                         <div class="stat-value" id="precioShare">1.00</div>
                     </div>
                 </div>
+            </div>
+
+            <!-- Sección informativa (explicación del vault) -->
+            <div class="info-section">
+                <h3><i class="fas fa-info-circle"></i> ¿Qué es esto?</h3>
+                <p>Fondo de inversión colectivo automatizado. Tu depósito se representa en "participaciones" (shares) cuyo valor aumenta con las ganancias generadas por estrategias DeFi.</p>
+                <ul>
+                    <li><strong>Mínimo:</strong> 10 USDT.</li>
+                    <li><strong>Acceso:</strong> Solo para miembros activos de Milimar (membresía vigente).</li>
+                    <li><strong>Comisión:</strong> 3% sobre ganancias, distribuida: 20% referidos, 30% liderazgo, 50% tesoro.</li>
+                    <li><strong>Seguridad:</strong> Roles, pausas granulares, timelock y modo emergencia.</li>
+                </ul>
+                <p style="margin-top: 8px; font-style: italic; color: #bf7aff;">Transparencia total · Contrato verificado en BscScan</p>
             </div>
 
             <!-- Datos del usuario + recompensas -->
@@ -438,9 +486,9 @@
             <details>
                 <summary><i class="fas fa-code"></i> Detalles del contrato</summary>
                 <div class="contract-detail">
-                    <span id="contractAddressDisplay">0xe13D5B2566EBcDc460Bc192b85506EA0Cfb0E92E</span>
+                    <span id="contractAddressDisplay">0x81EbAFA4E7540A3e5b0990E20876af103dC1fd2d</span>
                     <button class="copy-btn" id="copyAddressBtn"><i class="fas fa-copy"></i> Copiar</button>
-                    <a href="https://bscscan.com/address/0xe13D5B2566EBcDc460Bc192b85506EA0Cfb0E92E" target="_blank">
+                    <a href="https://bscscan.com/address/0x81EbAFA4E7540A3e5b0990E20876af103dC1fd2d" target="_blank">
                         <i class="fas fa-external-link-alt"></i> Ver en BscScan
                     </a>
                 </div>
@@ -499,10 +547,22 @@
                         <button class="btn btn-small" id="procesarBonoBtn">Procesar</button>
                     </div>
                     <div>
+                        <h4>Pausas</h4>
+                        <button class="btn btn-small btn-secondary" id="pausarDepositosBtn">Pausar depósitos</button>
+                        <button class="btn btn-small btn-secondary" id="pausarRetirosBtn">Pausar retiros</button>
+                        <button class="btn btn-small btn-secondary" id="pausarRecompensasBtn">Pausar recompensas</button>
+                    </div>
+                    <div>
                         <h4>Emergencia</h4>
                         <button class="btn btn-small btn-secondary" id="activarEmergenciaBtn">Activar</button>
                         <button class="btn btn-small btn-secondary" id="desactivarEmergenciaBtn">Desactivar</button>
-                        <button class="btn btn-small btn-secondary" id="retiroEmergenciaBtn" style="margin-top:5px;">Retiro emergencia</button>
+                        <button class="btn btn-small btn-secondary" id="retiroEmergenciaBtn">Retiro emergencia</button>
+                    </div>
+                    <div>
+                        <h4>Modo público</h4>
+                        <button class="btn btn-small btn-secondary" id="iniciarModoPublicoBtn">Iniciar</button>
+                        <button class="btn btn-small btn-secondary" id="ejecutarModoPublicoBtn">Ejecutar</button>
+                        <button class="btn btn-small btn-secondary" id="cancelarModoPublicoBtn">Cancelar</button>
                     </div>
                 </div>
                 <div style="margin-top: 15px;">
@@ -510,21 +570,22 @@
                     <p><strong>Pool de liderazgo:</strong> <span id="poolLiderazgo">0</span> USDT</p>
                     <p><strong>Pool de referidos:</strong> <span id="poolReferidos">0</span> USDT</p>
                     <p><strong>Modo emergencia:</strong> <span id="emergenciaEstado">Inactivo</span></p>
+                    <p><strong>Modo público:</strong> <span id="modoPublicoEstado">Inactivo</span></p>
                 </div>
             </div>
         </div>
 
         <div class="footer">
-            <p>Milimar Vault · Diseño Neón · Versión 2.0</p>
+            <p>Milimar Vault · Versión con roles y timelock · Diseño Neón</p>
         </div>
     </div>
 
     <script>
         // ---------- CONFIGURACIÓN ----------
-        const CONTRACT_ADDRESS = "0xe13D5B2566EBcDc460Bc192b85506EA0Cfb0E92E";
+        const CONTRACT_ADDRESS = "0x81EbAFA4E7540A3e5b0990E20876af103dC1fd2d";
         const BSC_MAINNET_CHAIN_ID = 56;
 
-        // ABI (funciones necesarias)
+        // ABI completo del nuevo contrato (incluye todas las funciones)
         const CONTRACT_ABI = [
             "function totalShares() view returns (uint256)",
             "function totalActivos() view returns (uint256)",
@@ -536,7 +597,17 @@
             "function preferenciaBono(address) view returns (uint8)",
             "function referidoDe(address) view returns (address)",
             "function modoEmergencia() view returns (bool)",
-            "function owner() view returns (address)",
+            "function modoPublico() view returns (bool)",
+            "function depositosPausados() view returns (bool)",
+            "function retirosPausados() view returns (bool)",
+            "function recompensasPausadas() view returns (bool)",
+            "function maxTotalAssets() view returns (uint256)",
+            "function maxDepositoPorTx() view returns (uint256)",
+            "function maxRetiroPorTx() view returns (uint256)",
+            "function hasRole(bytes32,address) view returns (bool)",
+            "function ADMIN_ROLE() view returns (bytes32)",
+            "function GUARDIAN_ROLE() view returns (bytes32)",
+            "function ALLOCATOR_ROLE() view returns (bytes32)",
             "function setPreferenciaBono(uint8) external",
             "function depositarAuto(uint256) external",
             "function reclamarRecompensas() external",
@@ -546,14 +617,21 @@
             "function retirarComisiones(uint256,address) external",
             "function distribuirLiderazgo(address[],uint256[]) external",
             "function procesarBono(address,uint256) external",
+            "function pausarDepositos(bool) external",
+            "function pausarRetiros(bool) external",
+            "function pausarRecompensas(bool) external",
+            "function setLimites(uint256,uint256,uint256) external",
             "function activarEmergencia() external",
             "function desactivarEmergencia() external",
             "function retiroEmergencia() external",
+            "function iniciarModoPublico() external",
+            "function ejecutarModoPublico() external",
+            "function cancelarModoPublico() external",
             "function saldoDe(address) view returns (uint256)",
             "function precioShare() view returns (uint256)"
         ];
 
-        let provider, signer, contract, userAddress, ownerAddress;
+        let provider, signer, contract, userAddress, isAdmin = false, isGuardian = false;
 
         // Elementos DOM
         const connectBtn = document.getElementById('connectBtn');
@@ -638,7 +716,12 @@
                 networkName.textContent = 'BSC Mainnet';
 
                 contract = new ethers.Contract(CONTRACT_ADDRESS, CONTRACT_ABI, signer);
-                ownerAddress = await contract.owner();
+
+                // Verificar roles
+                const adminRole = await contract.ADMIN_ROLE();
+                const guardianRole = await contract.GUARDIAN_ROLE();
+                isAdmin = await contract.hasRole(adminRole, userAddress);
+                isGuardian = await contract.hasRole(guardianRole, userAddress);
 
                 await loadAllData();
                 mainPanel.classList.remove('hidden');
@@ -665,6 +748,7 @@
 
         async function loadAllData() {
             try {
+                // Datos globales
                 const totalShares = await contract.totalShares();
                 const totalActivos = await contract.totalActivos();
                 const precioShare = await contract.precioShare();
@@ -672,6 +756,7 @@
                 document.getElementById('totalActivos').textContent = formatUSDT(totalActivos) + ' USDT';
                 document.getElementById('precioShare').textContent = formatUSDT(precioShare);
 
+                // Datos del usuario
                 const sharesUser = await contract.shares(userAddress);
                 const saldoUser = await contract.saldoDe(userAddress);
                 const recompensas = await contract.recompensasPendientesReferidor(userAddress);
@@ -683,16 +768,19 @@
                 document.getElementById('preferenciaBono').textContent = preferencia === 0 ? 'RETIRAR' : 'INVERTIR';
                 document.getElementById('miReferidor').textContent = referido === ethers.constants.AddressZero ? 'Ninguno' : referido.slice(0,6) + '...' + referido.slice(-4);
 
-                if (userAddress.toLowerCase() === ownerAddress.toLowerCase()) {
+                // Panel admin (si tiene algún rol)
+                if (isAdmin || isGuardian) {
                     adminPanel.classList.remove('hidden');
                     const comisiones = await contract.comisionesAcumuladas();
                     const poolLiderazgo = await contract.poolLiderazgo();
                     const poolReferidos = await contract.poolReferidos();
                     const emergencia = await contract.modoEmergencia();
+                    const modoPublico = await contract.modoPublico();
                     document.getElementById('comisionesAcumuladas').textContent = formatUSDT(comisiones);
                     document.getElementById('poolLiderazgo').textContent = formatUSDT(poolLiderazgo);
                     document.getElementById('poolReferidos').textContent = formatUSDT(poolReferidos);
                     document.getElementById('emergenciaEstado').textContent = emergencia ? 'Activo' : 'Inactivo';
+                    document.getElementById('modoPublicoEstado').textContent = modoPublico ? 'Activo' : 'Inactivo';
                 } else {
                     adminPanel.classList.add('hidden');
                 }
@@ -703,6 +791,7 @@
 
         connectBtn.addEventListener('click', connect);
 
+        // Funciones de usuario
         document.getElementById('depositarAutoBtn').addEventListener('click', async () => {
             try {
                 const amount = document.getElementById('depositAmount').value;
@@ -757,8 +846,9 @@
             }
         });
 
-        // Admin functions
+        // Funciones de admin (solo se ejecutan si tiene rol)
         document.getElementById('distribuirGananciaBtn').addEventListener('click', async () => {
+            if (!isAdmin) { showMessage('No tienes permisos', 'error'); return; }
             try {
                 const profit = document.getElementById('profitAmount').value;
                 if (!profit || parseFloat(profit) <= 0) throw new Error('Ganancia inválida');
@@ -773,6 +863,7 @@
         });
 
         document.getElementById('asignarRecompensaBtn').addEventListener('click', async () => {
+            if (!isAdmin) { showMessage('No tienes permisos', 'error'); return; }
             try {
                 const referidor = document.getElementById('asignarReferido').value;
                 const cantidad = document.getElementById('asignarCantidad').value;
@@ -789,6 +880,7 @@
         });
 
         document.getElementById('retirarComisionesBtn').addEventListener('click', async () => {
+            if (!isAdmin) { showMessage('No tienes permisos', 'error'); return; }
             try {
                 const cantidad = document.getElementById('feeAmount').value;
                 const destino = document.getElementById('feeDestination').value;
@@ -805,6 +897,7 @@
         });
 
         document.getElementById('distribuirLiderazgoBtn').addEventListener('click', async () => {
+            if (!isAdmin) { showMessage('No tienes permisos', 'error'); return; }
             try {
                 const leadersStr = document.getElementById('leadersList').value;
                 const amountPerLeader = document.getElementById('leaderAmount').value;
@@ -824,6 +917,7 @@
         });
 
         document.getElementById('procesarBonoBtn').addEventListener('click', async () => {
+            if (!isAdmin) { showMessage('No tienes permisos', 'error'); return; }
             try {
                 const usuario = document.getElementById('bonoUser').value;
                 const cantidad = document.getElementById('bonoAmount').value;
@@ -839,7 +933,49 @@
             }
         });
 
+        // Pausas (requiere GUARDIAN_ROLE o ADMIN)
+        document.getElementById('pausarDepositosBtn').addEventListener('click', async () => {
+            if (!isGuardian && !isAdmin) { showMessage('No tienes permisos', 'error'); return; }
+            try {
+                const pausar = confirm('¿Pausar depósitos?');
+                const tx = await contract.pausarDepositos(pausar);
+                showMessage('Cambiando estado...', 'info');
+                await tx.wait();
+                showMessage('✅ Estado cambiado', 'success');
+            } catch (error) {
+                showMessage('Error: ' + error.message, 'error');
+            }
+        });
+
+        document.getElementById('pausarRetirosBtn').addEventListener('click', async () => {
+            if (!isGuardian && !isAdmin) { showMessage('No tienes permisos', 'error'); return; }
+            try {
+                const pausar = confirm('¿Pausar retiros?');
+                const tx = await contract.pausarRetiros(pausar);
+                showMessage('Cambiando estado...', 'info');
+                await tx.wait();
+                showMessage('✅ Estado cambiado', 'success');
+            } catch (error) {
+                showMessage('Error: ' + error.message, 'error');
+            }
+        });
+
+        document.getElementById('pausarRecompensasBtn').addEventListener('click', async () => {
+            if (!isGuardian && !isAdmin) { showMessage('No tienes permisos', 'error'); return; }
+            try {
+                const pausar = confirm('¿Pausar recompensas?');
+                const tx = await contract.pausarRecompensas(pausar);
+                showMessage('Cambiando estado...', 'info');
+                await tx.wait();
+                showMessage('✅ Estado cambiado', 'success');
+            } catch (error) {
+                showMessage('Error: ' + error.message, 'error');
+            }
+        });
+
+        // Emergencia
         document.getElementById('activarEmergenciaBtn').addEventListener('click', async () => {
+            if (!isGuardian && !isAdmin) { showMessage('No tienes permisos', 'error'); return; }
             try {
                 const tx = await contract.activarEmergencia();
                 showMessage('Activando emergencia...', 'info');
@@ -852,6 +988,7 @@
         });
 
         document.getElementById('desactivarEmergenciaBtn').addEventListener('click', async () => {
+            if (!isAdmin) { showMessage('Solo ADMIN', 'error'); return; }
             try {
                 const tx = await contract.desactivarEmergencia();
                 showMessage('Desactivando emergencia...', 'info');
@@ -875,6 +1012,47 @@
             }
         });
 
+        // Modo público (solo ADMIN)
+        document.getElementById('iniciarModoPublicoBtn').addEventListener('click', async () => {
+            if (!isAdmin) { showMessage('No tienes permisos', 'error'); return; }
+            try {
+                const tx = await contract.iniciarModoPublico();
+                showMessage('Iniciando modo público (timelock 2 días)...', 'info');
+                await tx.wait();
+                showMessage('✅ Proceso iniciado', 'success');
+                await loadAllData();
+            } catch (error) {
+                showMessage('Error: ' + error.message, 'error');
+            }
+        });
+
+        document.getElementById('ejecutarModoPublicoBtn').addEventListener('click', async () => {
+            if (!isAdmin) { showMessage('No tienes permisos', 'error'); return; }
+            try {
+                const tx = await contract.ejecutarModoPublico();
+                showMessage('Ejecutando modo público...', 'info');
+                await tx.wait();
+                showMessage('✅ Modo público activado', 'success');
+                await loadAllData();
+            } catch (error) {
+                showMessage('Error: ' + error.message, 'error');
+            }
+        });
+
+        document.getElementById('cancelarModoPublicoBtn').addEventListener('click', async () => {
+            if (!isAdmin) { showMessage('No tienes permisos', 'error'); return; }
+            try {
+                const tx = await contract.cancelarModoPublico();
+                showMessage('Cancelando...', 'info');
+                await tx.wait();
+                showMessage('✅ Cancelado', 'success');
+                await loadAllData();
+            } catch (error) {
+                showMessage('Error: ' + error.message, 'error');
+            }
+        });
+
+        // Copiar dirección
         copyAddressBtn.addEventListener('click', () => {
             navigator.clipboard.writeText(CONTRACT_ADDRESS).then(() => {
                 showMessage('Dirección copiada', 'success');
