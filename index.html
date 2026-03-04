@@ -2,66 +2,900 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Milimar Vault - Testnet (simplificado)</title>
-    <!-- mismo estilo que antes, lo omito por brevedad -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Milimar Hybrid Vault</title>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Ethers.js -->
+    <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: radial-gradient(circle at 20% 20%, #1a2639, #0d0f1a);
+            min-height: 100vh;
+            color: #e0e0e0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        /* Header */
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        .header h1 {
+            font-size: 2.8rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #fbbf24, #f59e0b);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -0.02em;
+            text-shadow: 0 0 30px rgba(251,191,36,0.3);
+        }
+        .header p {
+            color: #9ca3af;
+            font-size: 1.1rem;
+            margin-top: 8px;
+        }
+        /* Tarjetas glassmorphism */
+        .card {
+            background: rgba(20, 30, 45, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 215, 0, 0.15);
+            border-radius: 24px;
+            padding: 24px;
+            box-shadow: 0 20px 40px -10px rgba(0,0,0,0.5);
+            transition: transform 0.2s;
+        }
+        .card:hover {
+            transform: translateY(-4px);
+            border-color: rgba(255, 215, 0, 0.4);
+        }
+        /* Botones */
+        .btn {
+            background: linear-gradient(145deg, #fbbf24, #f59e0b);
+            color: #0f172a;
+            border: none;
+            padding: 12px 28px;
+            border-radius: 40px;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 8px 20px rgba(251,191,36,0.3);
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+        .btn:hover {
+            transform: scale(1.02);
+            box-shadow: 0 12px 28px rgba(251,191,36,0.5);
+        }
+        .btn-secondary {
+            background: transparent;
+            border: 2px solid #fbbf24;
+            color: #fbbf24;
+            box-shadow: none;
+        }
+        .btn-secondary:hover {
+            background: rgba(251,191,36,0.1);
+        }
+        .btn-danger {
+            background: linear-gradient(145deg, #ef4444, #dc2626);
+            box-shadow: 0 8px 20px rgba(239,68,68,0.3);
+        }
+        /* Grid */
+        .grid-2 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 24px;
+            margin: 24px 0;
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+        }
+        .stat-item {
+            background: rgba(0,0,0,0.3);
+            border-radius: 20px;
+            padding: 16px;
+            text-align: center;
+        }
+        .stat-label {
+            color: #9ca3af;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+        }
+        .stat-value {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #fbbf24;
+        }
+        .stat-value small {
+            font-size: 0.9rem;
+            color: #d1d5db;
+        }
+        .form-group {
+            margin: 16px 0;
+        }
+        .form-group label {
+            display: block;
+            color: #d1d5db;
+            font-weight: 500;
+            margin-bottom: 6px;
+        }
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 12px 16px;
+            background: rgba(0,0,0,0.3);
+            border: 1px solid #334155;
+            border-radius: 16px;
+            color: white;
+            font-size: 1rem;
+        }
+        .form-group input:focus {
+            outline: none;
+            border-color: #fbbf24;
+        }
+        .message {
+            background: rgba(30, 58, 138, 0.5);
+            border-left: 4px solid #fbbf24;
+            padding: 16px;
+            border-radius: 12px;
+            margin: 20px 0;
+        }
+        .message.error {
+            background: rgba(127, 29, 29, 0.5);
+            border-left-color: #ef4444;
+        }
+        .message.success {
+            background: rgba(20, 83, 45, 0.5);
+            border-left-color: #10b981;
+        }
+        .hidden {
+            display: none;
+        }
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #9ca3af;
+        }
+        .loading i {
+            font-size: 3rem;
+            color: #fbbf24;
+            margin-bottom: 16px;
+        }
+        .admin-panel {
+            border-top: 2px solid #f59e0b;
+            margin-top: 40px;
+            padding-top: 20px;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 60px;
+            color: #6b7280;
+        }
+        .badge {
+            background: #1e293b;
+            padding: 4px 12px;
+            border-radius: 40px;
+            font-size: 0.8rem;
+            color: #fbbf24;
+        }
+        .wallet-selector {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        .wallet-btn {
+            background: white;
+            border: 2px solid #fbbf24;
+            color: #fbbf24;
+            padding: 10px 20px;
+            border-radius: 40px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .wallet-btn:hover {
+            background: #fbbf24;
+            color: black;
+        }
+    </style>
 </head>
 <body>
-    <!-- mismo HTML que antes -->
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>🏦 MILIMAR HYBRID VAULT</h1>
+            <p>Bóveda automatizada con referidos y pool de liderazgo</p>
+        </div>
+
+        <!-- Conexión -->
+        <div class="card" style="text-align: center; margin-bottom: 20px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;">
+                <div>
+                    <p><i class="fas fa-wallet"></i> <span id="connectionStatus">Desconectado</span></p>
+                    <p><i class="fas fa-user"></i> <span id="accountDisplay">-</span></p>
+                </div>
+                <button class="btn" id="connectBtn"><i class="fas fa-plug"></i> Conectar Wallet</button>
+            </div>
+            <div id="walletSelector" class="wallet-selector hidden"></div>
+            <div id="networkInfo" class="hidden" style="margin-top: 12px;">Red: <span id="networkName"></span></div>
+        </div>
+
+        <!-- Mensajes -->
+        <div id="messageBox" class="message hidden"></div>
+        <div id="loading" class="loading hidden">
+            <i class="fas fa-circle-notch fa-spin"></i>
+            <p>Cargando datos...</p>
+        </div>
+
+        <!-- Panel principal (visible al conectar) -->
+        <div id="mainPanel" class="hidden">
+            <!-- Estadísticas globales -->
+            <div class="card">
+                <h2 style="display: flex; align-items: center; gap: 8px;"><i class="fas fa-chart-line" style="color: #fbbf24;"></i> Estadísticas del Vault</h2>
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <div class="stat-label">Total Activos</div>
+                        <div class="stat-value" id="totalActivos">0</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">Total Shares</div>
+                        <div class="stat-value" id="totalShares">0</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">Precio Share</div>
+                        <div class="stat-value" id="precioShare">1.00</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Datos del usuario -->
+            <div class="grid-2">
+                <div class="card">
+                    <h2><i class="fas fa-user-circle" style="color: #fbbf24;"></i> Mi posición</h2>
+                    <div class="stats-grid" style="grid-template-columns: 1fr 1fr;">
+                        <div class="stat-item">
+                            <div class="stat-label">Mis Shares</div>
+                            <div class="stat-value" id="misShares">0</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-label">Mi Saldo (USDT)</div>
+                            <div class="stat-value" id="miSaldo">0.00</div>
+                        </div>
+                    </div>
+                    <div style="margin-top: 16px;">
+                        <p><strong>Recompensas de referidos pendientes:</strong> <span id="recompensasPendientes">0.00</span> USDT</p>
+                        <p><strong>Preferencia de bono:</strong> <span id="preferenciaBono">RETIRAR</span></p>
+                        <p><strong>Mi referidor directo:</strong> <span id="miReferidor">0x...</span></p>
+                    </div>
+                </div>
+
+                <!-- Acciones rápidas -->
+                <div class="card">
+                    <h2><i class="fas fa-bolt" style="color: #fbbf24;"></i> Acciones</h2>
+                    <div style="display: flex; flex-wrap: wrap; gap: 12px; margin-top: 16px;">
+                        <button class="btn" id="reclamarRecompensasBtn"><i class="fas fa-gift"></i> Reclamar recompensas</button>
+                        <button class="btn btn-secondary" id="cambiarPreferenciaBtn"><i class="fas fa-exchange-alt"></i> Cambiar preferencia</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Depósito y retiro -->
+            <div class="grid-2">
+                <div class="card">
+                    <h2><i class="fas fa-arrow-down" style="color: #fbbf24;"></i> Depositar</h2>
+                    <div class="form-group">
+                        <label>Cantidad (mín. 10 USDT)</label>
+                        <input type="number" id="depositAmount" placeholder="Ej: 10" min="10" step="0.01">
+                    </div>
+                    <button class="btn" id="depositarAutoBtn" style="width: 100%;"><i class="fas fa-magic"></i> Depositar automático (hereda referido)</button>
+                    <p class="badge" style="margin-top: 12px;">o deposita con referido manual</p>
+                    <div class="form-group">
+                        <label>Dirección del referidor (opcional)</label>
+                        <input type="text" id="referrerManual" placeholder="0x...">
+                    </div>
+                    <button class="btn btn-secondary" id="depositarManualBtn" style="width: 100%;"><i class="fas fa-user-plus"></i> Depositar con referido</button>
+                </div>
+
+                <div class="card">
+                    <h2><i class="fas fa-arrow-up" style="color: #fbbf24;"></i> Retirar</h2>
+                    <div class="form-group">
+                        <label>Cantidad de shares a retirar</label>
+                        <input type="number" id="withdrawShares" placeholder="Ej: 10" min="0" step="1">
+                    </div>
+                    <button class="btn btn-secondary" id="retirarBtn" style="width: 100%;"><i class="fas fa-hand-holding-usd"></i> Retirar</button>
+                </div>
+            </div>
+
+            <!-- Panel de administración (visible solo para owner) -->
+            <div id="adminPanel" class="card admin-panel hidden">
+                <h2 style="color: #fbbf24;"><i class="fas fa-crown"></i> Panel de Administración</h2>
+                <div class="grid-2">
+                    <div>
+                        <h3>Distribuir ganancia</h3>
+                        <div class="form-group">
+                            <label>Ganancia (USDT)</label>
+                            <input type="number" id="profitAmount" step="0.01">
+                        </div>
+                        <button class="btn" id="distribuirGananciaBtn">Distribuir</button>
+                    </div>
+                    <div>
+                        <h3>Asignar recompensa referido</h3>
+                        <div class="form-group">
+                            <label>Dirección del referidor</label>
+                            <input type="text" id="asignarReferido" placeholder="0x...">
+                        </div>
+                        <div class="form-group">
+                            <label>Cantidad (USDT)</label>
+                            <input type="number" id="asignarCantidad" step="0.01">
+                        </div>
+                        <button class="btn" id="asignarRecompensaBtn">Asignar</button>
+                    </div>
+                    <div>
+                        <h3>Retirar comisiones</h3>
+                        <div class="form-group">
+                            <label>Cantidad (USDT)</label>
+                            <input type="number" id="feeAmount" step="0.01">
+                        </div>
+                        <div class="form-group">
+                            <label>Destino</label>
+                            <input type="text" id="feeDestination" placeholder="0x...">
+                        </div>
+                        <button class="btn" id="retirarComisionesBtn">Retirar</button>
+                    </div>
+                    <div>
+                        <h3>Distribuir liderazgo</h3>
+                        <div class="form-group">
+                            <label>Líderes (separados por coma)</label>
+                            <input type="text" id="leadersList" placeholder="0x...,0x...">
+                        </div>
+                        <div class="form-group">
+                            <label>Cantidad por líder (USDT)</label>
+                            <input type="number" id="leaderAmount" step="0.01">
+                        </div>
+                        <button class="btn" id="distribuirLiderazgoBtn">Distribuir</button>
+                    </div>
+                    <div>
+                        <h3>Procesar bono (admin)</h3>
+                        <div class="form-group">
+                            <label>Usuario</label>
+                            <input type="text" id="bonoUser" placeholder="0x...">
+                        </div>
+                        <div class="form-group">
+                            <label>Cantidad (USDT)</label>
+                            <input type="number" id="bonoAmount" step="0.01">
+                        </div>
+                        <button class="btn" id="procesarBonoBtn">Procesar</button>
+                    </div>
+                    <div>
+                        <h3>Modo emergencia</h3>
+                        <button class="btn btn-danger" id="activarEmergenciaBtn">Activar emergencia</button>
+                        <button class="btn btn-secondary" id="desactivarEmergenciaBtn">Desactivar emergencia</button>
+                        <button class="btn btn-secondary" id="retiroEmergenciaBtn" style="margin-top:10px;">Retiro de emergencia</button>
+                    </div>
+                </div>
+                <div style="margin-top: 16px;">
+                    <p><strong>Comisiones acumuladas:</strong> <span id="comisionesAcumuladas">0</span> USDT</p>
+                    <p><strong>Pool de liderazgo:</strong> <span id="poolLiderazgo">0</span> USDT</p>
+                    <p><strong>Pool de referidos:</strong> <span id="poolReferidos">0</span> USDT</p>
+                    <p><strong>Modo emergencia:</strong> <span id="emergenciaEstado">Inactivo</span></p>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>Milimar Hybrid Vault · Contrato: <span id="contractAddress">0xe13D5B2566EBcDc460Bc192b85506EA0Cfb0E92E</span></p>
+        </div>
+    </div>
+
     <script>
-        const CONFIG = {
-            vaultAddress: "0x09b3A8338471718e25b19E37d0669FfdE250CD37",
-            usdtAddress: "0x337610d27c682e347c9cd60bd4b3b107c9d34d",
-            chainId: 97
-        };
+        // ---------- CONFIGURACIÓN ----------
+        const CONTRACT_ADDRESS = "0xe13D5B2566EBcDc460Bc192b85506EA0Cfb0E92E";
+        const BSC_MAINNET_CHAIN_ID = 56;
 
-        // ABI mínimo con funciones individuales
-        const VAULT_ABI = [
-            "function totalAssets() view returns (uint256)",
+        // ABI del contrato (basado en las funciones necesarias)
+        const CONTRACT_ABI = [
+            // Variables públicas
+            "function DEPOSITO_MINIMO() view returns (uint256)",
+            "function COMISION_GESTION() view returns (uint256)",
+            "function PORCENTAJE_REFERIDOS() view returns (uint256)",
+            "function PORCENTAJE_POOL_LIDERAZGO() view returns (uint256)",
             "function totalShares() view returns (uint256)",
-            "function sharePrice() view returns (uint256)",
+            "function totalActivos() view returns (uint256)",
+            "function comisionesAcumuladas() view returns (uint256)",
+            "function poolLiderazgo() view returns (uint256)",
+            "function poolReferidos() view returns (uint256)",
             "function shares(address) view returns (uint256)",
-            "function balanceOf(address) view returns (uint256)",
-            "function emergencyMode() view returns (bool)",
-            "function deposit(uint256 _amount) returns (bool)",
-            "function emergencyWithdraw()"
+            "function ultimoDeposito(address) view returns (uint256)",
+            "function referidoDe(address) view returns (address)",
+            "function recompensasPendientesReferidor(address) view returns (uint256)",
+            "function preferenciaBono(address) view returns (uint8)",
+            "function modoEmergencia() view returns (bool)",
+            "function fechaLimiteEmergencia() view returns (uint256)",
+            "function owner() view returns (address)",
+            // Funciones de usuario
+            "function setPreferenciaBono(uint8) external",
+            "function depositarAuto(uint256) external",
+            "function reclamarRecompensas() external",
+            "function retirar(uint256) external",
+            // Funciones de admin
+            "function distribuirGanancia(uint256) external",
+            "function asignarRecompensaReferido(address,uint256) external",
+            "function retirarComisiones(uint256,address) external",
+            "function distribuirLiderazgo(address[],uint256[]) external",
+            "function procesarBono(address,uint256) external",
+            "function activarEmergencia() external",
+            "function desactivarEmergencia() external",
+            "function retiroEmergencia() external",
+            // Consultas adicionales
+            "function saldoDe(address) view returns (uint256)",
+            "function precioShare() view returns (uint256)"
         ];
 
-        const USDT_ABI = [
-            "function balanceOf(address) view returns (uint256)",
-            "function approve(address spender, uint256 amount) returns (bool)"
-        ];
+        // Variables globales
+        let provider, signer, contract, userAddress, ownerAddress;
 
-        // Variables y funciones de conexión (igual que antes)
+        // Elementos DOM
+        const connectBtn = document.getElementById('connectBtn');
+        const walletSelector = document.getElementById('walletSelector');
+        const connectionStatus = document.getElementById('connectionStatus');
+        const accountDisplay = document.getElementById('accountDisplay');
+        const networkInfo = document.getElementById('networkInfo');
+        const networkName = document.getElementById('networkName');
+        const messageBox = document.getElementById('messageBox');
+        const loading = document.getElementById('loading');
+        const mainPanel = document.getElementById('mainPanel');
+        const adminPanel = document.getElementById('adminPanel');
 
-        async function loadVaultData() {
+        // Funciones de formato
+        function showMessage(text, type = 'info') {
+            messageBox.classList.remove('hidden', 'error', 'success');
+            messageBox.innerHTML = `<i class="fas ${type === 'error' ? 'fa-exclamation-circle' : type === 'success' ? 'fa-check-circle' : 'fa-info-circle'}"></i> ${text}`;
+            messageBox.classList.add(type);
+        }
+
+        function formatUSDT(amount) {
+            return ethers.utils.formatUnits(amount, 18);
+        }
+
+        function parseUSDT(amount) {
+            return ethers.utils.parseUnits(amount.toString(), 18);
+        }
+
+        // Detectar wallets instaladas
+        async function detectWallets() {
+            const wallets = [];
+            if (window.ethereum && window.ethereum.isMetaMask) {
+                wallets.push({ name: 'MetaMask', provider: window.ethereum, icon: 'fab fa-metamask' });
+            }
+            if (window.BinanceChain) {
+                wallets.push({ name: 'Binance Wallet', provider: window.BinanceChain, icon: 'fas fa-dog' });
+            } else if (window.ethereum && window.ethereum.isBinance) {
+                wallets.push({ name: 'Binance Wallet', provider: window.ethereum, icon: 'fas fa-dog' });
+            }
+            if (window.okxwallet) {
+                wallets.push({ name: 'OKX Wallet', provider: window.okxwallet, icon: 'fas fa-bolt' });
+            }
+            return wallets;
+        }
+
+        // Mostrar selector de wallets
+        async function showWalletSelector() {
+            const wallets = await detectWallets();
+            if (wallets.length === 0) {
+                alert('No se detectó ninguna wallet compatible. Instala MetaMask, Binance Wallet u OKX Wallet.');
+                return;
+            }
+            walletSelector.innerHTML = '';
+            wallets.forEach(w => {
+                const btn = document.createElement('button');
+                btn.className = 'wallet-btn';
+                btn.innerHTML = `<i class="${w.icon}"></i> ${w.name}`;
+                btn.onclick = () => connectWithWallet(w.provider);
+                walletSelector.appendChild(btn);
+            });
+            walletSelector.classList.remove('hidden');
+        }
+
+        // Cambiar a BSC Mainnet
+        async function switchToMainnet() {
             try {
-                // Llamadas individuales con manejo de errores
-                let totalAssets = 0, totalShares = 0, sharePrice = 1e18, emergency = false;
-                try { totalAssets = await vaultContract.totalAssets(); } catch (e) { console.warn("totalAssets falló", e); }
-                try { totalShares = await vaultContract.totalShares(); } catch (e) { console.warn("totalShares falló", e); }
-                try { sharePrice = await vaultContract.sharePrice(); } catch (e) { console.warn("sharePrice falló", e); }
-                try { emergency = await vaultContract.emergencyMode(); } catch (e) { console.warn("emergencyMode falló", e); }
+                await window.ethereum.request({
+                    method: 'wallet_switchEthereumChain',
+                    params: [{ chainId: '0x38' }]
+                });
+                return true;
+            } catch (switchError) {
+                if (switchError.code === 4902) {
+                    try {
+                        await window.ethereum.request({
+                            method: 'wallet_addEthereumChain',
+                            params: [{
+                                chainId: '0x38',
+                                chainName: 'BNB Smart Chain',
+                                nativeCurrency: { name: 'BNB', symbol: 'BNB', decimals: 18 },
+                                rpcUrls: ['https://bsc-dataseed.binance.org/'],
+                                blockExplorerUrls: ['https://bscscan.com/']
+                            }]
+                        });
+                        return true;
+                    } catch (addError) {
+                        return false;
+                    }
+                }
+                return false;
+            }
+        }
 
-                totalAssetsEl.textContent = formatUnits(totalAssets) + ' USDT';
-                totalSharesEl.textContent = formatUnits(totalShares, 18);
-                sharePriceEl.textContent = formatUnits(sharePrice);
+        // Conectar con wallet seleccionada
+        async function connectWithWallet(walletProvider) {
+            try {
+                loading.classList.remove('hidden');
+                walletSelector.classList.add('hidden');
+
+                provider = new ethers.providers.Web3Provider(walletProvider);
+                await provider.send("eth_requestAccounts", []);
+                signer = provider.getSigner();
+                userAddress = await signer.getAddress();
+                const network = await provider.getNetwork();
+
+                if (network.chainId !== BSC_MAINNET_CHAIN_ID) {
+                    showMessage('Cambiando a BSC Mainnet...', 'info');
+                    const switched = await switchToMainnet();
+                    if (!switched) {
+                        showMessage('Cambia manualmente a BSC Mainnet en tu wallet.', 'error');
+                        loading.classList.add('hidden');
+                        return;
+                    }
+                    provider = new ethers.providers.Web3Provider(window.ethereum);
+                    signer = provider.getSigner();
+                }
+
+                connectionStatus.innerHTML = 'Conectado <i class="fas fa-check-circle" style="color:#10b981;"></i>';
+                accountDisplay.textContent = `${userAddress.slice(0,6)}...${userAddress.slice(-4)}`;
+                networkInfo.classList.remove('hidden');
+                networkName.textContent = 'BSC Mainnet';
+
+                contract = new ethers.Contract(CONTRACT_ADDRESS, CONTRACT_ABI, signer);
+                ownerAddress = await contract.owner();
+
+                await loadAllData();
+                mainPanel.classList.remove('hidden');
+                loading.classList.add('hidden');
+
+                // Eventos de cambio de cuenta/red
+                window.ethereum.on('accountsChanged', (accounts) => {
+                    if (accounts.length === 0) {
+                        connectionStatus.innerHTML = 'Desconectado';
+                        accountDisplay.textContent = '-';
+                        mainPanel.classList.add('hidden');
+                    } else {
+                        userAddress = accounts[0];
+                        accountDisplay.textContent = `${userAddress.slice(0,6)}...${userAddress.slice(-4)}`;
+                        if (contract) loadAllData();
+                    }
+                });
+                window.ethereum.on('chainChanged', () => window.location.reload());
+
+            } catch (error) {
+                showMessage('Error al conectar: ' + error.message, 'error');
+                loading.classList.add('hidden');
+            }
+        }
+
+        // Cargar todos los datos
+        async function loadAllData() {
+            try {
+                // Estadísticas globales
+                const totalShares = await contract.totalShares();
+                const totalActivos = await contract.totalActivos();
+                const precioShare = await contract.precioShare();
+                document.getElementById('totalShares').textContent = formatUSDT(totalShares);
+                document.getElementById('totalActivos').textContent = formatUSDT(totalActivos) + ' USDT';
+                document.getElementById('precioShare').textContent = formatUSDT(precioShare);
 
                 // Datos del usuario
-                const shares = await vaultContract.shares(userAddress);
-                const balance = await vaultContract.balanceOf(userAddress);
-                mySharesEl.textContent = formatUnits(shares, 18);
-                myBalanceEl.textContent = formatUnits(balance) + ' USDT';
+                const sharesUser = await contract.shares(userAddress);
+                const saldoUser = await contract.saldoDe(userAddress);
+                const recompensas = await contract.recompensasPendientesReferidor(userAddress);
+                const preferencia = await contract.preferenciaBono(userAddress);
+                const referido = await contract.referidoDe(userAddress);
+                document.getElementById('misShares').textContent = formatUSDT(sharesUser);
+                document.getElementById('miSaldo').textContent = formatUSDT(saldoUser);
+                document.getElementById('recompensasPendientes').textContent = formatUSDT(recompensas);
+                document.getElementById('preferenciaBono').textContent = preferencia === 0 ? 'RETIRAR' : 'INVERTIR';
+                document.getElementById('miReferidor').textContent = referido === ethers.constants.AddressZero ? 'Ninguno' : referido.slice(0,6) + '...' + referido.slice(-4);
 
-                const usdtBal = await usdtContract.balanceOf(userAddress);
-                usdtBalanceEl.textContent = formatUnits(usdtBal) + ' USDT';
-
-                emergencyWithdrawBtn.disabled = !emergency;
+                // Mostrar panel admin si es owner
+                if (userAddress.toLowerCase() === ownerAddress.toLowerCase()) {
+                    adminPanel.classList.remove('hidden');
+                    const comisiones = await contract.comisionesAcumuladas();
+                    const poolLiderazgo = await contract.poolLiderazgo();
+                    const poolReferidos = await contract.poolReferidos();
+                    const emergencia = await contract.modoEmergencia();
+                    document.getElementById('comisionesAcumuladas').textContent = formatUSDT(comisiones);
+                    document.getElementById('poolLiderazgo').textContent = formatUSDT(poolLiderazgo);
+                    document.getElementById('poolReferidos').textContent = formatUSDT(poolReferidos);
+                    document.getElementById('emergenciaEstado').textContent = emergencia ? 'Activo' : 'Inactivo';
+                } else {
+                    adminPanel.classList.add('hidden');
+                }
             } catch (error) {
                 showMessage('Error cargando datos: ' + error.message, 'error');
             }
         }
 
-        // Resto del código (connect, approve, deposit, etc.) igual que antes
+        // Event listeners
+        connectBtn.addEventListener('click', showWalletSelector);
+
+        // Depósito automático
+        document.getElementById('depositarAutoBtn').addEventListener('click', async () => {
+            try {
+                const amount = document.getElementById('depositAmount').value;
+                if (!amount || parseFloat(amount) < 10) {
+                    showMessage('Ingresa una cantidad válida (mín. 10 USDT)', 'error');
+                    return;
+                }
+                const tx = await contract.depositarAuto(parseUSDT(amount));
+                showMessage('Procesando depósito...', 'info');
+                await tx.wait();
+                showMessage('✅ Depósito exitoso', 'success');
+                await loadAllData();
+            } catch (error) {
+                showMessage('Error: ' + error.message, 'error');
+            }
+        });
+
+        // Depósito manual con referido
+        document.getElementById('depositarManualBtn').addEventListener('click', async () => {
+            try {
+                const amount = document.getElementById('depositAmount').value;
+                const referrer = document.getElementById('referrerManual').value;
+                if (!amount || parseFloat(amount) < 10) {
+                    showMessage('Ingresa una cantidad válida (mín. 10 USDT)', 'error');
+                    return;
+                }
+                if (!referrer || !ethers.utils.isAddress(referrer)) {
+                    showMessage('Dirección de referidor inválida', 'error');
+                    return;
+                }
+                // Nota: el contrato no tiene una función depositar con referido directa; usamos depositarAuto y luego asignamos referido manualmente? No, el contrato tiene depositarAuto que obtiene el referido de Milimar. Para referido manual, necesitaríamos una función depositar(address referrer). Pero nuestro contrato no la tiene. Por lo tanto, esta opción no funcionará. Podemos quitarla o adaptar.
+                // Como el contrato no tiene esa función, mejor deshabilitamos este botón o lo redirigimos a depositarAuto y luego asignar recompensa manualmente por admin.
+                showMessage('El contrato no soporta depósito con referido manual. Usa depósito automático.', 'error');
+            } catch (error) {
+                showMessage('Error: ' + error.message, 'error');
+            }
+        });
+
+        // Retirar
+        document.getElementById('retirarBtn').addEventListener('click', async () => {
+            try {
+                const sharesAmount = document.getElementById('withdrawShares').value;
+                if (!sharesAmount || parseFloat(sharesAmount) <= 0) {
+                    showMessage('Ingresa una cantidad de shares válida', 'error');
+                    return;
+                }
+                const tx = await contract.retirar(parseUSDT(sharesAmount));
+                showMessage('Procesando retiro...', 'info');
+                await tx.wait();
+                showMessage('✅ Retiro exitoso', 'success');
+                await loadAllData();
+            } catch (error) {
+                showMessage('Error: ' + error.message, 'error');
+            }
+        });
+
+        // Reclamar recompensas
+        document.getElementById('reclamarRecompensasBtn').addEventListener('click', async () => {
+            try {
+                const tx = await contract.reclamarRecompensas();
+                showMessage('Reclamando recompensas...', 'info');
+                await tx.wait();
+                showMessage('✅ Recompensas reclamadas', 'success');
+                await loadAllData();
+            } catch (error) {
+                showMessage('Error: ' + error.message, 'error');
+            }
+        });
+
+        // Cambiar preferencia de bono
+        document.getElementById('cambiarPreferenciaBtn').addEventListener('click', async () => {
+            try {
+                const opcion = prompt('Elige opción: 0 = RETIRAR, 1 = INVERTIR');
+                if (opcion !== '0' && opcion !== '1') {
+                    showMessage('Opción inválida', 'error');
+                    return;
+                }
+                const tx = await contract.setPreferenciaBono(parseInt(opcion));
+                showMessage('Cambiando preferencia...', 'info');
+                await tx.wait();
+                showMessage('✅ Preferencia actualizada', 'success');
+                await loadAllData();
+            } catch (error) {
+                showMessage('Error: ' + error.message, 'error');
+            }
+        });
+
+        // ADMIN: distribuir ganancia
+        document.getElementById('distribuirGananciaBtn').addEventListener('click', async () => {
+            try {
+                const profit = document.getElementById('profitAmount').value;
+                if (!profit || parseFloat(profit) <= 0) {
+                    showMessage('Ingresa una ganancia válida', 'error');
+                    return;
+                }
+                const tx = await contract.distribuirGanancia(parseUSDT(profit));
+                showMessage('Distribuyendo ganancia...', 'info');
+                await tx.wait();
+                showMessage('✅ Ganancia distribuida', 'success');
+                await loadAllData();
+            } catch (error) {
+                showMessage('Error: ' + error.message, 'error');
+            }
+        });
+
+        // ADMIN: asignar recompensa referido
+        document.getElementById('asignarRecompensaBtn').addEventListener('click', async () => {
+            try {
+                const referidor = document.getElementById('asignarReferido').value;
+                const cantidad = document.getElementById('asignarCantidad').value;
+                if (!referidor || !ethers.utils.isAddress(referidor)) {
+                    showMessage('Dirección inválida', 'error');
+                    return;
+                }
+                if (!cantidad || parseFloat(cantidad) <= 0) {
+                    showMessage('Cantidad inválida', 'error');
+                    return;
+                }
+                const tx = await contract.asignarRecompensaReferido(referidor, parseUSDT(cantidad));
+                showMessage('Asignando recompensa...', 'info');
+                await tx.wait();
+                showMessage('✅ Recompensa asignada', 'success');
+                await loadAllData();
+            } catch (error) {
+                showMessage('Error: ' + error.message, 'error');
+            }
+        });
+
+        // ADMIN: retirar comisiones
+        document.getElementById('retirarComisionesBtn').addEventListener('click', async () => {
+            try {
+                const cantidad = document.getElementById('feeAmount').value;
+                const destino = document.getElementById('feeDestination').value;
+                if (!cantidad || parseFloat(cantidad) <= 0) {
+                    showMessage('Cantidad inválida', 'error');
+                    return;
+                }
+                if (!destino || !ethers.utils.isAddress(destino)) {
+                    showMessage('Dirección destino inválida', 'error');
+                    return;
+                }
+                const tx = await contract.retirarComisiones(parseUSDT(cantidad), destino);
+                showMessage('Retirando comisiones...', 'info');
+                await tx.wait();
+                showMessage('✅ Comisiones retiradas', 'success');
+                await loadAllData();
+            } catch (error) {
+                showMessage('Error: ' + error.message, 'error');
+            }
+        });
+
+        // ADMIN: distribuir liderazgo
+        document.getElementById('distribuirLiderazgoBtn').addEventListener('click', async () => {
+            try {
+                const leadersStr = document.getElementById('leadersList').value;
+                const amountPerLeader = document.getElementById('leaderAmount').value;
+                if (!leadersStr || !amountPerLeader) {
+                    showMessage('Completa todos los campos', 'error');
+                    return;
+                }
+                const leaders = leadersStr.split(',').map(s => s.trim()).filter(s => s !== '');
+                if (leaders.length === 0) {
+                    showMessage('Lista de líderes vacía', 'error');
+                    return;
+                }
+                for (let addr of leaders) {
+                    if (!ethers.utils.isAddress(addr)) {
+                        showMessage('Dirección inválida en lista: ' + addr, 'error');
+                        return;
+                    }
+                }
+                const amounts = new Array(leaders.length).fill(parseUSDT(amountPerLeader));
+                const tx = await contract.distribuirLiderazgo(leaders, amounts);
+                showMessage('Distribuyendo liderazgo...', 'info');
+                await tx.wait();
+                showMessage('✅ Liderazgo distribuido', 'success');
+                await loadAllData();
+            } catch (error) {
+                showMessage('Error: ' + error.message, 'error');
+            }
+        });
+
+        // ADMIN: procesar bono
+        document.getElementById('procesarBonoBtn').addEventListener('click', async () => {
+            try {
+                const usuario = document.getElementById('bonoUser').value;
+                const cantidad = document.getElementById('bonoAmount').value;
+                if (!usuario || !ethers.utils.isAddress(usuario)) {
+                    showMessage('Dirección de usuario inválida', 'error');
+                    return;
+                }
+                if (!cantidad || parseFloat(cantidad) <= 0) {
+                    showMessage('Cantidad inválida', 'error');
+                    return;
+                }
+                const tx = await contract.procesarBono(usuario, parseUSDT(cantidad));
+                showMessage('Procesando bono...', 'info');
+                await tx.wait();
+                showMessage('✅ Bono procesado', 'success');
+                await loadAllData();
+            } catch (error) {
+                showMessage('Error: ' + error.message, 'error');
+            }
+        });
+
+        // ADMIN: activar emergencia
+        document.getElementById('activarEmergenciaBtn').addEventListener('click', async () => {
+            try {
+                const tx = await contract.activarEmergencia();
+                showMessage('Activando modo emergencia...', 'info');
+                await tx.wait();
+                showMessage('✅ Modo emergencia activado', 'success');
+                await loadAllData();
+            } catch (error) {
+                showMessage('Error: ' + error.message, 'error');
+            }
+        });
+
+        // ADMIN: desactivar emergencia
+        document.getElementById('desactivarEmergenciaBtn').addEventListener('click', async () => {
+            try {
+                const tx = await contract.desactivarEmergencia();
+                showMessage('Desactivando modo emergencia...', 'info');
+                await tx.wait();
+                showMessage('✅ Modo emergencia desactivado', 'success');
+                await loadAllData();
+            } catch (error) {
+                showMessage('Error: ' + error.message, 'error');
+            }
+        });
+
+        // Retiro de emergencia (para cualquier usuario)
+        document.getElementById('retiroEmergenciaBtn').addEventListener('click', async () => {
+            try {
+                const tx = await contract.retiroEmergencia();
+                showMessage('Procesando retiro de emergencia...', 'info');
+                await tx.wait();
+                showMessage('✅ Retiro de emergencia completado', 'success');
+                await loadAllData();
+            } catch (error) {
+                showMessage('Error: ' + error.message, 'error');
+            }
+        });
+
+        // Auto-conectar si la wallet ya está conectada
+        window.addEventListener('load', () => {
+            if (window.ethereum && window.ethereum.selectedAddress) {
+                // Simular clic en conectar
+                connectWithWallet(window.ethereum);
+            }
+        });
     </script>
 </body>
 </html>
