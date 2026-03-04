@@ -2,136 +2,888 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Milimar Vault · Simple</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <style>
-        body { background: #0f172a; color: #e2e8f0; font-family: sans-serif; padding: 20px; }
-        .card { background: #1e293b; border-radius: 16px; padding: 20px; margin-bottom: 20px; }
-        button { background: #fbbf24; color: #0f172a; border: none; padding: 10px 20px; border-radius: 40px; font-weight: bold; cursor: pointer; margin: 5px; }
-        input, select { padding: 8px; border-radius: 8px; border: 1px solid #475569; background: #334155; color: white; width: 100%; margin: 5px 0; }
-        .error { color: #f87171; }
-        .success { color: #4ade80; }
-    </style>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>Milimar Vault · Neón</title>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Google Fonts: Playfair Display (cursiva elegante) + Inter (auxiliar) -->
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <!-- Ethers.js -->
     <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(-45deg, #0d0217, #1a0933, #2a0f45, #3b1b5e);
+            background-size: 400% 400%;
+            animation: auroraNeon 12s ease infinite;
+            min-height: 100vh;
+            color: #f0e6ff;
+            padding: 16px;
+            position: relative;
+        }
+        @keyframes auroraNeon {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            width: 100%;
+        }
+        /* Botones flotantes pequeños */
+        .floating-buttons {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            display: flex;
+            gap: 10px;
+            z-index: 100;
+            flex-wrap: wrap;
+        }
+        .floating-btn {
+            background: rgba(128, 0, 255, 0.25);
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(200, 130, 255, 0.5);
+            color: white;
+            padding: 8px 18px;
+            border-radius: 60px;
+            font-size: 0.9rem;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: 0.2s;
+            font-weight: 500;
+            box-shadow: 0 0 15px rgba(170, 0, 255, 0.3);
+        }
+        .floating-btn:hover {
+            background: rgba(170, 0, 255, 0.5);
+            border-color: #ffaaff;
+            box-shadow: 0 0 25px #cc66ff;
+        }
+        .floating-btn i {
+            font-size: 1.2rem;
+        }
+        /* Header */
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .header h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.8rem;
+            font-weight: 700;
+            font-style: italic;
+            background: linear-gradient(135deg, #e0b0ff, #c080ff, #a05aff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 30px #b266ff;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+            word-break: break-word;
+        }
+        .header p {
+            font-size: 1.1rem;
+            color: #d9c0ff;
+            background: rgba(128, 0, 255, 0.2);
+            display: inline-block;
+            padding: 8px 24px;
+            border-radius: 60px;
+            backdrop-filter: blur(4px);
+            border: 1px solid rgba(200, 130, 255, 0.4);
+            box-shadow: 0 0 15px rgba(170, 0, 255, 0.3);
+        }
+        /* Tarjetas glassmorphism purpura */
+        .card {
+            background: rgba(48, 16, 64, 0.5);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(200, 130, 255, 0.3);
+            border-radius: 28px;
+            padding: 22px;
+            margin-bottom: 20px;
+            box-shadow: 0 20px 40px -10px rgba(0,0,0,0.6), 0 0 20px rgba(180, 0, 255, 0.3);
+            transition: transform 0.2s;
+        }
+        .card:hover {
+            transform: translateY(-4px);
+            border-color: rgba(255, 150, 255, 0.7);
+            box-shadow: 0 20px 40px -8px #6a1aff;
+        }
+        /* Botones */
+        .btn {
+            background: linear-gradient(145deg, #b266ff, #7a2aff);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 60px;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 8px 20px rgba(170, 0, 255, 0.4);
+            border: 1px solid rgba(255,255,255,0.2);
+            width: 100%;
+            max-width: 100%;
+        }
+        .btn:hover {
+            transform: scale(1.02);
+            box-shadow: 0 12px 28px #b266ff;
+            background: linear-gradient(145deg, #c080ff, #9147ff);
+        }
+        .btn-secondary {
+            background: transparent;
+            border: 2px solid #b266ff;
+            color: #e0b0ff;
+            box-shadow: none;
+        }
+        .btn-secondary:hover {
+            background: rgba(178, 102, 255, 0.15);
+            border-color: #da7aff;
+        }
+        .btn-small {
+            padding: 8px 18px;
+            font-size: 0.9rem;
+        }
+        /* Estadísticas */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin: 20px 0;
+        }
+        .stat-item {
+            background: rgba(0,0,0,0.35);
+            border-radius: 20px;
+            padding: 14px 6px;
+            text-align: center;
+            border: 1px solid rgba(200,130,255,0.2);
+        }
+        .stat-label {
+            color: #c9b0ff;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 5px;
+        }
+        .stat-value {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #f3e5ff;
+            text-shadow: 0 0 10px #cc99ff;
+            word-break: break-word;
+        }
+        .stat-value small {
+            font-size: 0.8rem;
+            color: #d9b0ff;
+        }
+        /* Grid de dos columnas (responsive) */
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin: 16px 0;
+        }
+        @media (max-width: 600px) {
+            .grid-2 {
+                grid-template-columns: 1fr;
+                gap: 16px;
+            }
+            .stats-grid {
+                gap: 8px;
+            }
+            .stat-value {
+                font-size: 1.2rem;
+            }
+            .header h1 {
+                font-size: 2.2rem;
+            }
+        }
+        /* Formularios */
+        .form-group {
+            margin: 15px 0;
+        }
+        .form-group label {
+            display: block;
+            color: #e0c0ff;
+            font-weight: 500;
+            margin-bottom: 5px;
+            font-size: 0.95rem;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 12px 16px;
+            background: rgba(20, 0, 30, 0.6);
+            border: 1px solid #a066cc;
+            border-radius: 24px;
+            color: white;
+            font-size: 1rem;
+            backdrop-filter: blur(4px);
+        }
+        .form-group input:focus {
+            outline: none;
+            border-color: #da7aff;
+            box-shadow: 0 0 15px #b266ff;
+        }
+        /* Mensajes */
+        .message {
+            background: rgba(128, 0, 255, 0.25);
+            border-left: 4px solid #cc66ff;
+            padding: 14px 18px;
+            border-radius: 20px;
+            margin: 20px 0;
+            backdrop-filter: blur(5px);
+        }
+        .message.error {
+            background: rgba(180, 0, 80, 0.3);
+            border-left-color: #ff4d6d;
+        }
+        .message.success {
+            background: rgba(0, 200, 150, 0.2);
+            border-left-color: #6affb5;
+        }
+        .hidden {
+            display: none;
+        }
+        .loading {
+            text-align: center;
+            padding: 30px;
+        }
+        .loading i {
+            font-size: 3rem;
+            color: #cc66ff;
+            animation: spin 1s infinite linear;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        /* Acordeón (detalles del contrato) */
+        details {
+            background: rgba(80, 0, 120, 0.25);
+            border-radius: 24px;
+            padding: 12px 16px;
+            border: 1px solid rgba(200,130,255,0.3);
+            margin-top: 20px;
+        }
+        summary {
+            font-weight: 600;
+            color: #e6ccff;
+            cursor: pointer;
+            font-size: 1rem;
+            padding: 4px 0;
+        }
+        summary i {
+            margin-right: 10px;
+            color: #bf7aff;
+        }
+        .contract-detail {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 15px;
+            padding: 12px;
+            background: rgba(0,0,0,0.4);
+            border-radius: 20px;
+        }
+        .contract-detail span {
+            font-family: monospace;
+            background: #2a0f3a;
+            padding: 6px 12px;
+            border-radius: 30px;
+            font-size: 0.85rem;
+            word-break: break-all;
+            flex: 1;
+            border: 1px solid #a066cc;
+        }
+        .contract-detail a {
+            color: #d9b0ff;
+            text-decoration: none;
+            font-size: 0.9rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .contract-detail a:hover {
+            text-decoration: underline;
+            color: #ffb3ff;
+        }
+        .copy-btn {
+            background: transparent;
+            border: 1px solid #bf7aff;
+            color: #e6ccff;
+            padding: 6px 14px;
+            border-radius: 40px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: 0.2s;
+        }
+        .copy-btn:hover {
+            background: #bf7aff;
+            color: black;
+        }
+        /* Panel admin */
+        .admin-panel {
+            border-top: 2px solid #bf7aff;
+            margin-top: 30px;
+            padding-top: 20px;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 50px;
+            color: #aa99cc;
+            font-size: 0.8rem;
+        }
+    </style>
 </head>
 <body>
-    <h1>Milimar Vault</h1>
-    <p>Contrato: 0xe13D5B2566EBcDc460Bc192b85506EA0Cfb0E92E</p>
-    <div id="status">Desconectado</div>
-    <button id="connect">Conectar</button>
-    <hr>
-    <div id="data"></div>
-    <hr>
-    <h3>Depositar automático</h3>
-    <input type="number" id="amount" placeholder="Cantidad (mín 10)" min="10" step="0.01">
-    <button id="deposit">Depositar</button>
-    <h3>Retirar</h3>
-    <input type="number" id="shares" placeholder="Cantidad de shares" step="1">
-    <button id="withdraw">Retirar</button>
-    <h3>Reclamar recompensas</h3>
-    <button id="claim">Reclamar</button>
-    <div id="msg"></div>
+    <!-- Botones flotantes (Telegram y WhatsApp) -->
+    <div class="floating-buttons">
+        <a href="https://t.me/+z7wwfx0ocho1NzI5" target="_blank" class="floating-btn">
+            <i class="fab fa-telegram-plane"></i> Telegram
+        </a>
+        <a href="https://whatsapp.com/channel/0029Vb74Mxr3LdQVgWdycV2a" target="_blank" class="floating-btn">
+            <i class="fab fa-whatsapp"></i> WhatsApp
+        </a>
+    </div>
+
+    <div class="container">
+        <div class="header">
+            <h1>⚡ MILIMAR VAULT</h1>
+            <p>Inversión automatizada · BSC</p>
+        </div>
+
+        <!-- Conexión -->
+        <div class="card" style="text-align: center;">
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px;">
+                <div>
+                    <p><i class="fas fa-wallet"></i> <span id="connectionStatus">Desconectado</span></p>
+                    <p><i class="fas fa-user"></i> <span id="accountDisplay">-</span></p>
+                </div>
+                <button class="btn" id="connectBtn"><i class="fas fa-plug"></i> Conectar</button>
+            </div>
+            <div id="networkInfo" class="hidden" style="margin-top: 10px;">Red: <span id="networkName"></span></div>
+        </div>
+
+        <!-- Mensajes y loading -->
+        <div id="messageBox" class="message hidden"></div>
+        <div id="loading" class="loading hidden">
+            <i class="fas fa-circle-notch fa-spin"></i>
+            <p>Cargando datos...</p>
+        </div>
+
+        <!-- Panel principal -->
+        <div id="mainPanel" class="hidden">
+            <!-- Estadísticas globales -->
+            <div class="card">
+                <h2 style="display: flex; align-items: center; gap: 8px;"><i class="fas fa-chart-line" style="color: #bf7aff;"></i> Estado del fondo</h2>
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <div class="stat-label">Total activos</div>
+                        <div class="stat-value" id="totalActivos">0</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">Participaciones</div>
+                        <div class="stat-value" id="totalShares">0</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">Valor participación</div>
+                        <div class="stat-value" id="precioShare">1.00</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Datos del usuario + recompensas -->
+            <div class="grid-2">
+                <div class="card">
+                    <h3><i class="fas fa-user"></i> Mi posición</h3>
+                    <p><strong>Mis participaciones:</strong> <span id="misShares">0</span></p>
+                    <p><strong>Mi saldo (USDT):</strong> <span id="miSaldo">0.00</span></p>
+                    <p><strong>Invitado por:</strong> <span id="miReferidor">0x...</span></p>
+                    <p><strong>Preferencia bonos:</strong> <span id="preferenciaBono">RETIRAR</span></p>
+                    <button class="btn btn-small btn-secondary" id="cambiarPreferenciaBtn">Cambiar preferencia</button>
+                </div>
+                <div class="card" style="border-left: 4px solid #bf7aff;">
+                    <h3 style="color: #e6ccff;"><i class="fas fa-gift"></i> Bonificación</h3>
+                    <p style="font-size: 2rem; font-weight: 700; color: #f3e5ff; text-shadow: 0 0 15px #bf7aff;" id="recompensasPendientes">0.00</p>
+                    <p>USDT disponibles para reclamar</p>
+                    <button class="btn btn-small" id="reclamarRecompensasBtn"><i class="fas fa-hand-holding-usd"></i> Reclamar</button>
+                </div>
+            </div>
+
+            <!-- Depósito y retiro -->
+            <div class="grid-2">
+                <div class="card">
+                    <h3><i class="fas fa-arrow-down"></i> Depositar</h3>
+                    <div class="form-group">
+                        <label>Cantidad (mín. 10 USDT)</label>
+                        <input type="number" id="depositAmount" placeholder="Ej: 10" min="10" step="0.01">
+                    </div>
+                    <button class="btn" id="depositarAutoBtn"><i class="fas fa-magic"></i> Depositar (hereda referido)</button>
+                </div>
+                <div class="card">
+                    <h3><i class="fas fa-arrow-up"></i> Retirar</h3>
+                    <div class="form-group">
+                        <label>Participaciones a retirar</label>
+                        <input type="number" id="withdrawShares" placeholder="Ej: 10" min="0" step="1">
+                    </div>
+                    <button class="btn btn-secondary" id="retirarBtn">Retirar</button>
+                </div>
+            </div>
+
+            <!-- Detalles del contrato (acordeón) -->
+            <details>
+                <summary><i class="fas fa-code"></i> Detalles del contrato</summary>
+                <div class="contract-detail">
+                    <span id="contractAddressDisplay">0xe13D5B2566EBcDc460Bc192b85506EA0Cfb0E92E</span>
+                    <button class="copy-btn" id="copyAddressBtn"><i class="fas fa-copy"></i> Copiar</button>
+                    <a href="https://bscscan.com/address/0xe13D5B2566EBcDc460Bc192b85506EA0Cfb0E92E" target="_blank">
+                        <i class="fas fa-external-link-alt"></i> Ver en BscScan
+                    </a>
+                </div>
+                <p style="margin-top: 10px; color: #ccb0ff;">Contrato verificado. Código fuente disponible.</p>
+            </details>
+
+            <!-- Panel de administración (solo visible para owner) -->
+            <div id="adminPanel" class="card admin-panel hidden">
+                <h3 style="color: #e6ccff;"><i class="fas fa-crown"></i> Administración</h3>
+                <div class="grid-2">
+                    <div>
+                        <h4>Distribuir ganancia</h4>
+                        <div class="form-group">
+                            <input type="number" id="profitAmount" placeholder="Ganancia USDT" step="0.01">
+                        </div>
+                        <button class="btn btn-small" id="distribuirGananciaBtn">Distribuir</button>
+                    </div>
+                    <div>
+                        <h4>Asignar recompensa</h4>
+                        <div class="form-group">
+                            <input type="text" id="asignarReferido" placeholder="Dirección referidor">
+                        </div>
+                        <div class="form-group">
+                            <input type="number" id="asignarCantidad" placeholder="Cantidad USDT" step="0.01">
+                        </div>
+                        <button class="btn btn-small" id="asignarRecompensaBtn">Asignar</button>
+                    </div>
+                    <div>
+                        <h4>Retirar comisiones</h4>
+                        <div class="form-group">
+                            <input type="number" id="feeAmount" placeholder="Cantidad USDT" step="0.01">
+                        </div>
+                        <div class="form-group">
+                            <input type="text" id="feeDestination" placeholder="Destino (0x...)">
+                        </div>
+                        <button class="btn btn-small" id="retirarComisionesBtn">Retirar</button>
+                    </div>
+                    <div>
+                        <h4>Distribuir liderazgo</h4>
+                        <div class="form-group">
+                            <input type="text" id="leadersList" placeholder="0x...,0x...">
+                        </div>
+                        <div class="form-group">
+                            <input type="number" id="leaderAmount" placeholder="Cantidad por líder" step="0.01">
+                        </div>
+                        <button class="btn btn-small" id="distribuirLiderazgoBtn">Distribuir</button>
+                    </div>
+                    <div>
+                        <h4>Procesar bono</h4>
+                        <div class="form-group">
+                            <input type="text" id="bonoUser" placeholder="Usuario (0x...)">
+                        </div>
+                        <div class="form-group">
+                            <input type="number" id="bonoAmount" placeholder="Cantidad USDT" step="0.01">
+                        </div>
+                        <button class="btn btn-small" id="procesarBonoBtn">Procesar</button>
+                    </div>
+                    <div>
+                        <h4>Emergencia</h4>
+                        <button class="btn btn-small btn-secondary" id="activarEmergenciaBtn">Activar</button>
+                        <button class="btn btn-small btn-secondary" id="desactivarEmergenciaBtn">Desactivar</button>
+                        <button class="btn btn-small btn-secondary" id="retiroEmergenciaBtn" style="margin-top:5px;">Retiro emergencia</button>
+                    </div>
+                </div>
+                <div style="margin-top: 15px;">
+                    <p><strong>Comisiones acumuladas:</strong> <span id="comisionesAcumuladas">0</span> USDT</p>
+                    <p><strong>Pool de liderazgo:</strong> <span id="poolLiderazgo">0</span> USDT</p>
+                    <p><strong>Pool de referidos:</strong> <span id="poolReferidos">0</span> USDT</p>
+                    <p><strong>Modo emergencia:</strong> <span id="emergenciaEstado">Inactivo</span></p>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>Milimar Vault · Diseño Neón · Versión 2.0</p>
+        </div>
+    </div>
 
     <script>
+        // ---------- CONFIGURACIÓN ----------
         const CONTRACT_ADDRESS = "0xe13D5B2566EBcDc460Bc192b85506EA0Cfb0E92E";
-        const ABI = [
+        const BSC_MAINNET_CHAIN_ID = 56;
+
+        // ABI (funciones necesarias)
+        const CONTRACT_ABI = [
             "function totalShares() view returns (uint256)",
             "function totalActivos() view returns (uint256)",
-            "function precioShare() view returns (uint256)",
+            "function comisionesAcumuladas() view returns (uint256)",
+            "function poolLiderazgo() view returns (uint256)",
+            "function poolReferidos() view returns (uint256)",
             "function shares(address) view returns (uint256)",
-            "function saldoDe(address) view returns (uint256)",
             "function recompensasPendientesReferidor(address) view returns (uint256)",
+            "function preferenciaBono(address) view returns (uint8)",
+            "function referidoDe(address) view returns (address)",
+            "function modoEmergencia() view returns (bool)",
+            "function owner() view returns (address)",
+            "function setPreferenciaBono(uint8) external",
             "function depositarAuto(uint256) external",
+            "function reclamarRecompensas() external",
             "function retirar(uint256) external",
-            "function reclamarRecompensas() external"
+            "function distribuirGanancia(uint256) external",
+            "function asignarRecompensaReferido(address,uint256) external",
+            "function retirarComisiones(uint256,address) external",
+            "function distribuirLiderazgo(address[],uint256[]) external",
+            "function procesarBono(address,uint256) external",
+            "function activarEmergencia() external",
+            "function desactivarEmergencia() external",
+            "function retiroEmergencia() external",
+            "function saldoDe(address) view returns (uint256)",
+            "function precioShare() view returns (uint256)"
         ];
 
-        let provider, signer, contract, userAddress;
+        let provider, signer, contract, userAddress, ownerAddress;
 
-        const connectBtn = document.getElementById('connect');
-        const statusDiv = document.getElementById('status');
-        const dataDiv = document.getElementById('data');
-        const msgDiv = document.getElementById('msg');
+        // Elementos DOM
+        const connectBtn = document.getElementById('connectBtn');
+        const connectionStatus = document.getElementById('connectionStatus');
+        const accountDisplay = document.getElementById('accountDisplay');
+        const networkInfo = document.getElementById('networkInfo');
+        const networkName = document.getElementById('networkName');
+        const messageBox = document.getElementById('messageBox');
+        const loading = document.getElementById('loading');
+        const mainPanel = document.getElementById('mainPanel');
+        const adminPanel = document.getElementById('adminPanel');
+        const copyAddressBtn = document.getElementById('copyAddressBtn');
 
-        function log(msg, isError = false) {
-            msgDiv.innerHTML = `<p class="${isError ? 'error' : 'success'}">${msg}</p>`;
+        function showMessage(text, type = 'info') {
+            messageBox.classList.remove('hidden', 'error', 'success');
+            messageBox.innerHTML = `<i class="fas ${type === 'error' ? 'fa-exclamation-circle' : type === 'success' ? 'fa-check-circle' : 'fa-info-circle'}"></i> ${text}`;
+            messageBox.classList.add(type);
         }
 
-        connectBtn.onclick = async () => {
-            if (!window.ethereum) return alert('Instala MetaMask');
+        function formatUSDT(amount) {
+            return ethers.utils.formatUnits(amount, 18);
+        }
+
+        function parseUSDT(amount) {
+            return ethers.utils.parseUnits(amount.toString(), 18);
+        }
+
+        async function switchToMainnet() {
             try {
+                await window.ethereum.request({ method: 'wallet_switchEthereumChain', params: [{ chainId: '0x38' }] });
+                return true;
+            } catch (switchError) {
+                if (switchError.code === 4902) {
+                    try {
+                        await window.ethereum.request({
+                            method: 'wallet_addEthereumChain',
+                            params: [{
+                                chainId: '0x38',
+                                chainName: 'BNB Smart Chain',
+                                nativeCurrency: { name: 'BNB', symbol: 'BNB', decimals: 18 },
+                                rpcUrls: ['https://bsc-dataseed.binance.org/'],
+                                blockExplorerUrls: ['https://bscscan.com/']
+                            }]
+                        });
+                        return true;
+                    } catch (addError) {
+                        return false;
+                    }
+                }
+                return false;
+            }
+        }
+
+        async function connect() {
+            if (!window.ethereum) {
+                alert('Instala MetaMask, Binance Wallet u OKX Wallet');
+                return;
+            }
+            try {
+                loading.classList.remove('hidden');
                 provider = new ethers.providers.Web3Provider(window.ethereum);
                 await provider.send("eth_requestAccounts", []);
                 signer = provider.getSigner();
                 userAddress = await signer.getAddress();
-                statusDiv.innerHTML = `Conectado: ${userAddress.slice(0,6)}...${userAddress.slice(-4)}`;
-                contract = new ethers.Contract(CONTRACT_ADDRESS, ABI, signer);
-                await loadData();
-            } catch (e) {
-                log('Error: ' + e.message, true);
-            }
-        };
+                const network = await provider.getNetwork();
 
-        async function loadData() {
+                if (network.chainId !== BSC_MAINNET_CHAIN_ID) {
+                    showMessage('Cambiando a BSC Mainnet...', 'info');
+                    const switched = await switchToMainnet();
+                    if (!switched) {
+                        showMessage('Cambia manualmente a BSC Mainnet en tu wallet.', 'error');
+                        loading.classList.add('hidden');
+                        return;
+                    }
+                    provider = new ethers.providers.Web3Provider(window.ethereum);
+                    signer = provider.getSigner();
+                }
+
+                connectionStatus.innerHTML = 'Conectado <i class="fas fa-check-circle" style="color:#b266ff;"></i>';
+                accountDisplay.textContent = `${userAddress.slice(0,6)}...${userAddress.slice(-4)}`;
+                networkInfo.classList.remove('hidden');
+                networkName.textContent = 'BSC Mainnet';
+
+                contract = new ethers.Contract(CONTRACT_ADDRESS, CONTRACT_ABI, signer);
+                ownerAddress = await contract.owner();
+
+                await loadAllData();
+                mainPanel.classList.remove('hidden');
+                loading.classList.add('hidden');
+
+                window.ethereum.on('accountsChanged', (accounts) => {
+                    if (accounts.length === 0) {
+                        connectionStatus.innerHTML = 'Desconectado';
+                        accountDisplay.textContent = '-';
+                        mainPanel.classList.add('hidden');
+                    } else {
+                        userAddress = accounts[0];
+                        accountDisplay.textContent = `${userAddress.slice(0,6)}...${userAddress.slice(-4)}`;
+                        if (contract) loadAllData();
+                    }
+                });
+                window.ethereum.on('chainChanged', () => window.location.reload());
+
+            } catch (error) {
+                showMessage('Error al conectar: ' + error.message, 'error');
+                loading.classList.add('hidden');
+            }
+        }
+
+        async function loadAllData() {
             try {
                 const totalShares = await contract.totalShares();
                 const totalActivos = await contract.totalActivos();
                 const precioShare = await contract.precioShare();
-                const misShares = await contract.shares(userAddress);
-                const miSaldo = await contract.saldoDe(userAddress);
+                document.getElementById('totalShares').textContent = formatUSDT(totalShares);
+                document.getElementById('totalActivos').textContent = formatUSDT(totalActivos) + ' USDT';
+                document.getElementById('precioShare').textContent = formatUSDT(precioShare);
+
+                const sharesUser = await contract.shares(userAddress);
+                const saldoUser = await contract.saldoDe(userAddress);
                 const recompensas = await contract.recompensasPendientesReferidor(userAddress);
-                dataDiv.innerHTML = `
-                    <p>Total Shares: ${ethers.utils.formatUnits(totalShares, 18)}</p>
-                    <p>Total Activos: ${ethers.utils.formatUnits(totalActivos, 18)} USDT</p>
-                    <p>Precio Share: ${ethers.utils.formatUnits(precioShare, 18)}</p>
-                    <p>Mis Shares: ${ethers.utils.formatUnits(misShares, 18)}</p>
-                    <p>Mi Saldo: ${ethers.utils.formatUnits(miSaldo, 18)} USDT</p>
-                    <p>Recompensas: ${ethers.utils.formatUnits(recompensas, 18)} USDT</p>
-                `;
-            } catch (e) {
-                log('Error al cargar datos: ' + e.message, true);
+                const preferencia = await contract.preferenciaBono(userAddress);
+                const referido = await contract.referidoDe(userAddress);
+                document.getElementById('misShares').textContent = formatUSDT(sharesUser);
+                document.getElementById('miSaldo').textContent = formatUSDT(saldoUser);
+                document.getElementById('recompensasPendientes').textContent = formatUSDT(recompensas);
+                document.getElementById('preferenciaBono').textContent = preferencia === 0 ? 'RETIRAR' : 'INVERTIR';
+                document.getElementById('miReferidor').textContent = referido === ethers.constants.AddressZero ? 'Ninguno' : referido.slice(0,6) + '...' + referido.slice(-4);
+
+                if (userAddress.toLowerCase() === ownerAddress.toLowerCase()) {
+                    adminPanel.classList.remove('hidden');
+                    const comisiones = await contract.comisionesAcumuladas();
+                    const poolLiderazgo = await contract.poolLiderazgo();
+                    const poolReferidos = await contract.poolReferidos();
+                    const emergencia = await contract.modoEmergencia();
+                    document.getElementById('comisionesAcumuladas').textContent = formatUSDT(comisiones);
+                    document.getElementById('poolLiderazgo').textContent = formatUSDT(poolLiderazgo);
+                    document.getElementById('poolReferidos').textContent = formatUSDT(poolReferidos);
+                    document.getElementById('emergenciaEstado').textContent = emergencia ? 'Activo' : 'Inactivo';
+                } else {
+                    adminPanel.classList.add('hidden');
+                }
+            } catch (error) {
+                showMessage('Error cargando datos: ' + error.message, 'error');
             }
         }
 
-        document.getElementById('deposit').onclick = async () => {
-            const amount = document.getElementById('amount').value;
-            if (!amount || amount < 10) return log('Mínimo 10 USDT', true);
-            try {
-                const tx = await contract.depositarAuto(ethers.utils.parseUnits(amount, 18));
-                log('Transacción enviada, esperando...');
-                await tx.wait();
-                log('Depósito exitoso');
-                await loadData();
-            } catch (e) {
-                log('Error: ' + e.message, true);
-            }
-        };
+        connectBtn.addEventListener('click', connect);
 
-        document.getElementById('withdraw').onclick = async () => {
-            const shares = document.getElementById('shares').value;
-            if (!shares || shares <= 0) return log('Cantidad inválida', true);
+        document.getElementById('depositarAutoBtn').addEventListener('click', async () => {
             try {
-                const tx = await contract.retirar(ethers.utils.parseUnits(shares, 18));
-                log('Transacción enviada...');
+                const amount = document.getElementById('depositAmount').value;
+                if (!amount || parseFloat(amount) < 10) throw new Error('Mínimo 10 USDT');
+                const tx = await contract.depositarAuto(parseUSDT(amount));
+                showMessage('Depositando...', 'info');
                 await tx.wait();
-                log('Retiro exitoso');
-                await loadData();
-            } catch (e) {
-                log('Error: ' + e.message, true);
+                showMessage('✅ Depósito exitoso', 'success');
+                await loadAllData();
+            } catch (error) {
+                showMessage('Error: ' + error.message, 'error');
             }
-        };
+        });
 
-        document.getElementById('claim').onclick = async () => {
+        document.getElementById('retirarBtn').addEventListener('click', async () => {
+            try {
+                const sharesAmount = document.getElementById('withdrawShares').value;
+                if (!sharesAmount || parseFloat(sharesAmount) <= 0) throw new Error('Cantidad inválida');
+                const tx = await contract.retirar(parseUSDT(sharesAmount));
+                showMessage('Retirando...', 'info');
+                await tx.wait();
+                showMessage('✅ Retiro exitoso', 'success');
+                await loadAllData();
+            } catch (error) {
+                showMessage('Error: ' + error.message, 'error');
+            }
+        });
+
+        document.getElementById('reclamarRecompensasBtn').addEventListener('click', async () => {
             try {
                 const tx = await contract.reclamarRecompensas();
-                log('Reclamando...');
+                showMessage('Reclamando...', 'info');
                 await tx.wait();
-                log('Recompensas reclamadas');
-                await loadData();
-            } catch (e) {
-                log('Error: ' + e.message, true);
+                showMessage('✅ Recompensas reclamadas', 'success');
+                await loadAllData();
+            } catch (error) {
+                showMessage('Error: ' + error.message, 'error');
             }
-        };
+        });
+
+        document.getElementById('cambiarPreferenciaBtn').addEventListener('click', async () => {
+            try {
+                const opcion = prompt('Elige: 0 = RETIRAR, 1 = INVERTIR');
+                if (opcion !== '0' && opcion !== '1') throw new Error('Opción inválida');
+                const tx = await contract.setPreferenciaBono(parseInt(opcion));
+                showMessage('Cambiando preferencia...', 'info');
+                await tx.wait();
+                showMessage('✅ Preferencia actualizada', 'success');
+                await loadAllData();
+            } catch (error) {
+                showMessage('Error: ' + error.message, 'error');
+            }
+        });
+
+        // Admin functions
+        document.getElementById('distribuirGananciaBtn').addEventListener('click', async () => {
+            try {
+                const profit = document.getElementById('profitAmount').value;
+                if (!profit || parseFloat(profit) <= 0) throw new Error('Ganancia inválida');
+                const tx = await contract.distribuirGanancia(parseUSDT(profit));
+                showMessage('Distribuyendo...', 'info');
+                await tx.wait();
+                showMessage('✅ Ganancia distribuida', 'success');
+                await loadAllData();
+            } catch (error) {
+                showMessage('Error: ' + error.message, 'error');
+            }
+        });
+
+        document.getElementById('asignarRecompensaBtn').addEventListener('click', async () => {
+            try {
+                const referidor = document.getElementById('asignarReferido').value;
+                const cantidad = document.getElementById('asignarCantidad').value;
+                if (!ethers.utils.isAddress(referidor)) throw new Error('Dirección inválida');
+                if (!cantidad || parseFloat(cantidad) <= 0) throw new Error('Cantidad inválida');
+                const tx = await contract.asignarRecompensaReferido(referidor, parseUSDT(cantidad));
+                showMessage('Asignando...', 'info');
+                await tx.wait();
+                showMessage('✅ Recompensa asignada', 'success');
+                await loadAllData();
+            } catch (error) {
+                showMessage('Error: ' + error.message, 'error');
+            }
+        });
+
+        document.getElementById('retirarComisionesBtn').addEventListener('click', async () => {
+            try {
+                const cantidad = document.getElementById('feeAmount').value;
+                const destino = document.getElementById('feeDestination').value;
+                if (!cantidad || parseFloat(cantidad) <= 0) throw new Error('Cantidad inválida');
+                if (!ethers.utils.isAddress(destino)) throw new Error('Destino inválido');
+                const tx = await contract.retirarComisiones(parseUSDT(cantidad), destino);
+                showMessage('Retirando comisiones...', 'info');
+                await tx.wait();
+                showMessage('✅ Comisiones retiradas', 'success');
+                await loadAllData();
+            } catch (error) {
+                showMessage('Error: ' + error.message, 'error');
+            }
+        });
+
+        document.getElementById('distribuirLiderazgoBtn').addEventListener('click', async () => {
+            try {
+                const leadersStr = document.getElementById('leadersList').value;
+                const amountPerLeader = document.getElementById('leaderAmount').value;
+                if (!leadersStr || !amountPerLeader) throw new Error('Completa los campos');
+                const leaders = leadersStr.split(',').map(s => s.trim()).filter(s => s !== '');
+                if (leaders.length === 0) throw new Error('Lista vacía');
+                leaders.forEach(addr => { if (!ethers.utils.isAddress(addr)) throw new Error('Dirección inválida: ' + addr); });
+                const amounts = new Array(leaders.length).fill(parseUSDT(amountPerLeader));
+                const tx = await contract.distribuirLiderazgo(leaders, amounts);
+                showMessage('Distribuyendo liderazgo...', 'info');
+                await tx.wait();
+                showMessage('✅ Liderazgo distribuido', 'success');
+                await loadAllData();
+            } catch (error) {
+                showMessage('Error: ' + error.message, 'error');
+            }
+        });
+
+        document.getElementById('procesarBonoBtn').addEventListener('click', async () => {
+            try {
+                const usuario = document.getElementById('bonoUser').value;
+                const cantidad = document.getElementById('bonoAmount').value;
+                if (!ethers.utils.isAddress(usuario)) throw new Error('Dirección inválida');
+                if (!cantidad || parseFloat(cantidad) <= 0) throw new Error('Cantidad inválida');
+                const tx = await contract.procesarBono(usuario, parseUSDT(cantidad));
+                showMessage('Procesando bono...', 'info');
+                await tx.wait();
+                showMessage('✅ Bono procesado', 'success');
+                await loadAllData();
+            } catch (error) {
+                showMessage('Error: ' + error.message, 'error');
+            }
+        });
+
+        document.getElementById('activarEmergenciaBtn').addEventListener('click', async () => {
+            try {
+                const tx = await contract.activarEmergencia();
+                showMessage('Activando emergencia...', 'info');
+                await tx.wait();
+                showMessage('✅ Emergencia activada', 'success');
+                await loadAllData();
+            } catch (error) {
+                showMessage('Error: ' + error.message, 'error');
+            }
+        });
+
+        document.getElementById('desactivarEmergenciaBtn').addEventListener('click', async () => {
+            try {
+                const tx = await contract.desactivarEmergencia();
+                showMessage('Desactivando emergencia...', 'info');
+                await tx.wait();
+                showMessage('✅ Emergencia desactivada', 'success');
+                await loadAllData();
+            } catch (error) {
+                showMessage('Error: ' + error.message, 'error');
+            }
+        });
+
+        document.getElementById('retiroEmergenciaBtn').addEventListener('click', async () => {
+            try {
+                const tx = await contract.retiroEmergencia();
+                showMessage('Procesando retiro de emergencia...', 'info');
+                await tx.wait();
+                showMessage('✅ Retiro completado', 'success');
+                await loadAllData();
+            } catch (error) {
+                showMessage('Error: ' + error.message, 'error');
+            }
+        });
+
+        copyAddressBtn.addEventListener('click', () => {
+            navigator.clipboard.writeText(CONTRACT_ADDRESS).then(() => {
+                showMessage('Dirección copiada', 'success');
+            }).catch(() => showMessage('Error al copiar', 'error'));
+        });
+
+        window.addEventListener('load', () => {
+            if (window.ethereum && window.ethereum.selectedAddress) connect();
+        });
     </script>
 </body>
 </html>
