@@ -3,19 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
-    <title>Milimar Hybrid Vault · Profesional con The Graph</title>
+    <title>Milimar Hybrid Vault · Profesional</title>
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <!-- Google Fonts -->
+    <!-- Google Fonts: Orbitron + Inter -->
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
-    <!-- Chart.js -->
+    <!-- Chart.js para gráfico simulado -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <!-- Ethers.js -->
     <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
-    <!-- Axios para consultas a The Graph -->
-    <script src="https://cdn.jsdelivr.net/npm/axios@1.6.2/dist/axios.min.js"></script>
     <style>
-        /* ========== ESTILOS (igual que la versión anterior) ========== */
+        /* ========== ESTILOS ========== */
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: 'Inter', sans-serif;
@@ -201,7 +199,7 @@
                 <i class="fas fa-exclamation-triangle"></i>
                 <strong data-i18n="riskTitle">⚠️ RIESGO ALTO ⚠️</strong>
             </div>
-            <p data-i18n="riskText">No inviertas dinero que no estés dispuesto a perder. Las ganancias no están garantizadas. No es asesoría financiera. Acepta los términos para operar.</p>
+            <p data-i18n="riskText">No inviertas dinero que no estés dispuesto a perder. Las ganancias no están garantizadas. No es asesoría financiera. Acepta los términos para operar. Este vault interactúa con Milimar V5, asegúrate de entender su funcionamiento.</p>
             <div class="checkbox-group">
                 <input type="checkbox" id="acceptRisk">
                 <label for="acceptRisk" data-i18n="acceptRisk">He leído y acepto los riesgos y términos de uso.</label>
@@ -325,7 +323,7 @@
                 <div class="card">
                     <h3><i class="fas fa-history"></i> <span data-i18n="myHistory">Mi historial de transacciones</span></h3>
                     <div id="historyList" style="max-height: 400px; overflow-y: auto;">
-                        <p data-i18n="connectToSeeHistory">Conecta tu wallet para ver historial.</p>
+                        <p data-i18n="connectToSeeHistory">Conecta tu wallet para ver historial. (Próximamente: integración con The Graph)</p>
                     </div>
                 </div>
             </div>
@@ -337,56 +335,63 @@
                     <div class="chart-container">
                         <canvas id="sharePriceChart"></canvas>
                     </div>
-                    <p class="small" style="color:#aaa; text-align:center;" data-i18n="chartNote">*Datos desde The Graph (requiere subgraph).</p>
+                    <p class="small" style="color:#aaa; text-align:center;" data-i18n="chartNote">*Datos simulados (próximamente datos reales con The Graph).</p>
                 </div>
             </div>
 
-            <!-- Panel admin (se muestra si tiene rol) -->
+            <!-- Panel admin (solo visible para ADMIN/GUARDIAN) -->
             <div id="adminPanel" class="card admin-panel hidden">
                 <h3 style="color: #00ffff; font-family: 'Orbitron';"><i class="fas fa-crown"></i> <span data-i18n="admin">Administración</span></h3>
                 <div class="grid-2">
-                    <!-- Botones de administración (mantener los mismos que tenías) -->
+                    <!-- Distribuir ganancia -->
                     <div>
                         <h4>Distribuir ganancia</h4>
                         <div class="form-group"><input type="number" id="profitAmount" placeholder="Ganancia USDT" step="0.01"></div>
                         <button class="btn btn-small" id="distribuirGananciaBtn">Distribuir</button>
                     </div>
+                    <!-- Asignar recompensa -->
                     <div>
                         <h4>Asignar recompensa</h4>
                         <div class="form-group"><input type="text" id="asignarReferido" placeholder="Dirección referidor"></div>
                         <div class="form-group"><input type="number" id="asignarCantidad" placeholder="Cantidad USDT" step="0.01"></div>
                         <button class="btn btn-small" id="asignarRecompensaBtn">Asignar</button>
                     </div>
+                    <!-- Retirar comisiones -->
                     <div>
                         <h4>Retirar comisiones</h4>
                         <div class="form-group"><input type="number" id="feeAmount" placeholder="Cantidad USDT" step="0.01"></div>
                         <div class="form-group"><input type="text" id="feeDestination" placeholder="Destino (0x...)"></div>
                         <button class="btn btn-small" id="retirarComisionesBtn">Retirar</button>
                     </div>
+                    <!-- Distribuir liderazgo -->
                     <div>
                         <h4>Distribuir liderazgo</h4>
                         <div class="form-group"><input type="text" id="leadersList" placeholder="0x...,0x..."></div>
                         <div class="form-group"><input type="number" id="leaderAmount" placeholder="Cantidad por líder" step="0.01"></div>
                         <button class="btn btn-small" id="distribuirLiderazgoBtn">Distribuir</button>
                     </div>
+                    <!-- Procesar bono -->
                     <div>
                         <h4>Procesar bono</h4>
                         <div class="form-group"><input type="text" id="bonoUser" placeholder="Usuario (0x...)"></div>
                         <div class="form-group"><input type="number" id="bonoAmount" placeholder="Cantidad USDT" step="0.01"></div>
                         <button class="btn btn-small" id="procesarBonoBtn">Procesar</button>
                     </div>
+                    <!-- Pausas -->
                     <div>
                         <h4>Pausas</h4>
                         <button class="btn btn-small btn-secondary" id="pausarDepositosBtn">Pausar depósitos</button>
                         <button class="btn btn-small btn-secondary" id="pausarRetirosBtn">Pausar retiros</button>
                         <button class="btn btn-small btn-secondary" id="pausarRecompensasBtn">Pausar recompensas</button>
                     </div>
+                    <!-- Emergencia -->
                     <div>
                         <h4>Emergencia</h4>
                         <button class="btn btn-small btn-secondary" id="activarEmergenciaBtn">Activar</button>
                         <button class="btn btn-small btn-secondary" id="desactivarEmergenciaBtn">Desactivar</button>
                         <button class="btn btn-small btn-secondary" id="retiroEmergenciaBtn">Retiro emergencia</button>
                     </div>
+                    <!-- Modo público -->
                     <div>
                         <h4>Modo público</h4>
                         <button class="btn btn-small btn-secondary" id="iniciarModoPublicoBtn">Iniciar</button>
@@ -410,65 +415,13 @@
     </div>
 
     <script>
-        // ========== CONFIGURACIÓN (REEMPLAZA CON TUS DATOS) ==========
-        const CONTRACT_ADDRESS = "0x81EbAFA4E7540A3e5b0990E20876af103dC1fd2d"; // Dirección de tu contrato
+        // ========== CONFIGURACIÓN ==========
+        const CONTRACT_ADDRESS = "0x81EbAFA4E7540A3e5b0990E20876af103dC1fd2d";
         const BSC_MAINNET_CHAIN_ID = 56;
         const USDT_DECIMALS = 18; // Cambia a 6 si tu USDT usa 6 decimales
 
-        // 🔴 REEMPLAZA CON TU API KEY Y SUBGRAPH ID DE THE GRAPH
-        const GRAPH_API_KEY = "TU_API_KEY";       // Ej: "caf3b4d5..."
-        const SUBGRAPH_ID = "TU_SUBGRAPH_ID";     // Ej: "QmX... o el ID numérico"
-        const GRAPH_URL = `https://gateway-arbitrum.network.thegraph.com/api/${GRAPH_API_KEY}/subgraphs/id/${SUBGRAPH_ID}`;
-
-        // ========== ABI DEL CONTRATO (REEMPLAZA CON EL TUYO) ==========
-        // Este es un ABI de ejemplo que cubre las funciones usadas. 
-        // Debes reemplazarlo con el ABI real de tu contrato desde BscScan.
-        const CONTRACT_ABI = [
-            // Funciones view
-            "function totalShares() view returns (uint256)",
-            "function totalActivos() view returns (uint256)",
-            "function precioShare() view returns (uint256)",
-            "function shares(address) view returns (uint256)",
-            "function saldoDe(address) view returns (uint256)",
-            "function recompensasPendientesReferidor(address) view returns (uint256)",
-            "function preferenciaBono(address) view returns (uint8)",
-            "function referidoDe(address) view returns (address)",
-            "function comisionesAcumuladas() view returns (uint256)",
-            "function poolLiderazgo() view returns (uint256)",
-            "function poolReferidos() view returns (uint256)",
-            "function modoEmergencia() view returns (bool)",
-            "function modoPublico() view returns (bool)",
-            "function depositosPausados() view returns (bool)",
-            "function retirosPausados() view returns (bool)",
-            "function recompensasPausadas() view returns (bool)",
-            "function hasRole(bytes32,address) view returns (bool)",
-            "function ADMIN_ROLE() view returns (bytes32)",
-            "function GUARDIAN_ROLE() view returns (bytes32)",
-            // Funciones de escritura
-            "function setPreferenciaBono(uint8) external",
-            "function depositarAuto(uint256) external",
-            "function reclamarRecompensas() external",
-            "function retirar(uint256) external",
-            "function distribuirGanancia(uint256) external",
-            "function asignarRecompensaReferido(address,uint256) external",
-            "function retirarComisiones(uint256,address) external",
-            "function distribuirLiderazgo(address[],uint256[]) external",
-            "function procesarBono(address,uint256) external",
-            "function pausarDepositos(bool) external",
-            "function pausarRetiros(bool) external",
-            "function pausarRecompensas(bool) external",
-            "function activarEmergencia() external",
-            "function desactivarEmergencia() external",
-            "function retiroEmergencia() external",
-            "function iniciarModoPublico() external",
-            "function ejecutarModoPublico() external",
-            "function cancelarModoPublico() external",
-            // Eventos
-            "event Deposit(address indexed user, uint256 amount, uint256 shares)",
-            "event Withdraw(address indexed user, uint256 shares, uint256 amount)",
-            "event RewardClaimed(address indexed user, uint256 amount)",
-            "event ProfitDistributed(uint256 totalAssets, uint256 newPrice)"
-        ];
+        // ABI del contrato (extraído del proporcionado)
+        const CONTRACT_ABI = [{"inputs":[],"stateMutability":"nonpayable","type":"constructor"},{"inputs":[],"name":"AccessControlBadConfirmation","type":"error"},{"inputs":[{"internalType":"address","name":"account","type":"address"},{"internalType":"bytes32","name":"neededRole","type":"bytes32"}],"name":"AccessControlUnauthorizedAccount","type":"error"},{"inputs":[{"internalType":"address","name":"token","type":"address"}],"name":"SafeERC20FailedOperation","type":"error"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"usuario","type":"address"},{"indexed":false,"internalType":"uint256","name":"cantidad","type":"uint256"},{"indexed":false,"internalType":"bool","name":"invertido","type":"bool"},{"indexed":false,"internalType":"uint256","name":"shares","type":"uint256"}],"name":"BonoProcesado","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"internalType":"uint256","name":"cantidad","type":"uint256"},{"indexed":true,"internalType":"address","name":"destino","type":"address"}],"name":"ComisionesRetiradas","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"usuario","type":"address"},{"indexed":false,"internalType":"uint256","name":"cantidad","type":"uint256"},{"indexed":false,"internalType":"uint256","name":"shares","type":"uint256"}],"name":"Depositado","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"internalType":"uint256","name":"ganancia","type":"uint256"},{"indexed":false,"internalType":"uint256","name":"comision","type":"uint256"}],"name":"GananciaDistribuida","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"lider","type":"address"},{"indexed":false,"internalType":"uint256","name":"cantidad","type":"uint256"}],"name":"LiderazgoDistribuido","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"internalType":"uint256","name":"maxTotal","type":"uint256"},{"indexed":false,"internalType":"uint256","name":"maxDeposito","type":"uint256"},{"indexed":false,"internalType":"uint256","name":"maxRetiro","type":"uint256"}],"name":"LimitesActualizados","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"internalType":"bool","name":"activo","type":"bool"}],"name":"ModoPublicoCambiado","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"internalType":"uint256","name":"activacionTimestamp","type":"uint256"}],"name":"ModoPublicoIniciado","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"internalType":"string","name":"tipo","type":"string"},{"indexed":false,"internalType":"bool","name":"estado","type":"bool"}],"name":"PausaCambiada","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"usuario","type":"address"},{"indexed":false,"internalType":"uint256","name":"cantidad","type":"uint256"}],"name":"RecompensaReclamada","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"usuario","type":"address"},{"indexed":false,"internalType":"uint256","name":"cantidad","type":"uint256"},{"indexed":false,"internalType":"uint256","name":"shares","type":"uint256"}],"name":"Retirado","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"internalType":"bytes32","name":"role","type":"bytes32"},{"indexed":false,"internalType":"address","name":"account","type":"address"}],"name":"RolAsignado","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"bytes32","name":"role","type":"bytes32"},{"indexed":true,"internalType":"bytes32","name":"previousAdminRole","type":"bytes32"},{"indexed":true,"internalType":"bytes32","name":"newAdminRole","type":"bytes32"}],"name":"RoleAdminChanged","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"bytes32","name":"role","type":"bytes32"},{"indexed":true,"internalType":"address","name":"account","type":"address"},{"indexed":true,"internalType":"address","name":"sender","type":"address"}],"name":"RoleGranted","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"bytes32","name":"role","type":"bytes32"},{"indexed":true,"internalType":"address","name":"account","type":"address"},{"indexed":true,"internalType":"address","name":"sender","type":"address"}],"name":"RoleRevoked","type":"event"},{"inputs":[],"name":"ADMIN_ROLE","outputs":[{"internalType":"bytes32","name":"","type":"bytes32"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"ALLOCATOR_ROLE","outputs":[{"internalType":"bytes32","name":"","type":"bytes32"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"COMISION_GESTION","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"DEFAULT_ADMIN_ROLE","outputs":[{"internalType":"bytes32","name":"","type":"bytes32"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"DEPOSITO_MINIMO","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"GUARDIAN_ROLE","outputs":[{"internalType":"bytes32","name":"","type":"bytes32"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"PORCENTAJE_POOL_LIDERAZGO","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"PORCENTAJE_REFERIDOS","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"TIMELOCK_PERIODO","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"activarEmergencia","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"referidor","type":"address"},{"internalType":"uint256","name":"cantidad","type":"uint256"}],"name":"asignarRecompensaReferido","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"cancelarModoPublico","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"comisionesAcumuladas","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"cantidad","type":"uint256"}],"name":"depositarAuto","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"depositosPausados","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"desactivarEmergencia","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"ganancia","type":"uint256"}],"name":"distribuirGanancia","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address[]","name":"lideres","type":"address[]"},{"internalType":"uint256[]","name":"cantidades","type":"uint256[]"}],"name":"distribuirLiderazgo","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"ejecutarModoPublico","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"fechaLimiteEmergencia","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"bytes32","name":"role","type":"bytes32"}],"name":"getRoleAdmin","outputs":[{"internalType":"bytes32","name":"","type":"bytes32"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"bytes32","name":"role","type":"bytes32"},{"internalType":"address","name":"account","type":"address"}],"name":"grantRole","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"bytes32","name":"role","type":"bytes32"},{"internalType":"address","name":"account","type":"address"}],"name":"hasRole","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"iniciarModoPublico","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"maxDepositoPorTx","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"maxRetiroPorTx","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"maxTotalAssets","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"milimar","outputs":[{"internalType":"contract IMilimarV5Min","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"modoEmergencia","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"modoPublico","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"modoPublicoActivacion","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"modoPublicoPendiente","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"obtenerEstadoPausas","outputs":[{"internalType":"bool","name":"depositos","type":"bool"},{"internalType":"bool","name":"retiros","type":"bool"},{"internalType":"bool","name":"recompensas","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"bool","name":"pausar","type":"bool"}],"name":"pausarDepositos","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"bool","name":"pausar","type":"bool"}],"name":"pausarRecompensas","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"bool","name":"pausar","type":"bool"}],"name":"pausarRetiros","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"poolLiderazgo","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"poolReferidos","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"precioShare","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"","type":"address"}],"name":"preferenciaBono","outputs":[{"internalType":"enum MilimarHybridVault.OpcionBono","name":"","type":"uint8"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"usuario","type":"address"},{"internalType":"uint256","name":"cantidad","type":"uint256"}],"name":"procesarBono","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"reclamarRecompensas","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"recompensasPausadas","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"","type":"address"}],"name":"recompensasPendientesReferidor","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"","type":"address"}],"name":"referidoDe","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"bytes32","name":"role","type":"bytes32"},{"internalType":"address","name":"callerConfirmation","type":"address"}],"name":"renounceRole","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"cantidadShares","type":"uint256"}],"name":"retirar","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"cantidad","type":"uint256"},{"internalType":"address","name":"destino","type":"address"}],"name":"retirarComisiones","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"retiroEmergencia","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"retirosPausados","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"bytes32","name":"role","type":"bytes32"},{"internalType":"address","name":"account","type":"address"}],"name":"revokeRole","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"usuario","type":"address"}],"name":"saldoDe","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"_maxTotalAssets","type":"uint256"},{"internalType":"uint256","name":"_maxDepositoPorTx","type":"uint256"},{"internalType":"uint256","name":"_maxRetiroPorTx","type":"uint256"}],"name":"setLimites","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"enum MilimarHybridVault.OpcionBono","name":"opcion","type":"uint8"}],"name":"setPreferenciaBono","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"","type":"address"}],"name":"shares","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"bytes4","name":"interfaceId","type":"bytes4"}],"name":"supportsInterface","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"totalActivos","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"totalShares","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"","type":"address"}],"name":"ultimoDeposito","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"usdt","outputs":[{"internalType":"contract IERC20","name":"","type":"address"}],"stateMutability":"view","type":"function"}];
 
         // ========== TRADUCCIONES ==========
         const i18n = {
@@ -509,9 +462,9 @@
                 contract: "Contrato inteligente",
                 copy: "Copiar",
                 myHistory: "Mi historial de transacciones",
-                connectToSeeHistory: "Conecta tu wallet para ver historial.",
+                connectToSeeHistory: "Conecta tu wallet para ver historial. (Próximamente: integración con The Graph)",
                 fundChart: "Evolución del valor de participación",
-                chartNote: "*Datos desde The Graph (requiere subgraph).",
+                chartNote: "*Datos simulados (próximamente datos reales con The Graph).",
                 admin: "Administración",
                 accumFees: "Comisiones acumuladas:",
                 leadershipPool: "Pool de liderazgo:",
@@ -519,8 +472,7 @@
                 emergencyMode: "Modo emergencia:",
                 publicMode: "Modo público:",
                 terms: "Términos de uso",
-                privacy: "Privacidad",
-                noHistory: "No hay transacciones aún."
+                privacy: "Privacidad"
             },
             en: {
                 subtitle: "Automated investments: arbitrage · farming · diversified portfolio",
@@ -559,9 +511,9 @@
                 contract: "Smart contract",
                 copy: "Copy",
                 myHistory: "My transaction history",
-                connectToSeeHistory: "Connect your wallet to see history.",
+                connectToSeeHistory: "Connect your wallet to see history. (Coming soon: The Graph integration)",
                 fundChart: "Share price evolution",
-                chartNote: "*Data from The Graph (subgraph required).",
+                chartNote: "*Simulated data (real data coming soon with The Graph).",
                 admin: "Administration",
                 accumFees: "Accumulated fees:",
                 leadershipPool: "Leadership pool:",
@@ -569,8 +521,7 @@
                 emergencyMode: "Emergency mode:",
                 publicMode: "Public mode:",
                 terms: "Terms of use",
-                privacy: "Privacy",
-                noHistory: "No transactions yet."
+                privacy: "Privacy"
             }
         };
 
@@ -653,7 +604,6 @@
                     }
                 }
             });
-            // Actualizar listas de características y riesgos
             updateFeatureLists(lang);
             langBtns.forEach(btn => btn.classList.remove('active'));
             document.querySelector(`.lang-btn[data-lang="${lang}"]`).classList.add('active');
@@ -782,10 +732,8 @@
                     adminPanel.classList.add('hidden');
                 }
 
-                // Cargar gráfico real desde The Graph
-                loadRealChartData();
-                // Cargar historial real
-                loadUserHistoryFromGraph();
+                // Actualizar gráfico simulado
+                updateSimulatedChart();
 
             } catch (error) {
                 showToast('Error cargando datos: ' + error.message, 'error');
@@ -794,62 +742,34 @@
 
         function setupEventListeners() {
             if (!contract) return;
-            contract.on("Deposit", (user, amount, shares, event) => {
-                if (user.toLowerCase() === userAddress.toLowerCase()) {
-                    showToast(`Depósito exitoso: ${formatUSDT(amount)} USDT`, 'success');
+            contract.on("Depositado", (usuario, cantidad, shares, event) => {
+                if (usuario.toLowerCase() === userAddress.toLowerCase()) {
+                    showToast(`Depósito exitoso: ${formatUSDT(cantidad)} USDT`, 'success');
                     loadAllData();
                 }
             });
-            contract.on("Withdraw", (user, shares, amount, event) => {
-                if (user.toLowerCase() === userAddress.toLowerCase()) {
-                    showToast(`Retiro exitoso: ${formatUSDT(amount)} USDT`, 'success');
+            contract.on("Retirado", (usuario, shares, cantidad, event) => {
+                if (usuario.toLowerCase() === userAddress.toLowerCase()) {
+                    showToast(`Retiro exitoso: ${formatUSDT(cantidad)} USDT`, 'success');
                     loadAllData();
                 }
             });
-            contract.on("RewardClaimed", (user, amount, event) => {
-                if (user.toLowerCase() === userAddress.toLowerCase()) {
-                    showToast(`Recompensas reclamadas: ${formatUSDT(amount)} USDT`, 'success');
+            contract.on("RecompensaReclamada", (usuario, cantidad, event) => {
+                if (usuario.toLowerCase() === userAddress.toLowerCase()) {
+                    showToast(`Recompensas reclamadas: ${formatUSDT(cantidad)} USDT`, 'success');
+                    loadAllData();
+                }
+            });
+            contract.on("BonoProcesado", (usuario, cantidad, invertido, shares, event) => {
+                if (usuario.toLowerCase() === userAddress.toLowerCase()) {
+                    showToast(`Bono procesado: ${formatUSDT(cantidad)} USDT ${invertido ? 'invertido' : 'recibido'}`, 'success');
                     loadAllData();
                 }
             });
         }
 
-        // ========== FUNCIONES DE THE GRAPH ==========
-        async function loadRealChartData() {
-            if (!GRAPH_API_KEY || GRAPH_API_KEY === "TU_API_KEY") {
-                console.warn("The Graph no configurado. Usando datos simulados.");
-                simulateChartData();
-                return;
-            }
-            try {
-                const query = `
-                {
-                    sharePriceHistories(
-                        first: 30,
-                        orderBy: timestamp,
-                        orderDirection: desc
-                    ) {
-                        timestamp
-                        sharePrice
-                    }
-                }`;
-                const response = await axios.post(GRAPH_URL, { query });
-                const historyData = response.data.data?.sharePriceHistories;
-                if (!historyData || historyData.length === 0) {
-                    simulateChartData();
-                    return;
-                }
-                const reversed = historyData.reverse();
-                const labels = reversed.map(item => new Date(item.timestamp * 1000).toLocaleDateString());
-                const prices = reversed.map(item => parseFloat(item.sharePrice));
-                updateChartWithData(labels, prices);
-            } catch (error) {
-                console.error("Error cargando datos de The Graph:", error);
-                simulateChartData();
-            }
-        }
-
-        function simulateChartData() {
+        // ========== GRÁFICO SIMULADO ==========
+        function updateSimulatedChart() {
             const labels = [];
             const data = [];
             const basePrice = parseFloat(document.getElementById('precioShare').textContent) || 1.0;
@@ -859,10 +779,6 @@
                 labels.push(date.toLocaleDateString());
                 data.push(basePrice * (1 + (Math.random() - 0.5) * 0.1));
             }
-            updateChartWithData(labels, data);
-        }
-
-        function updateChartWithData(labels, prices) {
             const ctx = document.getElementById('sharePriceChart').getContext('2d');
             if (chartInstance) chartInstance.destroy();
             chartInstance = new Chart(ctx, {
@@ -871,7 +787,7 @@
                     labels: labels,
                     datasets: [{
                         label: currentLang === 'es' ? 'Precio participación (USDT)' : 'Share Price (USDT)',
-                        data: prices,
+                        data: data,
                         borderColor: '#00ffff',
                         backgroundColor: 'rgba(0,255,255,0.1)',
                         tension: 0.3,
@@ -890,55 +806,6 @@
                     }
                 }
             });
-        }
-
-        async function loadUserHistoryFromGraph() {
-            if (!userAddress) return;
-            if (!GRAPH_API_KEY || GRAPH_API_KEY === "TU_API_KEY") {
-                document.getElementById('historyList').innerHTML = '<p>Configura The Graph para ver historial real.</p>';
-                return;
-            }
-            try {
-                const query = `
-                {
-                    userTransactions(
-                        where: { user: "${userAddress.toLowerCase()}" },
-                        orderBy: timestamp,
-                        orderDirection: desc,
-                        first: 50
-                    ) {
-                        type
-                        amount
-                        shares
-                        timestamp
-                        txHash
-                    }
-                }`;
-                const response = await axios.post(GRAPH_URL, { query });
-                const txs = response.data.data?.userTransactions;
-                const historyDiv = document.getElementById('historyList');
-                if (!txs || txs.length === 0) {
-                    historyDiv.innerHTML = `<p data-i18n="noHistory">${i18n[currentLang].noHistory}</p>`;
-                    return;
-                }
-                let html = '';
-                txs.forEach(tx => {
-                    const date = new Date(tx.timestamp * 1000).toLocaleString();
-                    const amount = parseFloat(tx.amount).toFixed(2);
-                    let desc = '';
-                    if (tx.type === 'DEPOSIT') desc = `Depósito: ${amount} USDT (${tx.shares} shares)`;
-                    else if (tx.type === 'WITHDRAW') desc = `Retiro: ${amount} USDT (${tx.shares} shares)`;
-                    else if (tx.type === 'CLAIM') desc = `Recompensa: ${amount} USDT`;
-                    html += `<div class="history-item">
-                        <div>${desc}</div>
-                        <small>${date} · <a href="https://bscscan.com/tx/${tx.txHash}" target="_blank">Ver en BscScan</a></small>
-                    </div>`;
-                });
-                historyDiv.innerHTML = html;
-            } catch (error) {
-                console.error("Error cargando historial:", error);
-                document.getElementById('historyList').innerHTML = '<p>Error al cargar historial.</p>';
-            }
         }
 
         // ========== EVENTOS DE UI ==========
@@ -1244,4 +1111,4 @@
         });
     </script>
 </body>
-    </html>
+                            </html>
