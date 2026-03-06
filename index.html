@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
-    <title>MILIMAR_JAGC · Vault</title>
+    <title>Milimar Hybrid Vault · Futuro</title>
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <!-- Google Fonts: Playfair Display (cursiva elegante) + Inter (auxiliar) -->
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <!-- Google Fonts: Orbitron (futurista) + Inter (legible) -->
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
     <!-- Ethers.js -->
     <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
     <style>
@@ -18,190 +18,210 @@
         }
         body {
             font-family: 'Inter', sans-serif;
-            background: linear-gradient(-45deg, #0d0217, #1a0933, #2a0f45, #3b1b5e);
-            background-size: 400% 400%;
-            animation: auroraNeon 12s ease infinite;
+            background: #0a0a0a;
+            color: #e0e0e0;
             min-height: 100vh;
-            color: #f0e6ff;
-            padding: 16px;
             position: relative;
+            overflow-x: hidden;
         }
-        @keyframes auroraNeon {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
+        /* Video de fondo */
+        #bg-video {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: -1;
+            opacity: 0.3;
+            pointer-events: none;
+        }
+        /* Capa de color sobre el video */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 30% 30%, rgba(0, 255, 255, 0.15), rgba(128, 0, 255, 0.25), #0a0a0a);
+            z-index: -1;
+            pointer-events: none;
         }
         .container {
-            max-width: 800px;
+            max-width: 1200px;
             margin: 0 auto;
-            width: 100%;
+            padding: 20px;
+            position: relative;
+            z-index: 1;
         }
-        /* Botones flotantes pequeños (Telegram y WhatsApp) */
+        /* Header con tipografía futurista */
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding-top: 30px;
+        }
+        .header h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 3.5rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, #00ffff, #aa80ff, #ff80ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 30px rgba(0, 255, 255, 0.7);
+            letter-spacing: 4px;
+            margin-bottom: 10px;
+            animation: glow 3s ease-in-out infinite;
+        }
+        @keyframes glow {
+            0% { filter: drop-shadow(0 0 5px #00ffff); }
+            50% { filter: drop-shadow(0 0 20px #aa80ff); }
+            100% { filter: drop-shadow(0 0 5px #00ffff); }
+        }
+        .header p {
+            font-size: 1.2rem;
+            color: #ccc;
+            background: rgba(0,0,0,0.6);
+            display: inline-block;
+            padding: 10px 30px;
+            border-radius: 60px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(0, 255, 255, 0.3);
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.3);
+        }
+        /* Botones flotantes de redes sociales */
         .floating-buttons {
             position: fixed;
             bottom: 20px;
             left: 20px;
             display: flex;
-            gap: 10px;
+            gap: 15px;
             z-index: 100;
-            flex-wrap: wrap;
         }
         .floating-btn {
-            background: rgba(128, 0, 255, 0.25);
-            backdrop-filter: blur(5px);
-            border: 1px solid rgba(200, 130, 255, 0.5);
+            background: rgba(0, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            border: 1px solid #00ffff;
             color: white;
-            padding: 8px 18px;
+            padding: 10px 22px;
             border-radius: 60px;
-            font-size: 0.9rem;
+            font-size: 1rem;
             text-decoration: none;
             display: flex;
             align-items: center;
-            gap: 8px;
-            transition: 0.2s;
-            font-weight: 500;
-            box-shadow: 0 0 15px rgba(170, 0, 255, 0.3);
+            gap: 10px;
+            transition: 0.3s;
+            font-weight: 600;
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.5);
         }
         .floating-btn:hover {
-            background: rgba(170, 0, 255, 0.5);
-            border-color: #ffaaff;
-            box-shadow: 0 0 25px #cc66ff;
+            background: #00ffff;
+            color: black;
+            box-shadow: 0 0 40px #00ffff;
+            transform: scale(1.05);
         }
         .floating-btn i {
-            font-size: 1.2rem;
+            font-size: 1.3rem;
         }
-        /* Header */
-        .header {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-        .header h1 {
-            font-family: 'Playfair Display', serif;
-            font-size: 2.8rem;
-            font-weight: 700;
-            font-style: italic;
-            background: linear-gradient(135deg, #e0b0ff, #c080ff, #a05aff);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            text-shadow: 0 0 30px #b266ff;
-            letter-spacing: 1px;
-            margin-bottom: 8px;
-            word-break: break-word;
-        }
-        .header p {
-            font-size: 1.1rem;
-            color: #d9c0ff;
-            background: rgba(128, 0, 255, 0.2);
-            display: inline-block;
-            padding: 8px 24px;
-            border-radius: 60px;
-            backdrop-filter: blur(4px);
-            border: 1px solid rgba(200, 130, 255, 0.4);
-            box-shadow: 0 0 15px rgba(170, 0, 255, 0.3);
-        }
-        /* Tarjetas glassmorphism púrpura */
+        /* Tarjetas con glassmorphism y bordes neón */
         .card {
-            background: rgba(48, 16, 64, 0.5);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(200, 130, 255, 0.3);
-            border-radius: 28px;
-            padding: 22px;
-            margin-bottom: 20px;
-            box-shadow: 0 20px 40px -10px rgba(0,0,0,0.6), 0 0 20px rgba(180, 0, 255, 0.3);
-            transition: transform 0.2s;
+            background: rgba(10, 10, 20, 0.7);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(0, 255, 255, 0.3);
+            border-radius: 32px;
+            padding: 28px;
+            margin-bottom: 25px;
+            box-shadow: 0 20px 40px -10px rgba(0,0,0,0.8), 0 0 30px rgba(0, 255, 255, 0.3);
+            transition: 0.3s;
         }
         .card:hover {
-            transform: translateY(-4px);
-            border-color: rgba(255, 150, 255, 0.7);
-            box-shadow: 0 20px 40px -8px #6a1aff;
+            border-color: #00ffff;
+            box-shadow: 0 20px 40px -8px #00ffff, 0 0 40px #00ffff;
         }
-        /* Botones */
+        /* Botones con efecto neón */
         .btn {
-            background: linear-gradient(145deg, #b266ff, #7a2aff);
-            color: white;
+            background: linear-gradient(145deg, #00ffff, #aa80ff);
+            color: #0a0a0a;
             border: none;
-            padding: 12px 24px;
+            padding: 14px 28px;
             border-radius: 60px;
-            font-weight: 600;
+            font-weight: 700;
             font-size: 1rem;
             cursor: pointer;
-            transition: all 0.2s;
-            box-shadow: 0 8px 20px rgba(170, 0, 255, 0.4);
+            transition: 0.2s;
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.6);
             border: 1px solid rgba(255,255,255,0.2);
             width: 100%;
             max-width: 100%;
+            font-family: 'Orbitron', sans-serif;
+            letter-spacing: 1px;
         }
         .btn:hover {
             transform: scale(1.02);
-            box-shadow: 0 12px 28px #b266ff;
-            background: linear-gradient(145deg, #c080ff, #9147ff);
+            box-shadow: 0 0 40px #00ffff;
+            background: linear-gradient(145deg, #80ffff, #c080ff);
         }
         .btn-secondary {
             background: transparent;
-            border: 2px solid #b266ff;
-            color: #e0b0ff;
+            border: 2px solid #00ffff;
+            color: #00ffff;
             box-shadow: none;
         }
         .btn-secondary:hover {
-            background: rgba(178, 102, 255, 0.15);
-            border-color: #da7aff;
+            background: rgba(0, 255, 255, 0.2);
+            color: white;
         }
         .btn-small {
             padding: 8px 18px;
             font-size: 0.9rem;
         }
-        /* Estadísticas */
+        /* Estadísticas con efecto de brillo */
         .stats-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 12px;
+            gap: 20px;
             margin: 20px 0;
         }
         .stat-item {
-            background: rgba(0,0,0,0.35);
-            border-radius: 20px;
-            padding: 14px 6px;
+            background: rgba(0, 255, 255, 0.1);
+            border: 1px solid rgba(0, 255, 255, 0.4);
+            border-radius: 24px;
+            padding: 18px 8px;
             text-align: center;
-            border: 1px solid rgba(200,130,255,0.2);
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.3);
         }
         .stat-label {
-            color: #c9b0ff;
-            font-size: 0.75rem;
+            color: #aaa;
+            font-size: 0.8rem;
             text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-bottom: 5px;
+            letter-spacing: 2px;
+            margin-bottom: 8px;
         }
         .stat-value {
-            font-size: 1.4rem;
+            font-size: 2rem;
             font-weight: 700;
-            color: #f3e5ff;
-            text-shadow: 0 0 10px #cc99ff;
-            word-break: break-word;
+            color: #00ffff;
+            text-shadow: 0 0 20px #00ffff;
         }
         .stat-value small {
-            font-size: 0.8rem;
-            color: #d9b0ff;
+            font-size: 0.9rem;
+            color: #ccc;
         }
-        /* Grid de dos columnas (responsive) */
+        /* Grid de dos columnas responsivo */
         .grid-2 {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 16px;
-            margin: 16px 0;
+            gap: 20px;
+            margin: 20px 0;
         }
-        @media (max-width: 600px) {
+        @media (max-width: 700px) {
             .grid-2 {
                 grid-template-columns: 1fr;
-                gap: 16px;
             }
             .stats-grid {
-                gap: 8px;
-            }
-            .stat-value {
-                font-size: 1.2rem;
+                grid-template-columns: 1fr;
             }
             .header h1 {
-                font-size: 2.2rem;
+                font-size: 2.5rem;
             }
         }
         /* Formularios */
@@ -210,99 +230,101 @@
         }
         .form-group label {
             display: block;
-            color: #e0c0ff;
+            color: #00ffff;
             font-weight: 500;
             margin-bottom: 5px;
-            font-size: 0.95rem;
+            letter-spacing: 1px;
         }
         .form-group input {
             width: 100%;
-            padding: 12px 16px;
-            background: rgba(20, 0, 30, 0.6);
-            border: 1px solid #a066cc;
-            border-radius: 24px;
+            padding: 14px 18px;
+            background: rgba(0,0,0,0.6);
+            border: 1px solid #00ffff;
+            border-radius: 40px;
             color: white;
             font-size: 1rem;
-            backdrop-filter: blur(4px);
+            backdrop-filter: blur(5px);
+            box-shadow: 0 0 15px rgba(0, 255, 255, 0.3);
         }
         .form-group input:focus {
             outline: none;
-            border-color: #da7aff;
-            box-shadow: 0 0 15px #b266ff;
+            border-color: #ff80ff;
+            box-shadow: 0 0 25px #ff80ff;
         }
         /* Mensajes */
         .message {
-            background: rgba(128, 0, 255, 0.25);
-            border-left: 4px solid #cc66ff;
-            padding: 14px 18px;
+            background: rgba(0, 255, 255, 0.2);
+            border-left: 4px solid #00ffff;
+            padding: 16px 20px;
             border-radius: 20px;
             margin: 20px 0;
             backdrop-filter: blur(5px);
         }
         .message.error {
-            background: rgba(180, 0, 80, 0.3);
-            border-left-color: #ff4d6d;
+            background: rgba(255, 0, 128, 0.2);
+            border-left-color: #ff0080;
         }
         .message.success {
-            background: rgba(0, 200, 150, 0.2);
-            border-left-color: #6affb5;
+            background: rgba(0, 255, 200, 0.2);
+            border-left-color: #00ffc8;
         }
         .hidden {
             display: none;
         }
         .loading {
             text-align: center;
-            padding: 30px;
+            padding: 40px;
         }
         .loading i {
             font-size: 3rem;
-            color: #cc66ff;
+            color: #00ffff;
             animation: spin 1s infinite linear;
         }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        /* Acordeón (detalles del contrato) */
+        /* Acordeón futurista */
         details {
-            background: rgba(80, 0, 120, 0.25);
-            border-radius: 24px;
-            padding: 12px 16px;
-            border: 1px solid rgba(200,130,255,0.3);
+            background: rgba(0, 255, 255, 0.1);
+            border-radius: 30px;
+            padding: 15px 20px;
+            border: 1px solid #00ffff;
             margin-top: 20px;
+            backdrop-filter: blur(5px);
         }
         summary {
             font-weight: 600;
-            color: #e6ccff;
+            color: #00ffff;
             cursor: pointer;
-            font-size: 1rem;
-            padding: 4px 0;
+            font-size: 1.1rem;
+            font-family: 'Orbitron', sans-serif;
         }
         summary i {
-            margin-right: 10px;
-            color: #bf7aff;
+            margin-right: 12px;
+            color: #ff80ff;
         }
         .contract-detail {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 12px;
             flex-wrap: wrap;
             margin-top: 15px;
-            padding: 12px;
-            background: rgba(0,0,0,0.4);
-            border-radius: 20px;
+            padding: 15px;
+            background: rgba(0,0,0,0.6);
+            border-radius: 30px;
         }
         .contract-detail span {
             font-family: monospace;
-            background: #2a0f3a;
-            padding: 6px 12px;
-            border-radius: 30px;
-            font-size: 0.85rem;
+            background: #1a1a2e;
+            padding: 8px 16px;
+            border-radius: 40px;
+            font-size: 0.9rem;
             word-break: break-all;
             flex: 1;
-            border: 1px solid #a066cc;
+            border: 1px solid #00ffff;
         }
         .contract-detail a {
-            color: #d9b0ff;
+            color: #ff80ff;
             text-decoration: none;
-            font-size: 0.9rem;
+            font-size: 1rem;
             display: inline-flex;
             align-items: center;
             gap: 5px;
@@ -313,69 +335,46 @@
         }
         .copy-btn {
             background: transparent;
-            border: 1px solid #bf7aff;
-            color: #e6ccff;
-            padding: 6px 14px;
+            border: 1px solid #00ffff;
+            color: #00ffff;
+            padding: 8px 18px;
             border-radius: 40px;
             cursor: pointer;
-            font-size: 0.8rem;
+            font-size: 0.9rem;
             transition: 0.2s;
         }
         .copy-btn:hover {
-            background: #bf7aff;
+            background: #00ffff;
             color: black;
         }
-        /* Panel admin (visible solo para owner) */
+        /* Panel admin */
         .admin-panel {
-            border-top: 2px solid #bf7aff;
+            border-top: 2px solid #00ffff;
             margin-top: 30px;
             padding-top: 20px;
         }
         .footer {
             text-align: center;
-            margin-top: 50px;
-            color: #aa99cc;
-            font-size: 0.8rem;
+            margin-top: 60px;
+            color: #aaa;
+            font-size: 0.9rem;
         }
-        /* Sección informativa (explicación del vault) */
-        .info-section {
-            background: rgba(128, 0, 255, 0.15);
-            border-radius: 24px;
-            padding: 20px;
-            margin: 20px 0;
-            border-left: 4px solid #bf7aff;
-            backdrop-filter: blur(4px);
-        }
-        .info-section h3 {
-            color: #e6ccff;
-            font-family: 'Playfair Display', serif;
-            font-style: italic;
-            margin-bottom: 12px;
-        }
-        .info-section p, .info-section li {
-            color: #d9c0ff;
-            line-height: 1.5;
-            font-size: 0.95rem;
-        }
-        .info-section ul {
-            list-style: none;
-            margin-top: 10px;
-        }
-        .info-section li {
-            margin-bottom: 8px;
-            padding-left: 24px;
-            position: relative;
-        }
-        .info-section li:before {
-            content: "✨";
-            position: absolute;
-            left: 0;
-            color: #bf7aff;
+        /* Imagen de fondo opcional (por si el video no carga) */
+        .fallback-image {
+            display: none;
         }
     </style>
 </head>
 <body>
-    <!-- Botones flotantes (Telegram y WhatsApp) -->
+    <!-- Video de fondo futurista (usamos un video de espacio/cibernético libre) -->
+    <!-- Si no se reproduce, se muestra la imagen de fondo -->
+    <video autoplay muted loop playsinline id="bg-video" poster="https://images.unsplash.com/photo-1541701494587-cb58502866ab?q=80&w=2070&auto=format&fit=crop">
+        <source src="https://videos.pexels.com/video-files/3129674/3129674-uhd_2560_1440_30fps.mp4" type="video/mp4">
+        <!-- Fallback: imagen de nebulosa -->
+    </video>
+    <div class="overlay"></div>
+
+    <!-- Botones flotantes de Telegram y WhatsApp -->
     <div class="floating-buttons">
         <a href="https://t.me/+z7wwfx0ocho1NzI5" target="_blank" class="floating-btn">
             <i class="fab fa-telegram-plane"></i> Telegram
@@ -387,11 +386,11 @@
 
     <div class="container">
         <div class="header">
-            <h1>⚡ MILIMAR_JAGC</h1>
-            <p>Vault de inversiones · BSC</p>
+            <h1>⚡ MILIMAR HYBRID VAULT</h1>
+            <p>Inversión automatizada del futuro · BSC</p>
         </div>
 
-        <!-- Conexión (único botón) -->
+        <!-- Conexión -->
         <div class="card" style="text-align: center;">
             <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px;">
                 <div>
@@ -410,11 +409,13 @@
             <p>Cargando datos...</p>
         </div>
 
-        <!-- Panel principal (visible al conectar) -->
+        <!-- Panel principal -->
         <div id="mainPanel" class="hidden">
             <!-- Estadísticas globales -->
             <div class="card">
-                <h2 style="display: flex; align-items: center; gap: 8px;"><i class="fas fa-chart-line" style="color: #bf7aff;"></i> Estado del fondo</h2>
+                <h2 style="display: flex; align-items: center; gap: 10px; font-family: 'Orbitron', sans-serif;">
+                    <i class="fas fa-chart-line" style="color: #00ffff;"></i> Estado del fondo
+                </h2>
                 <div class="stats-grid">
                     <div class="stat-item">
                         <div class="stat-label">Total activos</div>
@@ -431,32 +432,35 @@
                 </div>
             </div>
 
-            <!-- Sección informativa (explicación del vault) -->
-            <div class="info-section">
-                <h3><i class="fas fa-info-circle"></i> ¿Qué es esto?</h3>
-                <p>Fondo de inversión colectivo automatizado. Tu depósito se representa en "participaciones" (shares) cuyo valor aumenta con las ganancias generadas por estrategias DeFi.</p>
-                <ul>
-                    <li><strong>Mínimo:</strong> 10 USDT.</li>
-                    <li><strong>Acceso:</strong> Solo para miembros activos de Milimar (membresía vigente).</li>
-                    <li><strong>Comisión:</strong> 3% sobre ganancias, distribuida: 20% referidos, 30% liderazgo, 50% tesoro.</li>
-                    <li><strong>Seguridad:</strong> Roles, pausas granulares, timelock y modo emergencia.</li>
-                </ul>
-                <p style="margin-top: 8px; font-style: italic; color: #bf7aff;">Transparencia total · Contrato verificado en BscScan</p>
+            <!-- Sección informativa con imagen (placeholder) -->
+            <div class="card" style="display: flex; align-items: center; gap: 20px; flex-wrap: wrap;">
+                <div style="flex: 1; min-width: 200px;">
+                    <img src="https://images.unsplash.com/photo-1639762681485-074b7f938ba0?q=80&w=1932&auto=format&fit=crop" alt="Vault" style="width: 100%; border-radius: 30px; border: 2px solid #00ffff; box-shadow: 0 0 30px #00ffff;">
+                </div>
+                <div style="flex: 2;">
+                    <h3 style="color: #00ffff; font-family: 'Orbitron';">¿Qué es este vault?</h3>
+                    <p>Fondo de inversión colectivo automatizado. Tus USDT se convierten en participaciones (shares) que aumentan de valor con las ganancias generadas por estrategias DeFi de última generación.</p>
+                    <ul style="list-style: none; margin-top: 10px;">
+                        <li>✨ Acceso exclusivo para miembros activos de MilimarV5</li>
+                        <li>⚡ Ganancias reinvertidas automáticamente (interés compuesto)</li>
+                        <li>🔒 Seguridad con roles, pausas y modo emergencia</li>
+                    </ul>
+                </div>
             </div>
 
             <!-- Datos del usuario + recompensas -->
             <div class="grid-2">
                 <div class="card">
-                    <h3><i class="fas fa-user"></i> Mi posición</h3>
+                    <h3 style="color: #00ffff;"><i class="fas fa-user"></i> Mi posición</h3>
                     <p><strong>Mis participaciones:</strong> <span id="misShares">0</span></p>
                     <p><strong>Mi saldo (USDT):</strong> <span id="miSaldo">0.00</span></p>
                     <p><strong>Invitado por:</strong> <span id="miReferidor">0x...</span></p>
                     <p><strong>Preferencia bonos:</strong> <span id="preferenciaBono">RETIRAR</span></p>
                     <button class="btn btn-small btn-secondary" id="cambiarPreferenciaBtn">Cambiar preferencia</button>
                 </div>
-                <div class="card" style="border-left: 4px solid #bf7aff;">
-                    <h3 style="color: #e6ccff;"><i class="fas fa-gift"></i> Bonificación</h3>
-                    <p style="font-size: 2rem; font-weight: 700; color: #f3e5ff; text-shadow: 0 0 15px #bf7aff;" id="recompensasPendientes">0.00</p>
+                <div class="card" style="border-left: 4px solid #00ffff;">
+                    <h3 style="color: #00ffff;"><i class="fas fa-gift"></i> Bonificación</h3>
+                    <p style="font-size: 3rem; font-weight: 700; color: #00ffff; text-shadow: 0 0 30px #00ffff;" id="recompensasPendientes">0.00</p>
                     <p>USDT disponibles para reclamar</p>
                     <button class="btn btn-small" id="reclamarRecompensasBtn"><i class="fas fa-hand-holding-usd"></i> Reclamar</button>
                 </div>
@@ -492,12 +496,12 @@
                         <i class="fas fa-external-link-alt"></i> Ver en BscScan
                     </a>
                 </div>
-                <p style="margin-top: 10px; color: #ccb0ff;">Contrato verificado. Código fuente disponible.</p>
+                <p style="margin-top: 10px; color: #aaa;">Contrato verificado. Código fuente disponible.</p>
             </details>
 
-            <!-- Panel de administración (solo visible para owner) -->
+            <!-- Panel de administración (solo visible para quien tenga roles) -->
             <div id="adminPanel" class="card admin-panel hidden">
-                <h3 style="color: #e6ccff;"><i class="fas fa-crown"></i> Administración</h3>
+                <h3 style="color: #00ffff; font-family: 'Orbitron';"><i class="fas fa-crown"></i> Administración</h3>
                 <div class="grid-2">
                     <div>
                         <h4>Distribuir ganancia</h4>
@@ -565,7 +569,7 @@
                         <button class="btn btn-small btn-secondary" id="cancelarModoPublicoBtn">Cancelar</button>
                     </div>
                 </div>
-                <div style="margin-top: 15px;">
+                <div style="margin-top: 20px;">
                     <p><strong>Comisiones acumuladas:</strong> <span id="comisionesAcumuladas">0</span> USDT</p>
                     <p><strong>Pool de liderazgo:</strong> <span id="poolLiderazgo">0</span> USDT</p>
                     <p><strong>Pool de referidos:</strong> <span id="poolReferidos">0</span> USDT</p>
@@ -576,7 +580,7 @@
         </div>
 
         <div class="footer">
-            <p>Milimar Vault · Versión con roles y timelock · Diseño Neón</p>
+            <p>Milimar Hybrid Vault · Diseño futurista con video · Versión 2.0</p>
         </div>
     </div>
 
@@ -601,9 +605,6 @@
             "function depositosPausados() view returns (bool)",
             "function retirosPausados() view returns (bool)",
             "function recompensasPausadas() view returns (bool)",
-            "function maxTotalAssets() view returns (uint256)",
-            "function maxDepositoPorTx() view returns (uint256)",
-            "function maxRetiroPorTx() view returns (uint256)",
             "function hasRole(bytes32,address) view returns (bool)",
             "function ADMIN_ROLE() view returns (bytes32)",
             "function GUARDIAN_ROLE() view returns (bytes32)",
@@ -620,7 +621,6 @@
             "function pausarDepositos(bool) external",
             "function pausarRetiros(bool) external",
             "function pausarRecompensas(bool) external",
-            "function setLimites(uint256,uint256,uint256) external",
             "function activarEmergencia() external",
             "function desactivarEmergencia() external",
             "function retiroEmergencia() external",
@@ -710,7 +710,7 @@
                     signer = provider.getSigner();
                 }
 
-                connectionStatus.innerHTML = 'Conectado <i class="fas fa-check-circle" style="color:#b266ff;"></i>';
+                connectionStatus.innerHTML = 'Conectado <i class="fas fa-check-circle" style="color:#00ffff;"></i>';
                 accountDisplay.textContent = `${userAddress.slice(0,6)}...${userAddress.slice(-4)}`;
                 networkInfo.classList.remove('hidden');
                 networkName.textContent = 'BSC Mainnet';
@@ -848,7 +848,7 @@
 
         // Funciones de admin (solo se ejecutan si tiene rol)
         document.getElementById('distribuirGananciaBtn').addEventListener('click', async () => {
-            if (!isAdmin) { showMessage('No tienes permisos', 'error'); return; }
+            if (!isAdmin && !isGuardian) { showMessage('No tienes permisos', 'error'); return; }
             try {
                 const profit = document.getElementById('profitAmount').value;
                 if (!profit || parseFloat(profit) <= 0) throw new Error('Ganancia inválida');
@@ -942,6 +942,7 @@
                 showMessage('Cambiando estado...', 'info');
                 await tx.wait();
                 showMessage('✅ Estado cambiado', 'success');
+                await loadAllData();
             } catch (error) {
                 showMessage('Error: ' + error.message, 'error');
             }
@@ -955,6 +956,7 @@
                 showMessage('Cambiando estado...', 'info');
                 await tx.wait();
                 showMessage('✅ Estado cambiado', 'success');
+                await loadAllData();
             } catch (error) {
                 showMessage('Error: ' + error.message, 'error');
             }
@@ -968,6 +970,7 @@
                 showMessage('Cambiando estado...', 'info');
                 await tx.wait();
                 showMessage('✅ Estado cambiado', 'success');
+                await loadAllData();
             } catch (error) {
                 showMessage('Error: ' + error.message, 'error');
             }
@@ -1064,4 +1067,4 @@
         });
     </script>
 </body>
-</html>
+    </html>
