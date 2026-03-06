@@ -54,7 +54,7 @@
             position: relative;
             z-index: 1;
         }
-        /* Header con tipografía futurista */
+        /* Header con tipografía futurista y título escalonado */
         .header {
             text-align: center;
             margin-bottom: 40px;
@@ -62,15 +62,23 @@
         }
         .header h1 {
             font-family: 'Orbitron', sans-serif;
-            font-size: 3.5rem;
+            font-size: 2.8rem;
             font-weight: 900;
             background: linear-gradient(135deg, #00ffff, #aa80ff, #ff80ff);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             text-shadow: 0 0 30px rgba(0, 255, 255, 0.7);
-            letter-spacing: 4px;
-            margin-bottom: 10px;
+            letter-spacing: 2px;
+            margin-bottom: 5px;
             animation: glow 3s ease-in-out infinite;
+            line-height: 1.2;
+        }
+        .header h1 span {
+            display: block;
+            font-size: 2rem;
+            margin-top: 5px;
+            color: #ff80ff;
+            text-shadow: 0 0 20px #ff80ff;
         }
         @keyframes glow {
             0% { filter: drop-shadow(0 0 5px #00ffff); }
@@ -87,6 +95,33 @@
             backdrop-filter: blur(10px);
             border: 1px solid rgba(0, 255, 255, 0.3);
             box-shadow: 0 0 20px rgba(0, 255, 255, 0.3);
+            margin-top: 15px;
+        }
+        /* Tarjeta de advertencia de riesgos */
+        .risk-warning {
+            background: rgba(255, 50, 50, 0.2);
+            border-left: 6px solid #ff3366;
+            border-radius: 20px;
+            padding: 20px 25px;
+            margin-bottom: 30px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 0 30px rgba(255, 50, 50, 0.3);
+            border: 1px solid rgba(255, 80, 80, 0.4);
+        }
+        .risk-warning i {
+            color: #ff6666;
+            font-size: 2rem;
+            margin-right: 15px;
+            vertical-align: middle;
+        }
+        .risk-warning strong {
+            color: #ff9999;
+            font-size: 1.3rem;
+        }
+        .risk-warning p {
+            margin-top: 10px;
+            color: #ffcccc;
+            font-size: 1rem;
         }
         /* Botones flotantes de redes sociales */
         .floating-buttons {
@@ -221,7 +256,10 @@
                 grid-template-columns: 1fr;
             }
             .header h1 {
-                font-size: 2.5rem;
+                font-size: 2.2rem;
+            }
+            .header h1 span {
+                font-size: 1.6rem;
             }
         }
         /* Formularios */
@@ -296,6 +334,7 @@
             cursor: pointer;
             font-size: 1.1rem;
             font-family: 'Orbitron', sans-serif;
+            outline: none;
         }
         summary i {
             margin-right: 12px;
@@ -359,18 +398,46 @@
             color: #aaa;
             font-size: 0.9rem;
         }
-        /* Imagen de fondo opcional (por si el video no carga) */
-        .fallback-image {
-            display: none;
+        /* Lista de características */
+        .feature-list {
+            list-style: none;
+            margin: 15px 0;
+        }
+        .feature-list li {
+            margin-bottom: 10px;
+            padding-left: 30px;
+            position: relative;
+            color: #ddd;
+        }
+        .feature-list li:before {
+            content: "▹";
+            position: absolute;
+            left: 0;
+            color: #00ffff;
+            font-size: 1.2rem;
+        }
+        .risk-list {
+            list-style: none;
+            margin: 15px 0;
+        }
+        .risk-list li {
+            margin-bottom: 10px;
+            padding-left: 30px;
+            position: relative;
+            color: #ffb3b3;
+        }
+        .risk-list li:before {
+            content: "⚠️";
+            position: absolute;
+            left: 0;
+            color: #ff6666;
         }
     </style>
 </head>
 <body>
-    <!-- Video de fondo futurista (usamos un video de espacio/cibernético libre) -->
-    <!-- Si no se reproduce, se muestra la imagen de fondo -->
+    <!-- Video de fondo futurista -->
     <video autoplay muted loop playsinline id="bg-video" poster="https://images.unsplash.com/photo-1541701494587-cb58502866ab?q=80&w=2070&auto=format&fit=crop">
         <source src="https://videos.pexels.com/video-files/3129674/3129674-uhd_2560_1440_30fps.mp4" type="video/mp4">
-        <!-- Fallback: imagen de nebulosa -->
     </video>
     <div class="overlay"></div>
 
@@ -386,8 +453,17 @@
 
     <div class="container">
         <div class="header">
-            <h1>⚡ MILIMAR HYBRID VAULT</h1>
-            <p>Inversión automatizada del futuro · BSC</p>
+            <h1>📈 MILIMAR_JAGC_HYBRIDVAULT_BAÚL 📊</h1>
+            <p>Inversiones automatizadas: arbitraje · farming · portafolio diversificado</p>
+        </div>
+
+        <!-- Tarjeta de advertencia de riesgos -->
+        <div class="risk-warning">
+            <div style="display: flex; align-items: center; flex-wrap: wrap; gap: 10px;">
+                <i class="fas fa-exclamation-triangle"></i>
+                <strong>⚠️ RIESGO ALTO ⚠️</strong>
+            </div>
+            <p>No inviertas dinero que no estés dispuesto a perder. Las ganancias son variables y no están garantizadas. Esta no es una asesoría financiera. Los rendimientos pasados no aseguran resultados futuros.</p>
         </div>
 
         <!-- Conexión -->
@@ -432,22 +508,6 @@
                 </div>
             </div>
 
-            <!-- Sección informativa con imagen (placeholder) -->
-            <div class="card" style="display: flex; align-items: center; gap: 20px; flex-wrap: wrap;">
-                <div style="flex: 1; min-width: 200px;">
-                    <img src="https://images.unsplash.com/photo-1639762681485-074b7f938ba0?q=80&w=1932&auto=format&fit=crop" alt="Vault" style="width: 100%; border-radius: 30px; border: 2px solid #00ffff; box-shadow: 0 0 30px #00ffff;">
-                </div>
-                <div style="flex: 2;">
-                    <h3 style="color: #00ffff; font-family: 'Orbitron';">¿Qué es este vault?</h3>
-                    <p>Fondo de inversión colectivo automatizado. Tus USDT se convierten en participaciones (shares) que aumentan de valor con las ganancias generadas por estrategias DeFi de última generación.</p>
-                    <ul style="list-style: none; margin-top: 10px;">
-                        <li>✨ Acceso exclusivo para miembros activos de MilimarV5</li>
-                        <li>⚡ Ganancias reinvertidas automáticamente (interés compuesto)</li>
-                        <li>🔒 Seguridad con roles, pausas y modo emergencia</li>
-                    </ul>
-                </div>
-            </div>
-
             <!-- Datos del usuario + recompensas -->
             <div class="grid-2">
                 <div class="card">
@@ -486,17 +546,45 @@
                 </div>
             </div>
 
-            <!-- Detalles del contrato (acordeón) -->
+            <!-- Acordeón: Características, riesgos y detalles del contrato -->
             <details>
-                <summary><i class="fas fa-code"></i> Detalles del contrato</summary>
-                <div class="contract-detail">
-                    <span id="contractAddressDisplay">0x81EbAFA4E7540A3e5b0990E20876af103dC1fd2d</span>
-                    <button class="copy-btn" id="copyAddressBtn"><i class="fas fa-copy"></i> Copiar</button>
-                    <a href="https://bscscan.com/address/0x81EbAFA4E7540A3e5b0990E20876af103dC1fd2d" target="_blank">
-                        <i class="fas fa-external-link-alt"></i> Ver en BscScan
-                    </a>
+                <summary><i class="fas fa-code"></i> Características, riesgos y detalles del contrato</summary>
+                
+                <!-- Características del vault -->
+                <div style="margin-top: 20px;">
+                    <h4 style="color: #00ffff; font-family: 'Orbitron';">🚀 Estrategias de inversión</h4>
+                    <ul class="feature-list">
+                        <li><strong>Arbitraje en DEX:</strong> Compra y venta simultánea en PancakeSwap, Biswap y otros para capturar diferencias de precio.</li>
+                        <li><strong>Farming automatizado:</strong> Asignación de liquidez en pools de alto rendimiento con reinversión automática.</li>
+                        <li><strong>Préstamos flash:</strong> Operaciones sin capital propio que generan ganancias sin riesgo de pérdida.</li>
+                        <li><strong>Portafolio diversificado:</strong> Distribución del fondo en múltiples protocolos para minimizar riesgos.</li>
+                    </ul>
                 </div>
-                <p style="margin-top: 10px; color: #aaa;">Contrato verificado. Código fuente disponible.</p>
+
+                <!-- Riesgos específicos -->
+                <div style="margin-top: 20px;">
+                    <h4 style="color: #ff6666; font-family: 'Orbitron';">⚠️ Riesgos asociados</h4>
+                    <ul class="risk-list">
+                        <li><strong>Pérdida de capital:</strong> El valor de tu inversión puede disminuir.</li>
+                        <li><strong>Riesgo de mercado:</strong> La volatilidad de los criptoactivos puede generar pérdidas.</li>
+                        <li><strong>Riesgo tecnológico:</strong> Posibles bugs en contratos inteligentes o ataques.</li>
+                        <li><strong>Riesgo de liquidez:</strong> En momentos de alta demanda, los retiros pueden demorarse.</li>
+                        <li><strong>Rendimientos variables:</strong> No hay garantía de ganancias; pueden ser positivas, nulas o negativas.</li>
+                    </ul>
+                </div>
+
+                <!-- Detalles del contrato -->
+                <div style="margin-top: 20px;">
+                    <h4 style="color: #00ffff; font-family: 'Orbitron';">🔗 Contrato inteligente</h4>
+                    <div class="contract-detail">
+                        <span id="contractAddressDisplay">0x81EbAFA4E7540A3e5b0990E20876af103dC1fd2d</span>
+                        <button class="copy-btn" id="copyAddressBtn"><i class="fas fa-copy"></i> Copiar</button>
+                        <a href="https://bscscan.com/address/0x81EbAFA4E7540A3e5b0990E20876af103dC1fd2d" target="_blank">
+                            <i class="fas fa-external-link-alt"></i> Ver en BscScan
+                        </a>
+                    </div>
+                    <p style="margin-top: 10px; color: #aaa;">Contrato verificado. Código fuente disponible en BscScan.</p>
+                </div>
             </details>
 
             <!-- Panel de administración (solo visible para quien tenga roles) -->
@@ -580,7 +668,7 @@
         </div>
 
         <div class="footer">
-            <p>Milimar Hybrid Vault · Diseño futurista con video · Versión 2.0</p>
+            <p>Milimar Hybrid Vault · Diseño futurista · Versión 3.0</p>
         </div>
     </div>
 
@@ -589,7 +677,7 @@
         const CONTRACT_ADDRESS = "0x81EbAFA4E7540A3e5b0990E20876af103dC1fd2d";
         const BSC_MAINNET_CHAIN_ID = 56;
 
-        // ABI completo del nuevo contrato (incluye todas las funciones)
+        // ABI completo del contrato
         const CONTRACT_ABI = [
             "function totalShares() view returns (uint256)",
             "function totalActivos() view returns (uint256)",
@@ -717,7 +805,6 @@
 
                 contract = new ethers.Contract(CONTRACT_ADDRESS, CONTRACT_ABI, signer);
 
-                // Verificar roles
                 const adminRole = await contract.ADMIN_ROLE();
                 const guardianRole = await contract.GUARDIAN_ROLE();
                 isAdmin = await contract.hasRole(adminRole, userAddress);
@@ -748,7 +835,6 @@
 
         async function loadAllData() {
             try {
-                // Datos globales
                 const totalShares = await contract.totalShares();
                 const totalActivos = await contract.totalActivos();
                 const precioShare = await contract.precioShare();
@@ -756,7 +842,6 @@
                 document.getElementById('totalActivos').textContent = formatUSDT(totalActivos) + ' USDT';
                 document.getElementById('precioShare').textContent = formatUSDT(precioShare);
 
-                // Datos del usuario
                 const sharesUser = await contract.shares(userAddress);
                 const saldoUser = await contract.saldoDe(userAddress);
                 const recompensas = await contract.recompensasPendientesReferidor(userAddress);
@@ -768,7 +853,6 @@
                 document.getElementById('preferenciaBono').textContent = preferencia === 0 ? 'RETIRAR' : 'INVERTIR';
                 document.getElementById('miReferidor').textContent = referido === ethers.constants.AddressZero ? 'Ninguno' : referido.slice(0,6) + '...' + referido.slice(-4);
 
-                // Panel admin (si tiene algún rol)
                 if (isAdmin || isGuardian) {
                     adminPanel.classList.remove('hidden');
                     const comisiones = await contract.comisionesAcumuladas();
@@ -791,7 +875,6 @@
 
         connectBtn.addEventListener('click', connect);
 
-        // Funciones de usuario
         document.getElementById('depositarAutoBtn').addEventListener('click', async () => {
             try {
                 const amount = document.getElementById('depositAmount').value;
@@ -933,7 +1016,6 @@
             }
         });
 
-        // Pausas (requiere GUARDIAN_ROLE o ADMIN)
         document.getElementById('pausarDepositosBtn').addEventListener('click', async () => {
             if (!isGuardian && !isAdmin) { showMessage('No tienes permisos', 'error'); return; }
             try {
@@ -976,7 +1058,6 @@
             }
         });
 
-        // Emergencia
         document.getElementById('activarEmergenciaBtn').addEventListener('click', async () => {
             if (!isGuardian && !isAdmin) { showMessage('No tienes permisos', 'error'); return; }
             try {
@@ -1015,7 +1096,6 @@
             }
         });
 
-        // Modo público (solo ADMIN)
         document.getElementById('iniciarModoPublicoBtn').addEventListener('click', async () => {
             if (!isAdmin) { showMessage('No tienes permisos', 'error'); return; }
             try {
@@ -1055,7 +1135,6 @@
             }
         });
 
-        // Copiar dirección
         copyAddressBtn.addEventListener('click', () => {
             navigator.clipboard.writeText(CONTRACT_ADDRESS).then(() => {
                 showMessage('Dirección copiada', 'success');
