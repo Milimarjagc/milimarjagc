@@ -3,9 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
-    <title>Milimar Turbo · Edición Neón</title>
+    <title>Milimar Turbo · Edición Definitiva</title>
     <!-- Fuentes futuristas -->
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <!-- Font Awesome para iconos -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/6.7.0/ethers.umd.min.js"></script>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -62,6 +64,14 @@
             text-shadow: 0 0 30px rgba(0, 255, 255, 0.7);
             letter-spacing: 2px;
         }
+        .slogan {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.9rem;
+            color: #ff80ff;
+            text-shadow: 0 0 15px #ff80ff;
+            margin-top: 5px;
+            font-style: italic;
+        }
         .header p {
             font-size: 0.8rem;
             color: #ccc;
@@ -74,6 +84,37 @@
             box-shadow: 0 0 20px rgba(0, 255, 255, 0.3);
             margin-top: 10px;
             word-break: break-all;
+        }
+        /* Botones flotantes */
+        .floating-buttons {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            display: flex;
+            gap: 15px;
+            z-index: 100;
+        }
+        .floating-btn {
+            background: rgba(0, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            border: 1px solid #00ffff;
+            color: white;
+            padding: 10px 22px;
+            border-radius: 60px;
+            font-size: 0.9rem;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: 0.3s;
+            font-weight: 600;
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.5);
+        }
+        .floating-btn:hover {
+            background: #00ffff;
+            color: black;
+            box-shadow: 0 0 40px #00ffff;
+            transform: scale(1.05);
         }
         .toast {
             background: rgba(0, 255, 255, 0.2);
@@ -258,7 +299,7 @@
             color: #0a0a0a;
         }
         .hidden { display: none; }
-        .flex-row { display: flex; gap: 10px; }
+        .flex-row { display: flex; gap: 10px; flex-wrap: wrap; }
         hr { border: none; border-top: 1px solid rgba(0, 255, 255, 0.3); margin: 15px 0; }
         .collapsible-header {
             cursor: pointer;
@@ -277,16 +318,77 @@
         .collapsible-content.show {
             display: block;
         }
+        /* Tarjeta de retiro express */
         .express-notice {
             background: rgba(255, 0, 128, 0.2);
-            border: 1px solid #ff00ff;
+            border: 2px solid #ff00ff;
             border-radius: 24px;
             padding: 15px;
-            margin-top: 15px;
+            margin: 15px 0;
             box-shadow: 0 0 30px #ff00ff;
+            text-align: center;
         }
         .express-notice strong {
             color: #ff80ff;
+            font-size: 1.1rem;
+        }
+        .express-notice .highlight {
+            color: #00ffff;
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+        /* Tarjeta de características */
+        .features-card {
+            background: rgba(0, 255, 255, 0.1);
+            border: 1px solid #00ffff;
+            border-radius: 24px;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+        .features-card summary {
+            color: #00ffff;
+            font-weight: bold;
+            cursor: pointer;
+            list-style: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .features-card summary i {
+            font-size: 1.2rem;
+        }
+        .features-card[open] {
+            background: rgba(0, 255, 255, 0.15);
+        }
+        .risk-warning {
+            background: rgba(255, 50, 50, 0.2);
+            border-left: 4px solid #ff3366;
+            border-radius: 20px;
+            padding: 15px;
+            margin-bottom: 15px;
+            font-size: 0.8rem;
+            color: #ffcccc;
+        }
+        .risk-warning i {
+            color: #ff6666;
+            margin-right: 8px;
+        }
+        .bsc-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            background: rgba(0, 255, 255, 0.2);
+            border: 1px solid #00ffff;
+            border-radius: 60px;
+            padding: 5px 15px;
+            font-size: 0.7rem;
+            color: #00ffff;
+            text-decoration: none;
+            margin: 5px;
+        }
+        .bsc-link:hover {
+            background: #00ffff;
+            color: black;
         }
         #adminPanel, #walkerPanel { display: none; }
         .admin-panel { border-color: #238636; }
@@ -300,14 +402,51 @@
     </video>
     <div class="neon-overlay"></div>
 
+    <!-- Botones flotantes de Telegram y WhatsApp -->
+    <div class="floating-buttons">
+        <a href="https://t.me/+z7wwfx0ocho1NzI5" target="_blank" class="floating-btn">
+            <i class="fab fa-telegram-plane"></i> Telegram
+        </a>
+        <a href="https://whatsapp.com/channel/0029Vb74Mxr3LdQVgWdycV2a" target="_blank" class="floating-btn">
+            <i class="fab fa-whatsapp"></i> WhatsApp
+        </a>
+    </div>
+
     <div class="container">
         <div class="header">
             <h1>🚀 MILIMAR TURBO</h1>
+            <div class="slogan">⚡ El contrato es la ley, la comunidad es la fuerza ⚡</div>
             <p id="myAddress">No Conectado</p>
             <button id="btnConnect" class="btn btn-gold">🔌 CONECTAR WALLET</button>
         </div>
 
         <div id="toast" class="toast"></div>
+
+        <!-- Enlaces rápidos: BscScan -->
+        <div style="text-align: center; margin-bottom: 15px;">
+            <a href="https://bscscan.com/address/0xc4158596B8F8E1cE337861dE0eCDc0c3045DbE88" target="_blank" class="bsc-link">
+                <i class="fas fa-link"></i> Ver contrato en BscScan
+            </a>
+        </div>
+
+        <!-- Tarjeta de características (desplegable) -->
+        <details class="features-card">
+            <summary><i class="fas fa-info-circle"></i> Características del contrato</summary>
+            <ul style="margin-top: 10px; list-style: none; padding-left: 0;">
+                <li><i class="fas fa-check-circle" style="color:#00ffff;"></i> <strong>Seguridad:</strong> Contabilidad separada, fondos de inversores aislados de comisiones.</li>
+                <li><i class="fas fa-check-circle" style="color:#00ffff;"></i> <strong>Transparencia:</strong> Todos los movimientos son públicos y verificables en BscScan.</li>
+                <li><i class="fas fa-check-circle" style="color:#00ffff;"></i> <strong>Rendimiento:</strong> 70% de las ganancias se reinvierten automáticamente.</li>
+                <li><i class="fas fa-check-circle" style="color:#00ffff;"></i> <strong>Gobernanza:</strong> Roles de Admin y Walker para operaciones de trading.</li>
+                <li><i class="fas fa-check-circle" style="color:#00ffff;"></i> <strong>Protección:</strong> Timelock de 24h para retiros de tesorería.</li>
+                <li><i class="fas fa-check-circle" style="color:#00ffff;"></i> <strong>Límites:</strong> Control de riesgo con límite del 80% del TVL en trading.</li>
+            </ul>
+        </details>
+
+        <!-- Advertencia de riesgo -->
+        <div class="risk-warning">
+            <i class="fas fa-exclamation-triangle"></i> <strong>⚠️ ALTO RIESGO ⚠️</strong><br>
+            El copy trading en mercados reales implica riesgo de pérdida de capital. Los resultados pasados no garantizan ganancias futuras. Invierte solo lo que estés dispuesto a perder.
+        </div>
 
         <div id="mainApp" class="hidden">
             <!-- Pestañas -->
@@ -365,13 +504,13 @@
                         <button id="btnWithdraw" class="btn btn-outline">💸 RETIRAR</button>
                     </div>
 
-                    <!-- Notificación de retiro express (destacada) -->
+                    <!-- Tarjeta de retiro express (visible cuando hay bloqueo) -->
                     <div id="expressNotice" class="express-notice" style="display:none;">
                         <strong>⚡ RETIRO EXPRESS ⚡</strong><br>
-                        Si retiras antes de 7 días:<br>
-                        • Se aplica una comisión del <b style="color:#ff80ff;">10%</b><br>
-                        • El retiro se procesará en <b style="color:#ff80ff;">24 horas</b><br>
-                        <span style="font-size:1.2rem; color:#00ffff;">Recibirás: <span id="calcReceive">0.00</span> USDT</span>
+                        <span style="font-size:0.9rem;">Si retiras antes de los 7 días:</span><br>
+                        <span class="highlight">Comisión: 10%</span><br>
+                        <span class="highlight">Plazo de desembolso: 24 horas</span><br>
+                        <span style="font-size:1rem;">Recibirás: <span id="calcReceive">0.00</span> USDT</span>
                     </div>
 
                     <div style="background: rgba(50, 100, 255, 0.1); margin-top:20px; padding:15px; border-radius:20px; border-left: 4px solid #3291ff;">
@@ -467,7 +606,7 @@
         </div>
 
         <div style="text-align:center; font-size:0.6rem; color:#aaa; margin-top:30px;">
-            Milimar Turbo V11 · Edición Neón
+            Milimar Turbo · Versión Definitiva
         </div>
     </div>
 
@@ -545,6 +684,9 @@
         const tabAdmin = document.getElementById('tabAdmin');
         const globalHeader = document.getElementById('globalHeader');
         const globalContent = document.getElementById('globalContent');
+        const expressNotice = document.getElementById('expressNotice');
+        const calcReceive = document.getElementById('calcReceive');
+        const amtOp = document.getElementById('amtOp');
 
         // =============== FUNCIONES AUXILIARES ===============
         function showToast(msg, isError = false) {
@@ -656,17 +798,17 @@
                 document.getElementById('stTimer').innerText = lockSec > 0 ? formatTime(lockSec) : 'AHORA LIBRE ✅';
 
                 // Calculadora de retiro express
-                const amtInput = document.getElementById('amtOp');
-                const notice = document.getElementById('expressNotice');
-                amtInput.oninput = (e) => {
-                    const amt = parseFloat(e.target.value);
-                    if (amt >= 5 && lockSec > 0) {
-                        notice.style.display = 'block';
-                        document.getElementById('calcReceive').innerText = (amt * 0.9).toFixed(2);
-                    } else {
-                        notice.style.display = 'none';
-                    }
-                };
+                if (amtOp) {
+                    amtOp.oninput = (e) => {
+                        const amt = parseFloat(e.target.value);
+                        if (amt >= 5 && lockSec > 0) {
+                            expressNotice.style.display = 'block';
+                            calcReceive.innerText = (amt * 0.9).toFixed(2);
+                        } else {
+                            expressNotice.style.display = 'none';
+                        }
+                    };
+                }
 
                 // Datos de configuración
                 const minDep = await contract.minimoDeposito();
@@ -1048,4 +1190,4 @@
         });
     </script>
 </body>
-    </html>
+</html>
