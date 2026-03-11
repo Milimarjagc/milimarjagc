@@ -1,42 +1,128 @@
-// Configuración Básica
-const contractAddress = "0xc4158596B8F8E1cE337861dE0eCDc0c3045DbE88";
-const usdtAddress = "0x55d398326f99059fF775485246999027B3197955";
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Milimar Turbo Vault - Dashboard</title>
+    <!-- Cargamos la librería Ethers.js directamente -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/6.7.0/index.umd.min.js"></script>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #0d1117; color: white; text-align: center; padding: 20px; }
+        .card { background: #161b22; border-radius: 15px; padding: 20px; margin: 15px auto; max-width: 400px; border: 1px solid #30363d; box-shadow: 0 4px 10px rgba(0,0,0,0.5); }
+        .btn { background-color: #238636; color: white; border: none; padding: 12px 24px; border-radius: 6px; cursor: pointer; font-size: 16px; margin-top: 10px; width: 100%; }
+        .btn:hover { background-color: #2ea043; }
+        .val { font-size: 24px; font-weight: bold; color: #58a6ff; margin: 10px 0; }
+        .status { font-size: 14px; color: #8b949e; }
+        #log { margin-top: 20px; font-size: 12px; color: #f0883e; }
+    </style>
+</head>
+<body>
 
-// El ABI simplificado para el usuario (solo funciones de lectura y deposito)
-const abi = [
-    "function deposit(uint256 assets, address receiver) public returns (uint256)",
-    "function getVaultDashboard(address _user) external view returns (uint256 capitalUsdt, uint256 residualLider, bool calificadoParaProfit, uint256 cronometroLock, uint256 sharePrice)",
-    "function balanceOf(address account) public view returns (uint256)",
-    "function approve(address spender, uint256 amount) public returns (bool)"
-];
+    <h1>🚀 Milimar Turbo Vault</h1>
+    
+    <!-- BOTÓN DE CONEXIÓN -->
+    <button id="connectBtn" class="btn">Conectar Billetera</button>
+    <p id="userAddress" class="status">Billetera no conectada</p>
 
-async function cargarDatosUsuario() {
-    if (typeof window.ethereum !== 'undefined') {
-        const provider = new ethers.BrowserProvider(window.ethereum);
-        const signer = await provider.getSigner();
-        const address = await signer.getAddress();
+    <!-- DASHBOARD DE USUARIO -->
+    <div class="card">
+        <h3>Tu Capital Invertido</h3>
+        <div id="balanceText" class="val">0.00 USDT</div>
+        <p class="status">Retiro sin multa en: <span id="lockText">0d 0h</span></p>
+    </div>
+
+    <div class="card" style="border-color: #f0883e;">
+        <h3>Comisiones Líder (8%)</h3>
+        <div id="residualText" class="val" style="color: #f0883e;">0.00 USDT</div>
+        <button id="claimBtn" class="btn" style="background-color: #f0883e;">Reclamar Ahora</button>
+    </div>
+
+    <div class="card">
+        <h3>Estado de Ganancias</h3>
+        <div id="statusText" class="val" style="color: #2ea043;">ESPERANDO CONEXIÓN</div>
+        <p class="status">Recuerda activar tu membresía Milimar V5</p>
+    </div>
+
+    <div id="log"></div>
+
+    <script>
+        const contractAddress = "0xc4158596B8F8E1cE337861dE0eCDc0c3045DbE88";
         
-        const contract = new ethers.Contract(contractAddress, abi, signer);
+        // El ABI que el navegador entiende
+        const abi = [
+            "function getVaultDashboard(address _user) external view returns (uint256 capitalUsdt, uint256 residualLider, bool calificadoParaProfit, uint256 cronometroLock, uint256 sharePrice)",
+            "function claimLeaderRewards() external"
+        ];
 
-        try {
-            // Llamamos a la función mágica que creamos para el dashboard
-            const data = await contract.getVaultDashboard(address);
+        let provider, signer, contract;
 
-            // Traduciendo los datos para mostrarlos en la web
-            const balance = ethers.formatUnits(data.capitalUsdt, 18);
-            const residual = ethers.formatUnits(data.residualLider, 18);
-            const calificado = data.calificadoParaProfit ? "SÍ ✅" : "ESPERANDO (24h) ⏳";
-            const tiempoSegundos = Number(data.cronometroLock);
-            const diasFaltantes = (tiempoSegundos / 86400).toFixed(1);
-
-            // Inyectar estos valores en tu HTML
-            document.getElementById('balanceText').innerText = `$${balance} USDT`;
-            document.getElementById('residualText').innerText = `$${residual} USDT`;
-            document.getElementById('statusText').innerText = calificado;
-            document.getElementById('lockText').innerText = diasFaltantes + " días";
-
-        } catch (error) {
-            console.error("Error al cargar datos:", error);
+        async function connect() {
+            if (window.ethereum) {
+                try {
+                    provider = new ethers.BrowserProvider(window.ethereum);
+                    await provider.send("eth_requestAccounts", []);
+                    signer = await provider.getSigner();
+                    const address = await signer.getAddress();
+                    
+                    document.getElementById('userAddress').innerText = "Conectado: " + address.substring(0,6) + "..." + address.substring(38);
+                    document.getElementById('connectBtn').style.display = "none";
+                    
+                    contract = new ethers.Contract(contractAddress, abi, signer);
+                    cargarDatos(address);
+                } catch (err) {
+                    mostrarError("Error al conectar: " + err.message);
+                }
+            } else {
+                mostrarError("Instala MetaMask o usa una wallet Web3");
+            }
         }
-    }
-}
+
+        async function cargarDatos(address) {
+            try {
+                // LLAMADA AL CONTRATO (Botón Azul 21)
+                const data = await contract.getVaultDashboard(address);
+                
+                // Procesar USDT (18 decimales)
+                const balance = ethers.formatUnits(data[0], 18);
+                const residual = ethers.formatUnits(data[1], 18);
+                const calificado = data[2] ? "SÍ (Activo) ✅" : "MADURANDO (24h) ⏳";
+                
+                // Procesar tiempo de retiro
+                const totalSegundos = Number(data[3]);
+                const dias = Math.floor(totalSegundos / 86400);
+                const horas = Math.floor((totalSegundos % 86400) / 3600);
+
+                // Inyectar en la web
+                document.getElementById('balanceText').innerText = `${parseFloat(balance).toFixed(2)} USDT`;
+                document.getElementById('residualText').innerText = `${parseFloat(residual).toFixed(2)} USDT`;
+                document.getElementById('statusText').innerText = calificado;
+                document.getElementById('lockText').innerText = `${dias}d ${horas}h`;
+
+            } catch (err) {
+                mostrarError("Error al leer datos del contrato.");
+                console.error(err);
+            }
+        }
+
+        function mostrarError(msg) {
+            document.getElementById('log').innerText = msg;
+        }
+
+        document.getElementById('connectBtn').onclick = connect;
+
+        // BOTÓN RECLAMAR
+        document.getElementById('claimBtn').onclick = async () => {
+            try {
+                const tx = await contract.claimLeaderRewards();
+                mostrarError("Procesando retiro... espera confirmación");
+                await tx.wait();
+                mostrarError("¡Retiro exitoso!");
+                location.reload();
+            } catch (err) {
+                mostrarError("Error: " + (err.reason || "Reclamo fallido. ¿Estás activo en V5?"));
+            }
+        };
+
+    </script>
+</body>
+</html>
