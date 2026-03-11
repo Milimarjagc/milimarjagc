@@ -6,7 +6,7 @@
     <title>Milimar Turbo · Edición Definitiva</title>
     <!-- Fuentes futuristas -->
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
-    <!-- Font Awesome para iconos -->
+    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/6.7.0/ethers.umd.min.js"></script>
     <style>
@@ -337,15 +337,15 @@
             font-size: 1.2rem;
             font-weight: bold;
         }
-        /* Tarjeta de características */
-        .features-card {
+        /* Acordeones personalizados */
+        details.acordeon {
             background: rgba(0, 255, 255, 0.1);
             border: 1px solid #00ffff;
             border-radius: 24px;
-            padding: 15px;
+            padding: 10px 15px;
             margin-bottom: 15px;
         }
-        .features-card summary {
+        details.acordeon summary {
             color: #00ffff;
             font-weight: bold;
             cursor: pointer;
@@ -354,24 +354,11 @@
             align-items: center;
             gap: 10px;
         }
-        .features-card summary i {
+        details.acordeon summary i {
             font-size: 1.2rem;
         }
-        .features-card[open] {
+        details.acordeon[open] {
             background: rgba(0, 255, 255, 0.15);
-        }
-        .risk-warning {
-            background: rgba(255, 50, 50, 0.2);
-            border-left: 4px solid #ff3366;
-            border-radius: 20px;
-            padding: 15px;
-            margin-bottom: 15px;
-            font-size: 0.8rem;
-            color: #ffcccc;
-        }
-        .risk-warning i {
-            color: #ff6666;
-            margin-right: 8px;
         }
         .bsc-link {
             display: inline-flex;
@@ -393,6 +380,9 @@
         #adminPanel, #walkerPanel { display: none; }
         .admin-panel { border-color: #238636; }
         .walker-panel { border-color: #b58900; }
+        /* Estado pre-conexión */
+        #preConnect { display: block; }
+        #mainApp { display: none; }
     </style>
 </head>
 <body>
@@ -422,33 +412,62 @@
 
         <div id="toast" class="toast"></div>
 
-        <!-- Enlaces rápidos: BscScan -->
-        <div style="text-align: center; margin-bottom: 15px;">
-            <a href="https://bscscan.com/address/0xc4158596B8F8E1cE337861dE0eCDc0c3045DbE88" target="_blank" class="bsc-link">
-                <i class="fas fa-link"></i> Ver contrato en BscScan
-            </a>
+        <!-- SECCIÓN PRE-CONEXIÓN (solo visible antes de conectar) -->
+        <div id="preConnect">
+            <!-- Enlace a BscScan -->
+            <div style="text-align: center; margin-bottom: 15px;">
+                <a href="https://bscscan.com/address/0xc4158596B8F8E1cE337861dE0eCDc0c3045DbE88" target="_blank" class="bsc-link">
+                    <i class="fas fa-link"></i> Ver contrato en BscScan
+                </a>
+            </div>
+
+            <!-- Características del contrato (acordeón) -->
+            <details class="acordeon">
+                <summary><i class="fas fa-info-circle"></i> Características del contrato</summary>
+                <ul style="margin-top: 10px; list-style: none; padding-left: 0;">
+                    <li><i class="fas fa-check-circle" style="color:#00ffff;"></i> <strong>Seguridad:</strong> Contabilidad separada, fondos de inversores aislados de comisiones.</li>
+                    <li><i class="fas fa-check-circle" style="color:#00ffff;"></i> <strong>Transparencia:</strong> Todos los movimientos son públicos y verificables en BscScan.</li>
+                    <li><i class="fas fa-check-circle" style="color:#00ffff;"></i> <strong>Rendimiento:</strong> 70% de las ganancias se reinvierten automáticamente.</li>
+                    <li><i class="fas fa-check-circle" style="color:#00ffff;"></i> <strong>Gobernanza:</strong> Roles de Admin y Walker para operaciones de trading.</li>
+                    <li><i class="fas fa-check-circle" style="color:#00ffff;"></i> <strong>Protección:</strong> Timelock de 24h para retiros de tesorería.</li>
+                    <li><i class="fas fa-check-circle" style="color:#00ffff;"></i> <strong>Límites:</strong> Control de riesgo con límite del 80% del TVL en trading.</li>
+                </ul>
+            </details>
+
+            <!-- Advertencia de riesgo (acordeón con texto más detallado) -->
+            <details class="acordeon">
+                <summary><i class="fas fa-exclamation-triangle" style="color:#ff6666;"></i> ⚠️ ALTO RIESGO</summary>
+                <div style="margin-top: 10px; color: #ffcccc; font-size: 0.9rem;">
+                    <p><strong>El copy trading en mercados reales implica riesgos significativos:</strong></p>
+                    <ul style="list-style: none; padding-left: 0;">
+                        <li><i class="fas fa-times-circle" style="color:#ff6666;"></i> Pérdida total o parcial del capital invertido.</li>
+                        <li><i class="fas fa-times-circle" style="color:#ff6666;"></i> La volatilidad del mercado puede generar pérdidas rápidas.</li>
+                        <li><i class="fas fa-times-circle" style="color:#ff6666;"></i> Los resultados pasados no garantizan ganancias futuras.</li>
+                        <li><i class="fas fa-times-circle" style="color:#ff6666;"></i> No hay garantía de rendimiento mínimo.</li>
+                        <li><i class="fas fa-times-circle" style="color:#ff6666;"></i> Invierte solo lo que estés dispuesto a perder.</li>
+                    </ul>
+                    <p style="margin-top:10px;">Este producto no es un asesoramiento financiero. Eres el único responsable de tus decisiones.</p>
+                </div>
+            </details>
+
+            <!-- Pasos para inyectar capital (acordeón) -->
+            <details class="acordeon">
+                <summary><i class="fas fa-rocket"></i> ¿Cómo inyectar capital?</summary>
+                <div style="margin-top: 10px; color: #ccc; font-size: 0.9rem;">
+                    <ol style="padding-left: 20px;">
+                        <li><strong>Conecta tu wallet</strong> (MetaMask, Binance Wallet, etc.) con fondos en USDT y BNB para gas.</li>
+                        <li><strong>Asegúrate de tener una membresía activa en Milimar V5</strong> (el contrato la verificará automáticamente).</li>
+                        <li><strong>Ingresa el monto</strong> en USDT (mínimo 50) en el campo correspondiente.</li>
+                        <li><strong>Haz clic en "APORTAR CAPITAL"</strong>. Primero se solicitará aprobación del token USDT, luego el depósito.</li>
+                        <li><strong>Espera 24 horas</strong> para que tu capital comience a generar rendimientos (periodo de maduración).</li>
+                        <li><strong>Puedes retirar en cualquier momento</strong>, pero si lo haces antes de 7 días, se aplica una comisión del 10%.</li>
+                    </ol>
+                </div>
+            </details>
         </div>
 
-        <!-- Tarjeta de características (desplegable) -->
-        <details class="features-card">
-            <summary><i class="fas fa-info-circle"></i> Características del contrato</summary>
-            <ul style="margin-top: 10px; list-style: none; padding-left: 0;">
-                <li><i class="fas fa-check-circle" style="color:#00ffff;"></i> <strong>Seguridad:</strong> Contabilidad separada, fondos de inversores aislados de comisiones.</li>
-                <li><i class="fas fa-check-circle" style="color:#00ffff;"></i> <strong>Transparencia:</strong> Todos los movimientos son públicos y verificables en BscScan.</li>
-                <li><i class="fas fa-check-circle" style="color:#00ffff;"></i> <strong>Rendimiento:</strong> 70% de las ganancias se reinvierten automáticamente.</li>
-                <li><i class="fas fa-check-circle" style="color:#00ffff;"></i> <strong>Gobernanza:</strong> Roles de Admin y Walker para operaciones de trading.</li>
-                <li><i class="fas fa-check-circle" style="color:#00ffff;"></i> <strong>Protección:</strong> Timelock de 24h para retiros de tesorería.</li>
-                <li><i class="fas fa-check-circle" style="color:#00ffff;"></i> <strong>Límites:</strong> Control de riesgo con límite del 80% del TVL en trading.</li>
-            </ul>
-        </details>
-
-        <!-- Advertencia de riesgo -->
-        <div class="risk-warning">
-            <i class="fas fa-exclamation-triangle"></i> <strong>⚠️ ALTO RIESGO ⚠️</strong><br>
-            El copy trading en mercados reales implica riesgo de pérdida de capital. Los resultados pasados no garantizan ganancias futuras. Invierte solo lo que estés dispuesto a perder.
-        </div>
-
-        <div id="mainApp" class="hidden">
+        <!-- APLICACIÓN PRINCIPAL (después de conectar) -->
+        <div id="mainApp">
             <!-- Pestañas -->
             <div class="tab-menu">
                 <div class="tab active" data-tab="global">🌍 GLOBAL</div>
@@ -498,19 +517,20 @@
                     </div>
 
                     <input type="number" id="amtOp" class="input-box" placeholder="Monto USDT (mín. 50)" step="0.01">
-                    
-                    <div class="flex-row">
-                        <button id="btnDeposit" class="btn btn-gold">🏦 APORTAR CAPITAL</button>
-                        <button id="btnWithdraw" class="btn btn-outline">💸 RETIRAR</button>
-                    </div>
 
-                    <!-- Tarjeta de retiro express (visible cuando hay bloqueo) -->
+                    <!-- Opciones de retiro (dinámicas) -->
+                    <div id="retiroOpciones" style="margin-top: 10px;"></div>
+
+                    <!-- Botón único que cambiará según el estado -->
+                    <button id="btnWithdrawAction" class="btn btn-outline" style="display: none;">RETIRAR</button>
+                    
+                    <!-- Tarjeta de retiro express (se muestra cuando corresponde) -->
                     <div id="expressNotice" class="express-notice" style="display:none;">
                         <strong>⚡ RETIRO EXPRESS ⚡</strong><br>
-                        <span style="font-size:0.9rem;">Si retiras antes de los 7 días:</span><br>
+                        <span style="font-size:0.9rem;">Retiro anticipado (antes de 7 días):</span><br>
                         <span class="highlight">Comisión: 10%</span><br>
-                        <span class="highlight">Plazo de desembolso: 24 horas</span><br>
-                        <span style="font-size:1rem;">Recibirás: <span id="calcReceive">0.00</span> USDT</span>
+                        <span class="highlight">Monto a recibir: <span id="calcReceive">0.00</span> USDT</span><br>
+                        <span style="font-size:0.8rem;">El retiro se procesará de inmediato en tu wallet.</span>
                     </div>
 
                     <div style="background: rgba(50, 100, 255, 0.1); margin-top:20px; padding:15px; border-radius:20px; border-left: 4px solid #3291ff;">
@@ -672,11 +692,13 @@
         let provider, signer, userAddress, contract, usdtContract;
         let isAdmin = false, isWalker = false;
         let toastTimeout, intervalId;
+        let lockSecActual = 0; // segundos de bloqueo restantes
 
         // Elementos DOM
         const toastDiv = document.getElementById('toast');
         const walletInfo = document.getElementById('myAddress');
         const btnConnect = document.getElementById('btnConnect');
+        const preConnect = document.getElementById('preConnect');
         const mainApp = document.getElementById('mainApp');
         const tabs = document.querySelectorAll('.tab');
         const tabContents = document.querySelectorAll('.tab-content');
@@ -687,6 +709,8 @@
         const expressNotice = document.getElementById('expressNotice');
         const calcReceive = document.getElementById('calcReceive');
         const amtOp = document.getElementById('amtOp');
+        const retiroOpciones = document.getElementById('retiroOpciones');
+        const btnWithdrawAction = document.getElementById('btnWithdrawAction');
 
         // =============== FUNCIONES AUXILIARES ===============
         function showToast(msg, isError = false) {
@@ -794,21 +818,11 @@
                 qualifyEl.innerText = data[2] ? '✅ SISTEMA ACTIVO' : '⏳ MADURANDO (24h)';
                 qualifyEl.style.color = data[2] ? '#238636' : '#f0b90b';
 
-                const lockSec = Number(data[3]);
-                document.getElementById('stTimer').innerText = lockSec > 0 ? formatTime(lockSec) : 'AHORA LIBRE ✅';
+                lockSecActual = Number(data[3]);
+                document.getElementById('stTimer').innerText = lockSecActual > 0 ? formatTime(lockSecActual) : 'AHORA LIBRE ✅';
 
-                // Calculadora de retiro express
-                if (amtOp) {
-                    amtOp.oninput = (e) => {
-                        const amt = parseFloat(e.target.value);
-                        if (amt >= 5 && lockSec > 0) {
-                            expressNotice.style.display = 'block';
-                            calcReceive.innerText = (amt * 0.9).toFixed(2);
-                        } else {
-                            expressNotice.style.display = 'none';
-                        }
-                    };
-                }
+                // Actualizar opciones de retiro según el monto ingresado
+                actualizarOpcionesRetiro();
 
                 // Datos de configuración
                 const minDep = await contract.minimoDeposito();
@@ -846,6 +860,66 @@
 
             } catch (e) {
                 console.error('Error en refresh:', e);
+            }
+        }
+
+        // Función para actualizar las opciones de retiro según el monto ingresado y el bloqueo
+        function actualizarOpcionesRetiro() {
+            const amt = parseFloat(amtOp.value);
+            if (isNaN(amt) || amt <= 0) {
+                retiroOpciones.innerHTML = '';
+                btnWithdrawAction.style.display = 'none';
+                expressNotice.style.display = 'none';
+                return;
+            }
+
+            if (lockSecActual > 0) {
+                // Con bloqueo activo: mostrar opción express
+                const montoNeto = amt * 0.9;
+                retiroOpciones.innerHTML = `
+                    <div class="express-notice" style="margin-top:0;">
+                        <strong>⚡ RETIRO EXPRESS ⚡</strong><br>
+                        <span>Comisión: 10%</span><br>
+                        <span class="highlight">Recibirás: ${montoNeto.toFixed(2)} USDT</span><br>
+                        <span style="font-size:0.8rem;">El retiro se procesará de inmediato.</span>
+                    </div>
+                `;
+                btnWithdrawAction.style.display = 'block';
+                btnWithdrawAction.innerText = 'RETIRAR EXPRESS (10%)';
+                btnWithdrawAction.className = 'btn btn-red';
+                btnWithdrawAction.onclick = () => realizarRetiro(amt, true);
+                expressNotice.style.display = 'none'; // ya no usamos el antiguo
+            } else {
+                // Sin bloqueo: retiro sin comisión
+                retiroOpciones.innerHTML = `
+                    <div style="background: rgba(35, 134, 54, 0.2); border: 2px solid #238636; border-radius: 24px; padding: 15px; text-align: center;">
+                        <strong style="color:#238636;">✅ RETIRO SIN COMISIÓN</strong><br>
+                        <span class="highlight">Recibirás: ${amt.toFixed(2)} USDT</span><br>
+                        <span style="font-size:0.8rem;">El retiro se procesará de inmediato.</span>
+                    </div>
+                `;
+                btnWithdrawAction.style.display = 'block';
+                btnWithdrawAction.innerText = 'RETIRAR SIN COMISIÓN';
+                btnWithdrawAction.className = 'btn btn-green';
+                btnWithdrawAction.onclick = () => realizarRetiro(amt, false);
+                expressNotice.style.display = 'none';
+            }
+        }
+
+        async function realizarRetiro(amt, isExpress) {
+            if (amt < 5) {
+                showToast('⚠️ Monto mínimo 5 USDT', true);
+                return;
+            }
+            try {
+                const wei = ethers.parseUnits(amt.toString(), 18);
+                addLog('⏳ Procesando retiro...');
+                const tx = await contract.withdraw(wei, userAddress, userAddress);
+                await tx.wait();
+                addLog('✅ Retiro completado');
+                refresh();
+            } catch (e) {
+                showToast('❌ Error: ' + e.message, true);
             }
         }
 
@@ -927,7 +1001,8 @@
 
                 walletInfo.innerText = `VINCULADO: ${userAddress.slice(0,8)}...${userAddress.slice(-6)}`;
                 btnConnect.style.display = 'none';
-                mainApp.classList.remove('hidden');
+                preConnect.style.display = 'none'; // Ocultar sección pre-conexión
+                mainApp.style.display = 'block';   // Mostrar aplicación principal
 
                 await loadRoles();
                 await refresh();
@@ -993,21 +1068,6 @@
             }
         };
 
-        document.getElementById('btnWithdraw').onclick = async () => {
-            const val = document.getElementById('amtOp').value;
-            if (!val || parseFloat(val) <= 0) return showToast('⚠️ Ingresa un monto válido', true);
-            try {
-                const wei = ethers.parseUnits(val, 18);
-                addLog('⏳ Procesando retiro...');
-                const tx = await contract.withdraw(wei, userAddress, userAddress);
-                await tx.wait();
-                addLog('✅ Retiro completado');
-                refresh();
-            } catch (e) {
-                showToast('❌ Error: ' + e.message, true);
-            }
-        };
-
         document.getElementById('btnClaimBonus').onclick = async () => {
             try {
                 addLog('⏳ Reclamando bono líder...');
@@ -1019,6 +1079,9 @@
                 showToast('❌ Error: ' + e.message, true);
             }
         };
+
+        // Escuchar cambios en el campo de monto para actualizar opciones
+        amtOp.addEventListener('input', actualizarOpcionesRetiro);
 
         // =============== BOTONES DE WALKER ===============
         document.getElementById('btnReportProfit').onclick = async () => {
