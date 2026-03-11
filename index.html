@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Milimar Turbo · Business Console</title>
+    <title>Milimar Turbo · Diamond Console</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/6.7.0/ethers.umd.min.js"></script>
     <style>
-        * { box-sizing: border-box; }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
         :root {
             --primary: #f0b90b;
             --bg: #0b0e11;
@@ -19,21 +19,20 @@
             --text-muted: #848e9c;
         }
         body {
-            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            font-family: 'Inter', system-ui, sans-serif;
             background: var(--bg);
             color: var(--text);
-            margin: 0;
             padding: 15px;
             min-height: 100vh;
         }
-        .container { max-width: 500px; margin: 0 auto; }
-        h2 { text-align: center; margin-bottom: 0; }
-        h2 span { color: var(--primary); }
+        .container { max-width: 600px; margin: 0 auto; }
+        h1 { text-align: center; font-size: 1.8rem; margin-bottom: 5px; }
+        h1 span { color: var(--primary); }
         .subtitle {
             text-align: center;
-            font-size: 11px;
+            font-size: 0.7rem;
             color: var(--text-muted);
-            margin: 5px 0 15px;
+            margin-bottom: 15px;
             word-break: break-all;
         }
         .toast {
@@ -44,25 +43,47 @@
             margin-bottom: 15px;
             border: 1px solid var(--primary);
             display: none;
-            font-size: 14px;
+            font-size: 0.9rem;
             text-align: center;
         }
         .card {
             background: var(--card);
             border-radius: 12px;
             padding: 18px;
-            margin-bottom: 15px;
+            margin-bottom: 20px;
             border: 1px solid var(--border);
         }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .stat-item {
+            background: rgba(0,0,0,0.3);
+            padding: 10px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        .stat-label {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+        }
+        .stat-value {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: var(--primary);
+        }
         .label {
-            font-size: 10px;
+            font-size: 0.7rem;
             color: var(--text-muted);
             text-transform: uppercase;
             display: block;
             margin-bottom: 5px;
         }
         .value {
-            font-size: 32px;
+            font-size: 2rem;
             font-weight: bold;
             color: var(--primary);
             text-align: center;
@@ -71,25 +92,23 @@
         .status-badge {
             text-align: center;
             font-weight: bold;
-            margin: 8px 0;
-            font-size: 14px;
+            margin: 10px 0;
+            font-size: 0.9rem;
         }
-        .timer { font-size: 11px; color: var(--text-muted); text-align: center; }
+        .timer { font-size: 0.8rem; color: var(--text-muted); text-align: center; margin-top: 5px; }
         .input-box {
             background: #000;
             border: 1px solid var(--border);
             color: #fff;
-            padding: 14px;
+            padding: 12px;
             border-radius: 8px;
             width: 100%;
-            box-sizing: border-box;
-            text-align: center;
             margin-bottom: 10px;
-            font-size: 16px;
+            font-size: 1rem;
         }
         .btn {
             border: none;
-            padding: 15px;
+            padding: 14px;
             border-radius: 8px;
             cursor: pointer;
             width: 100%;
@@ -108,117 +127,179 @@
         .btn-blue { background: var(--blue); color: white; }
         .btn-green { background: var(--green); color: white; }
         .btn:hover { opacity: 0.9; transform: translateY(-2px); }
-        .flex-row { display: flex; gap: 10px; }
-        .admin-panel {
-            border: 1px solid var(--green);
-            background: #012b15;
-            display: none;
-        }
-        .walker-panel {
-            border: 1px solid #b58900;
-            background: #261b01;
-            display: none;
-        }
+        .flex-row { display: flex; gap: 10px; flex-wrap: wrap; }
+        .admin-panel { border: 1px solid var(--green); background: #012b15; display: none; }
+        .walker-panel { border: 1px solid #b58900; background: #261b01; display: none; }
         .hidden { display: none; }
         #btnConnect { margin-bottom: 20px; }
+        hr { border: none; border-top: 1px solid var(--border); margin: 15px 0; }
+        .small-note { font-size: 0.7rem; color: var(--text-muted); margin-top: 5px; }
     </style>
 </head>
 <body>
     <div class="container">
-        <h2>🚀 MILIMAR <span>TURBO</span></h2>
+        <h1>🚀 MILIMAR <span>TURBO</span></h1>
         <div id="walletInfo" class="subtitle">Desconectado</div>
         <div id="toast" class="toast"></div>
 
         <button id="btnConnect" class="btn btn-gold">🔌 CONECTAR BILLETERA</button>
 
         <div id="mainApp" class="hidden">
-            <!-- Panel Inversor -->
+            <!-- Estadísticas globales -->
+            <div class="stats-grid">
+                <div class="stat-item"><span class="stat-label">Total Activos</span><span id="globalTotalAssets" class="stat-value">0</span></div>
+                <div class="stat-item"><span class="stat-label">Total Shares</span><span id="globalTotalSupply" class="stat-value">0</span></div>
+                <div class="stat-item"><span class="stat-label">Precio Share</span><span id="globalSharePrice" class="stat-value">0</span></div>
+                <div class="stat-item"><span class="stat-label">Capital Trading</span><span id="globalCapitalTrading" class="stat-value">0</span></div>
+                <div class="stat-item"><span class="stat-label">Reserva Eventos</span><span id="globalEventos" class="stat-value">0</span></div>
+                <div class="stat-item"><span class="stat-label">Reserva Admin</span><span id="globalAdmin" class="stat-value">0</span></div>
+                <div class="stat-item"><span class="stat-label">Reserva Referidos</span><span id="globalReferidos" class="stat-value">0</span></div>
+                <div class="stat-item"><span class="stat-label">Bot Address</span><span id="globalBot" class="stat-value" style="font-size:0.9rem;">0x...</span></div>
+            </div>
+
+            <!-- Panel Usuario -->
             <div class="card">
                 <span class="label">Mi Balance Total</span>
                 <div id="userBalance" class="value">0.00 USDT</div>
                 <div id="qualifyStatus" class="status-badge">...</div>
-
-                <input type="number" id="amountOp" class="input-box" placeholder="Monto en USDT (mín. 50)">
-                <button id="btnDeposit" class="btn btn-gold">📥 INYECTAR AL TURBO</button>
-                <button id="btnWithdraw" class="btn btn-outline">📤 RETIRAR CAPITAL</button>
+                <input type="number" id="amountOp" class="input-box" placeholder="Monto USDT (mín. 50)" step="0.01">
+                <div class="flex-row">
+                    <button id="btnDeposit" class="btn btn-gold">📥 INYECTAR AL TURBO</button>
+                    <button id="btnWithdraw" class="btn btn-outline">📤 RETIRAR</button>
+                </div>
                 <div id="lockTimer" class="timer"></div>
             </div>
 
             <!-- Panel Bono Líder -->
             <div class="card" style="border-left: 5px solid var(--blue);">
                 <span class="label" style="color: var(--blue);">Bono Líder (8%)</span>
-                <div id="leaderBonus" class="value" style="color: var(--blue); font-size: 28px;">0.00 USDT</div>
+                <div id="leaderBonus" class="value" style="color: var(--blue); font-size: 1.8rem;">0.00 USDT</div>
                 <button id="btnClaimBonus" class="btn btn-blue">💰 RECLAMAR MI BONO</button>
             </div>
 
-            <!-- Panel Walker (ALLOCATOR_ROLE) -->
+            <!-- Panel Walker (ALLOCATOR) -->
             <div id="walkerPanel" class="card walker-panel">
                 <h4 style="margin:0 0 10px; color:#b58900;">🤖 PANEL WALKER</h4>
+                <div class="stats-grid" style="margin-bottom: 10px;">
+                    <div class="stat-item"><span class="stat-label">Capital Trading</span><span id="walkerCapitalTrading" class="stat-value">0</span></div>
+                    <div class="stat-item"><span class="stat-label">Max Loss/Report</span><span id="walkerMaxLoss" class="stat-value">0</span></div>
+                </div>
                 <input type="number" id="reportAmount" class="input-box" placeholder="Monto USDT">
                 <div class="flex-row">
                     <button id="btnReportProfit" class="btn btn-gold">PROFIT (+)</button>
                     <button id="btnReportLoss" class="btn btn-red">PÉRDIDA (-)</button>
                 </div>
-                <hr style="border-color: var(--border); margin: 15px 0;">
-                <button id="btnReturnCapital" class="btn btn-outline" style="border-color:#b58900; color:#b58900;">↩️ REGRESAR CAPITAL</button>
+                <button id="btnReturnCapital" class="btn btn-outline" style="border-color:#b58900; color:#b58900; margin-top: 10px;">↩️ REGRESAR CAPITAL</button>
             </div>
 
-            <!-- Panel Admin (DEFAULT_ADMIN_ROLE) -->
+            <!-- Panel Admin (DEFAULT_ADMIN) -->
             <div id="adminPanel" class="card admin-panel">
                 <h4 style="margin:0 0 10px; color:var(--green);">🔱 PANEL MASTER ADMIN</h4>
+
+                <!-- Envío a trading -->
                 <input type="number" id="tradeAmount" class="input-box" placeholder="Cantidad USDT a enviar">
                 <button id="btnSendToMarket" class="btn btn-green">🚀 ENVIAR A TRADING</button>
-                <!-- Sección de tesorería (timelock) -->
-                <hr style="border-color: var(--border); margin: 15px 0;">
+
+                <hr>
+                <h5 style="color:var(--green);">⚙️ Configuración</h5>
+                <div class="stats-grid">
+                    <div class="stat-item"><span class="stat-label">Min Depósito</span><span id="configMinDep" class="stat-value">0</span></div>
+                    <div class="stat-item"><span class="stat-label">Multa Early</span><span id="configEarlyFee" class="stat-value">0</span></div>
+                    <div class="stat-item"><span class="stat-label">Max Riesgo %</span><span id="configMaxRisk" class="stat-value">0</span></div>
+                    <div class="stat-item"><span class="stat-label">Max Envío</span><span id="configMaxSend" class="stat-value">0</span></div>
+                </div>
+                <input type="number" id="newMinDep" class="input-box" placeholder="Nuevo mínimo depósito">
+                <input type="number" id="newEarlyFee" class="input-box" placeholder="Nueva multa % (0-20)">
+                <input type="number" id="newMaxRisk" class="input-box" placeholder="Nuevo riesgo % (10-95)">
+                <input type="number" id="newMaxSend" class="input-box" placeholder="Nuevo límite por envío">
+                <button id="btnUpdateParams" class="btn btn-outline" style="border-color:var(--green); color:var(--green);">ACTUALIZAR PARÁMETROS</button>
+
+                <hr>
+                <h5 style="color:var(--green);">🤖 Dirección del Bot</h5>
+                <input type="text" id="newBotAddress" class="input-box" placeholder="0x...">
+                <button id="btnSetBot" class="btn btn-outline" style="border-color:var(--green); color:var(--green);">CAMBIAR BOT</button>
+
+                <hr>
+                <h5 style="color:var(--green);">💰 Tesorería (Timelock 24h)</h5>
                 <input type="number" id="treasuryAmount" class="input-box" placeholder="Cantidad USDT">
                 <div class="flex-row">
                     <button id="btnRequestEvent" class="btn btn-outline" style="border-color: var(--blue); color: var(--blue);">📅 SOLICITAR EVENTOS</button>
                     <button id="btnRequestAdmin" class="btn btn-outline" style="border-color: var(--primary); color: var(--primary);">📅 SOLICITAR ADMIN</button>
                 </div>
-                <button id="btnExecuteTreasury" class="btn btn-green" style="margin-top: 10px;">⚡ EJECUTAR RETIRO</button>
+                <div class="stats-grid" style="margin:10px 0;">
+                    <div class="stat-item"><span class="stat-label">Solicitud Pendiente</span><span id="pendingAmount" class="stat-value">0</span></div>
+                    <div class="stat-item"><span class="stat-label">Listo en</span><span id="pendingReadyAt" class="stat-value">0</span></div>
+                </div>
+                <button id="btnExecuteTreasury" class="btn btn-green">⚡ EJECUTAR RETIRO</button>
+
+                <hr>
+                <h5 style="color:var(--green);">⏸️ Pausa / Reanudar</h5>
+                <div class="flex-row">
+                    <button id="btnPause" class="btn btn-red" style="flex:1;">PAUSAR</button>
+                    <button id="btnUnpause" class="btn btn-green" style="flex:1;">REANUDAR</button>
+                </div>
+            </div>
+
+            <!-- Pie de página -->
+            <div style="text-align:center; font-size:0.6rem; color:var(--text-muted); margin-top:30px;">
+                Milimar Turbo V11 · Diamond Edition
             </div>
         </div>
     </div>
 
     <script>
         // ================= CONFIGURACIÓN =================
-        const CONTRACT_ADDR = "0xc4158596B8F8E1cE337861dE0eCDc0c3045DbE88";
+        const CONTRACT_ADDR = "0xc4158596B8F8E1cE337861dE0eCDc0c3045DbE88"; // Reemplaza con tu dirección
         const USDT_ADDR = "0x55d398326f99059fF775485246999027B3197955";
-        const BSC_CHAIN_ID = 56; // BSC Mainnet
+        const BSC_CHAIN_ID = 56;
 
         // HASHES DE ROLES (deben coincidir con el contrato)
         const DEFAULT_ADMIN_ROLE = "0x0000000000000000000000000000000000000000000000000000000000000000";
         const ALLOCATOR_ROLE = "0x7cf3a903332501a3036a7e0d37e641772eb5d7422204a08573216896174a7a8e";
 
-        // ABI (ajusta según tu contrato, incluye funciones de tesorería y reportLoss)
+        // ABI completo (incluye todas las funciones necesarias)
         const abi = [
-            // Funciones view
+            // Views
             "function getVaultDashboard(address) view returns (uint256 capitalUsdt, uint256 residualLider, bool calificado, uint256 cronometroLock, uint256 sharePrice)",
             "function hasRole(bytes32 role, address account) view returns (bool)",
             "function saldoRecompensasLider(address) view returns (uint256)",
             "function totalSupply() view returns (uint256)",
             "function totalAssets() view returns (uint256)",
-            // Funciones de usuario
+            "function capitalEnTrading() view returns (uint256)",
+            "function porcentajeMaximoTrading() view returns (uint256)",
+            "function maxEnvioTrading() view returns (uint256)",
+            "function minimoDeposito() view returns (uint256)",
+            "function earlyExitFee() view returns (uint256)",
+            "function maxLossPerReport() view returns (uint256)",
+            "function lossCooldown() view returns (uint256)",
+            "function acumuladoEventos() view returns (uint256)",
+            "function acumuladoAdministracion() view returns (uint256)",
+            "function acumuladoParaReferidos() view returns (uint256)",
+            "function botAddress() view returns (address)",
+            "function milimarRedPrincipal() view returns (address)",
+            "function pendingAdminWithdrawal() view returns (uint256 amount, address destination, bool isEventFund, uint256 readyAt)",
+            // User
             "function deposit(uint256 assets, address receiver) returns (uint256)",
             "function withdraw(uint256 assets, address receiver, address owner) returns (uint256)",
             "function claimLeaderRewards() external",
-            // Funciones de Walker
+            // Allocator
             "function reportProfit(uint256 _amount, address _userTrigger) external",
             "function reportLoss(uint256 _amount) external",
             "function registrarRegresoCapital(uint256 _amt) external",
-            // Funciones de Admin
+            // Admin
             "function enviarATrading(uint256 _amt) external",
-            "function solicitarRetiroTesoreria(address _to, uint256 _amt, bool _isEventFund) external",
-            "function ejecutarRetiroTesoreria() external",
             "function configurarParametros(uint256 _min, uint256 _multa, uint256 _risk, uint256 _maxSend) external",
             "function setBotAddress(address _bot) external",
-            // Eventos
+            "function solicitarRetiroTesoreria(address _to, uint256 _amt, bool _isEventFund) external",
+            "function ejecutarRetiroTesoreria() external",
+            "function pause() external",
+            "function unpause() external",
+            // Events
             "event ProfitReported(uint256 monto, uint256 nuevoPrecio)",
             "event LossReported(uint256 monto, uint256 nuevoPrecio)",
             "event CapitalTradingUpdated(uint256 enMercadoActual)",
             "event BotAddressUpdated(address indexed newBot)",
             "event LimitsUpdated(uint256 minDep, uint256 maxRisk, uint256 maxSend)",
-            "event WithdrawalRequested(uint256 amount, uint256 executionTime)",
             "event Deposit(address indexed sender, uint256 assets, address indexed receiver)",
             "event Withdraw(address indexed sender, address indexed receiver, address indexed owner, uint256 assets, uint256 shares)"
         ];
@@ -229,6 +310,7 @@
         let provider, signer, userAddress, contract, usdtContract;
         let isAdmin = false, isWalker = false;
         let toastTimeout;
+        let intervalId;
 
         // =============== ELEMENTOS DOM ===============
         const toastDiv = document.getElementById('toast');
@@ -291,45 +373,93 @@
             return true;
         }
 
-        async function updateDashboard() {
+        function formatUSDT(wei) {
+            return Number(ethers.formatUnits(wei, 18)).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        }
+
+        function formatTime(seconds) {
+            if (seconds <= 0) return '0s';
+            const d = Math.floor(seconds / 86400);
+            const h = Math.floor((seconds % 86400) / 3600);
+            const m = Math.floor((seconds % 3600) / 60);
+            return `${d}d ${h}h ${m}m`;
+        }
+
+        // =============== ACTUALIZACIÓN DE DATOS ===============
+        async function updateAll() {
             if (!contract || !userAddress) return;
             try {
+                // Datos globales
+                const totalAssets = await contract.totalAssets();
+                const totalSupply = await contract.totalSupply();
+                const sharePrice = totalSupply === 0n ? 1e18 : (totalAssets * 1000000000000000000n) / totalSupply;
+                const capitalTrading = await contract.capitalEnTrading();
+                const eventos = await contract.acumuladoEventos();
+                const adminReserve = await contract.acumuladoAdministracion();
+                const referidos = await contract.acumuladoParaReferidos();
+                const botAddr = await contract.botAddress();
+
+                document.getElementById('globalTotalAssets').innerText = formatUSDT(totalAssets);
+                document.getElementById('globalTotalSupply').innerText = ethers.formatUnits(totalSupply, 18);
+                document.getElementById('globalSharePrice').innerText = formatUSDT(sharePrice);
+                document.getElementById('globalCapitalTrading').innerText = formatUSDT(capitalTrading);
+                document.getElementById('globalEventos').innerText = formatUSDT(eventos);
+                document.getElementById('globalAdmin').innerText = formatUSDT(adminReserve);
+                document.getElementById('globalReferidos').innerText = formatUSDT(referidos);
+                document.getElementById('globalBot').innerText = botAddr ? botAddr.slice(0,8)+'...'+botAddr.slice(-6) : '0x...';
+
+                // Datos del usuario (dashboard)
                 const data = await contract.getVaultDashboard(userAddress);
                 // [0] capitalUsdt, [1] residualLider, [2] calificado, [3] cronometroLock, [4] sharePrice
-                document.getElementById('userBalance').innerText = ethers.formatUnits(data[0], 18) + ' USDT';
-                document.getElementById('leaderBonus').innerText = ethers.formatUnits(data[1], 18) + ' USDT';
+                document.getElementById('userBalance').innerText = formatUSDT(data[0]) + ' USDT';
+                document.getElementById('leaderBonus').innerText = formatUSDT(data[1]) + ' USDT';
 
                 const qualifyEl = document.getElementById('qualifyStatus');
-                if (data[2]) {
-                    qualifyEl.innerText = '✅ SISTEMA OPERATIVO (24h cumplidas)';
-                    qualifyEl.style.color = '#238636';
-                } else {
-                    qualifyEl.innerText = '⏳ ESTADO: MADURANDO (24h desde depósito)';
-                    qualifyEl.style.color = '#f0b90b';
-                }
+                qualifyEl.innerText = data[2] ? '✅ SISTEMA OPERATIVO' : '⏳ MADURANDO (24h)';
+                qualifyEl.style.color = data[2] ? 'var(--green)' : 'var(--primary)';
 
                 const lockSec = Number(data[3]);
-                const lockEl = document.getElementById('lockTimer');
-                if (lockSec > 0) {
-                    const days = Math.floor(lockSec / 86400);
-                    const hours = Math.floor((lockSec % 86400) / 3600);
-                    lockEl.innerText = `⏳ Retiro sin comisión en ${days}d ${hours}h (o retira ahora con 10% de penalidad)`;
-                    lockEl.style.color = '#848e9c';
+                document.getElementById('lockTimer').innerText = lockSec > 0 
+                    ? `🔒 Retiro sin multa en ${formatTime(lockSec)}` 
+                    : '🔓 Capital libre para retiro sin penalidad';
+
+                // Datos de configuración
+                const minDep = await contract.minimoDeposito();
+                const earlyFee = await contract.earlyExitFee();
+                const maxRisk = await contract.porcentajeMaximoTrading();
+                const maxSend = await contract.maxEnvioTrading();
+                document.getElementById('configMinDep').innerText = formatUSDT(minDep);
+                document.getElementById('configEarlyFee').innerText = earlyFee.toString() + '%';
+                document.getElementById('configMaxRisk').innerText = maxRisk.toString() + '%';
+                document.getElementById('configMaxSend').innerText = formatUSDT(maxSend);
+
+                // Walker: capital trading y maxLoss
+                const maxLoss = await contract.maxLossPerReport();
+                document.getElementById('walkerCapitalTrading').innerText = formatUSDT(capitalTrading);
+                document.getElementById('walkerMaxLoss').innerText = formatUSDT(maxLoss);
+
+                // Tesorería pendiente
+                const pending = await contract.pendingAdminWithdrawal();
+                if (pending && pending.amount > 0) {
+                    document.getElementById('pendingAmount').innerText = formatUSDT(pending.amount);
+                    const readyAt = Number(pending.readyAt);
+                    const now = Math.floor(Date.now() / 1000);
+                    const remaining = readyAt > now ? readyAt - now : 0;
+                    document.getElementById('pendingReadyAt').innerText = remaining > 0 ? formatTime(remaining) : 'Listo';
                 } else {
-                    lockEl.innerText = '🔓 Capital libre para retiro sin penalidad';
-                    lockEl.style.color = '#238636';
+                    document.getElementById('pendingAmount').innerText = '0';
+                    document.getElementById('pendingReadyAt').innerText = '--';
                 }
+
             } catch (e) {
-                console.error('Error actualizando dashboard:', e);
+                console.error('Error en updateAll:', e);
             }
         }
 
         async function loadRoles() {
-            if (!contract || !userAddress) return;
             try {
                 isAdmin = await contract.hasRole(DEFAULT_ADMIN_ROLE, userAddress);
                 isWalker = await contract.hasRole(ALLOCATOR_ROLE, userAddress);
-
                 adminPanel.style.display = isAdmin ? 'block' : 'none';
                 walkerPanel.style.display = isWalker ? 'block' : 'none';
             } catch (e) {
@@ -339,30 +469,36 @@
 
         function setupEventListeners() {
             if (!contract) return;
-            // Escuchar eventos de depósito/retiro para actualizar dashboard
             contract.on('Deposit', (sender, assets, receiver) => {
                 if (sender.toLowerCase() === userAddress.toLowerCase() || receiver.toLowerCase() === userAddress.toLowerCase()) {
-                    updateDashboard();
-                    showToast('✅ Depósito confirmado', false);
+                    updateAll();
+                    showToast('✅ Depósito confirmado');
                 }
             });
             contract.on('Withdraw', (sender, receiver, owner, assets, shares) => {
                 if (owner.toLowerCase() === userAddress.toLowerCase()) {
-                    updateDashboard();
-                    showToast('✅ Retiro procesado', false);
+                    updateAll();
+                    showToast('✅ Retiro procesado');
                 }
             });
             contract.on('ProfitReported', (monto, nuevoPrecio) => {
-                updateDashboard();
-                showToast('💰 Ganancia reportada. Nuevo precio: ' + ethers.formatUnits(nuevoPrecio, 18), false);
+                updateAll();
+                showToast(`💰 Ganancia reportada. Nuevo precio: ${formatUSDT(nuevoPrecio)} USDT`);
             });
             contract.on('LossReported', (monto, nuevoPrecio) => {
-                updateDashboard();
-                showToast('📉 Pérdida reportada', true);
+                updateAll();
+                showToast(`📉 Pérdida reportada. Nuevo precio: ${formatUSDT(nuevoPrecio)} USDT`, true);
+            });
+            contract.on('CapitalTradingUpdated', (enMercadoActual) => {
+                updateAll();
+            });
+            contract.on('BotAddressUpdated', (newBot) => {
+                updateAll();
+                showToast('🤖 Dirección del bot actualizada');
             });
         }
 
-        // =============== EVENTO PRINCIPAL DE CONEXIÓN ===============
+        // =============== CONEXIÓN ===============
         btnConnect.onclick = async () => {
             if (!window.ethereum) {
                 showToast('⚠️ Instala MetaMask o Binance Wallet', true);
@@ -384,24 +520,24 @@
                 mainApp.classList.remove('hidden');
 
                 await loadRoles();
-                await updateDashboard();
+                await updateAll();
                 setupEventListeners();
 
                 // Escuchar cambios de cuenta y red
                 window.ethereum.on('accountsChanged', (accounts) => {
-                    if (accounts.length === 0) {
-                        window.location.reload();
-                    } else {
+                    if (accounts.length === 0) window.location.reload();
+                    else {
                         userAddress = accounts[0];
                         walletInfo.innerText = `VINCULADO: ${userAddress.slice(0,8)}...${userAddress.slice(-6)}`;
                         loadRoles();
-                        updateDashboard();
+                        updateAll();
                     }
                 });
                 window.ethereum.on('chainChanged', () => window.location.reload());
 
-                // Actualización periódica por si acaso
-                setInterval(updateDashboard, 15000);
+                // Actualización periódica (cada 15s)
+                if (intervalId) clearInterval(intervalId);
+                intervalId = setInterval(updateAll, 15000);
             } catch (e) {
                 showToast('❌ Error conectando: ' + e.message, true);
             }
@@ -419,10 +555,10 @@
                 showToast('⏳ Realizando depósito...');
                 const depositTx = await contract.deposit(wei, userAddress);
                 await depositTx.wait();
-                showToast('✅ Depósito exitoso. ¡Bienvenido al Turbo!');
-                updateDashboard();
+                showToast('✅ Depósito exitoso');
+                updateAll();
             } catch (e) {
-                showToast('❌ Error en depósito: ' + e.message, true);
+                showToast('❌ Error: ' + e.message, true);
             }
         };
 
@@ -435,9 +571,9 @@
                 const withdrawTx = await contract.withdraw(wei, userAddress, userAddress);
                 await withdrawTx.wait();
                 showToast('✅ Retiro completado');
-                updateDashboard();
+                updateAll();
             } catch (e) {
-                showToast('❌ Error en retiro: ' + e.message, true);
+                showToast('❌ Error: ' + e.message, true);
             }
         };
 
@@ -447,9 +583,9 @@
                 const tx = await contract.claimLeaderRewards();
                 await tx.wait();
                 showToast('✅ Bono reclamado');
-                updateDashboard();
+                updateAll();
             } catch (e) {
-                showToast('❌ Error al reclamar: ' + e.message, true);
+                showToast('❌ Error: ' + e.message, true);
             }
         };
 
@@ -463,7 +599,7 @@
                 const tx = await contract.reportProfit(wei, userAddress);
                 await tx.wait();
                 showToast('✅ Ganancia reportada');
-                updateDashboard();
+                updateAll();
             } catch (e) {
                 showToast('❌ Error: ' + e.message, true);
             }
@@ -478,7 +614,7 @@
                 const tx = await contract.reportLoss(wei);
                 await tx.wait();
                 showToast('✅ Pérdida reportada');
-                updateDashboard();
+                updateAll();
             } catch (e) {
                 showToast('❌ Error: ' + e.message, true);
             }
@@ -493,7 +629,7 @@
                 const tx = await contract.registrarRegresoCapital(wei);
                 await tx.wait();
                 showToast('✅ Capital registrado');
-                updateDashboard();
+                updateAll();
             } catch (e) {
                 showToast('❌ Error: ' + e.message, true);
             }
@@ -509,13 +645,47 @@
                 const tx = await contract.enviarATrading(wei);
                 await tx.wait();
                 showToast('✅ Fondos enviados al bot');
-                updateDashboard();
+                updateAll();
             } catch (e) {
                 showToast('❌ Error: ' + e.message, true);
             }
         };
 
-        // Solicitudes de tesorería (eventos o admin)
+        document.getElementById('btnUpdateParams').onclick = async () => {
+            const min = document.getElementById('newMinDep').value;
+            const multa = document.getElementById('newEarlyFee').value;
+            const risk = document.getElementById('newMaxRisk').value;
+            const maxSend = document.getElementById('newMaxSend').value;
+            if (!min || !multa || !risk || !maxSend) return showToast('⚠️ Completa todos los campos', true);
+            try {
+                const minWei = ethers.parseUnits(min, 18);
+                const multaNum = parseInt(multa);
+                const riskNum = parseInt(risk);
+                const maxSendWei = ethers.parseUnits(maxSend, 18);
+                showToast('⏳ Actualizando parámetros...');
+                const tx = await contract.configurarParametros(minWei, multaNum, riskNum, maxSendWei);
+                await tx.wait();
+                showToast('✅ Parámetros actualizados');
+                updateAll();
+            } catch (e) {
+                showToast('❌ Error: ' + e.message, true);
+            }
+        };
+
+        document.getElementById('btnSetBot').onclick = async () => {
+            const newBot = document.getElementById('newBotAddress').value;
+            if (!ethers.isAddress(newBot)) return showToast('⚠️ Dirección inválida', true);
+            try {
+                showToast('⏳ Cambiando dirección del bot...');
+                const tx = await contract.setBotAddress(newBot);
+                await tx.wait();
+                showToast('✅ Bot actualizado');
+                updateAll();
+            } catch (e) {
+                showToast('❌ Error: ' + e.message, true);
+            }
+        };
+
         document.getElementById('btnRequestEvent').onclick = async () => {
             const val = document.getElementById('treasuryAmount').value;
             if (!val || parseFloat(val) <= 0) return showToast('⚠️ Cantidad inválida', true);
@@ -525,6 +695,7 @@
                 const tx = await contract.solicitarRetiroTesoreria(userAddress, wei, true);
                 await tx.wait();
                 showToast('✅ Solicitud creada (espera 24h)');
+                updateAll();
             } catch (e) {
                 showToast('❌ Error: ' + e.message, true);
             }
@@ -539,6 +710,7 @@
                 const tx = await contract.solicitarRetiroTesoreria(userAddress, wei, false);
                 await tx.wait();
                 showToast('✅ Solicitud creada (espera 24h)');
+                updateAll();
             } catch (e) {
                 showToast('❌ Error: ' + e.message, true);
             }
@@ -550,12 +722,35 @@
                 const tx = await contract.ejecutarRetiroTesoreria();
                 await tx.wait();
                 showToast('✅ Retiro ejecutado');
+                updateAll();
             } catch (e) {
                 showToast('❌ Error: ' + e.message, true);
             }
         };
 
-        // Inicialización: si la wallet ya está conectada al cargar la página
+        document.getElementById('btnPause').onclick = async () => {
+            try {
+                showToast('⏳ Pausando contrato...');
+                const tx = await contract.pause();
+                await tx.wait();
+                showToast('✅ Contrato pausado');
+            } catch (e) {
+                showToast('❌ Error: ' + e.message, true);
+            }
+        };
+
+        document.getElementById('btnUnpause').onclick = async () => {
+            try {
+                showToast('⏳ Reanudando contrato...');
+                const tx = await contract.unpause();
+                await tx.wait();
+                showToast('✅ Contrato reanudado');
+            } catch (e) {
+                showToast('❌ Error: ' + e.message, true);
+            }
+        };
+
+        // Inicialización automática si la wallet ya está conectada
         window.addEventListener('load', async () => {
             if (window.ethereum && window.ethereum.selectedAddress) {
                 btnConnect.click();
