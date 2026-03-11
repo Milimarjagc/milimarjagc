@@ -180,6 +180,22 @@
         #adminPanel, #walkerPanel { display: none; }
         .admin-panel { border-color: var(--green); background: #001f0c; }
         .walker-panel { border-color: #b58900; background: #261b01; }
+        .collapsible-header {
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: bold;
+            color: var(--gold);
+            margin-bottom: 10px;
+        }
+        .collapsible-content {
+            display: none;
+            margin-top: 10px;
+        }
+        .collapsible-content.show {
+            display: block;
+        }
     </style>
 </head>
 <body>
@@ -201,19 +217,23 @@
                 <div class="tab" data-tab="admin" id="tabAdmin" style="display:none;">🔱 Admin</div>
             </div>
 
-            <!-- Pestaña Global -->
+            <!-- Pestaña Global (colapsable) -->
             <div id="tab-global" class="tab-content">
                 <div class="card">
-                    <span class="section-tag">ESTADO DEL FONDO</span>
-                    <div class="stats-grid">
-                        <div class="stat-item"><span class="stat-label">Total Activos</span><span id="globalTotalAssets" class="stat-value">0</span></div>
-                        <div class="stat-item"><span class="stat-label">Total Shares</span><span id="globalTotalSupply" class="stat-value">0</span></div>
-                        <div class="stat-item"><span class="stat-label">Precio Share</span><span id="globalSharePrice" class="stat-value">0</span></div>
-                        <div class="stat-item"><span class="stat-label">Capital Trading</span><span id="globalCapitalTrading" class="stat-value">0</span></div>
-                        <div class="stat-item"><span class="stat-label">Reserva Eventos</span><span id="globalEventos" class="stat-value">0</span></div>
-                        <div class="stat-item"><span class="stat-label">Reserva Admin</span><span id="globalAdmin" class="stat-value">0</span></div>
-                        <div class="stat-item"><span class="stat-label">Reserva Referidos</span><span id="globalReferidos" class="stat-value">0</span></div>
-                        <div class="stat-item"><span class="stat-label">Bot Address</span><span id="globalBot" class="stat-value" style="font-size:0.9rem;">0x...</span></div>
+                    <div class="collapsible-header" id="globalHeader">
+                        <span>🌍</span> <span>ESTADO DEL FONDO</span> <span style="margin-left: auto;">▼</span>
+                    </div>
+                    <div class="collapsible-content" id="globalContent">
+                        <div class="stats-grid">
+                            <div class="stat-item"><span class="stat-label">Total Activos</span><span id="globalTotalAssets" class="stat-value">0</span></div>
+                            <div class="stat-item"><span class="stat-label">Total Shares</span><span id="globalTotalSupply" class="stat-value">0</span></div>
+                            <div class="stat-item"><span class="stat-label">Precio Share</span><span id="globalSharePrice" class="stat-value">0</span></div>
+                            <div class="stat-item"><span class="stat-label">Capital Trading</span><span id="globalCapitalTrading" class="stat-value">0</span></div>
+                            <div class="stat-item"><span class="stat-label">Reserva Eventos</span><span id="globalEventos" class="stat-value">0</span></div>
+                            <div class="stat-item"><span class="stat-label">Reserva Admin</span><span id="globalAdmin" class="stat-value">0</span></div>
+                            <div class="stat-item"><span class="stat-label">Reserva Referidos</span><span id="globalReferidos" class="stat-value">0</span></div>
+                            <div class="stat-item"><span class="stat-label">Bot Address</span><span id="globalBot" class="stat-value" style="font-size:0.9rem;">0x...</span></div>
+                        </div>
                     </div>
                 </div>
 
@@ -246,10 +266,11 @@
 
                     <!-- Notificación de retiro express -->
                     <div id="expressNotice" style="background:#2b1d00; border:1px solid var(--gold); border-radius:8px; padding:10px; font-size:11px; display:none; margin-top:10px;">
-                        ⚠️ <b>Retiro Express Detectado:</b><br>
-                        Se aplicará una comisión del 10% por retiro anticipado.<br>
+                        ⚠️ <b>Retiro Express</b><br>
+                        Si retiras antes de 7 días:<br>
+                        - Se aplica una comisión del <b>10%</b><br>
+                        - El retiro se procesará en <b>24 horas</b><br>
                         Recibirás: <span id="calcReceive" style="color:var(--gold); font-weight:bold;">0.00</span> USDT<br>
-                        <small>Plazo de liquidación en billetera: 24 horas.</small>
                     </div>
 
                     <div style="background: #161b22; margin-top:20px; padding:15px; border-radius:12px; border-left: 4px solid var(--blue);">
@@ -421,6 +442,8 @@
         const tabContents = document.querySelectorAll('.tab-content');
         const tabWalker = document.getElementById('tabWalker');
         const tabAdmin = document.getElementById('tabAdmin');
+        const globalHeader = document.getElementById('globalHeader');
+        const globalContent = document.getElementById('globalContent');
 
         // =============== FUNCIONES AUXILIARES ===============
         function showToast(msg, isError = false) {
@@ -699,6 +722,13 @@
                 tabContents.forEach(content => content.classList.add('hidden'));
                 document.getElementById(`tab-${tabId}`).classList.remove('hidden');
             });
+        });
+
+        // =============== COLLAPSIBLE GLOBAL ===============
+        globalHeader.addEventListener('click', () => {
+            globalContent.classList.toggle('show');
+            const arrow = globalHeader.querySelector('span:last-child');
+            arrow.innerText = globalContent.classList.contains('show') ? '▲' : '▼';
         });
 
         // =============== BOTONES DE USUARIO ===============
