@@ -3,260 +3,199 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Milimar Turbo - Business Interface</title>
+    <title>Milimar Turbo - Business Center</title>
     <script src="https://unpkg.com/ethers@6.7.0/dist/ethers.umd.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         :root { --primary: #f0b90b; --bg: #0b0e11; --card: #1e2329; --border: #474d57; --green: #238636; --red: #f85149; --blue: #58a6ff; }
-        body { font-family: 'Inter', sans-serif; background: var(--bg); color: #fff; margin: 0; padding: 10px; padding-bottom: 50px; }
-        .card { background: var(--card); border-radius: 12px; padding: 15px; margin-bottom: 12px; border: 1px solid var(--border); }
-        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        .btn { border: none; padding: 12px; border-radius: 6px; cursor: pointer; width: 100%; font-weight: 700; text-transform: uppercase; font-size: 12px; margin: 4px 0; transition: 0.2s; }
+        body { font-family: 'Inter', sans-serif; background: var(--bg); color: #fff; padding: 15px; margin:0; }
+        .card { background: var(--card); border-radius: 14px; padding: 18px; margin-bottom: 12px; border: 1px solid var(--border); box-shadow: 0 4px 10px rgba(0,0,0,0.5); }
+        .btn { border: none; padding: 15px; border-radius: 8px; cursor: pointer; width: 100%; font-weight: bold; text-transform: uppercase; margin: 5px 0; transition: 0.3s; }
         .btn-gold { background: var(--primary); color: #000; }
-        .btn-blue { background: var(--blue); color: #fff; }
-        .btn-green { background: var(--green); color: #fff; }
-        .btn-red { background: var(--red); color: #fff; }
         .btn-outline { background: transparent; border: 1px solid var(--primary); color: var(--primary); }
-        .input-box { background: #000; border: 1px solid var(--border); color: #fff; padding: 10px; border-radius: 6px; width: 100%; box-sizing: border-box; text-align: center; margin: 5px 0; font-size: 15px; }
-        .label { font-size: 10px; color: #848e9c; font-weight: bold; }
-        .val { font-size: 18px; font-weight: bold; color: var(--primary); }
-        .section-title { font-size: 13px; color: var(--primary); margin-bottom: 10px; border-bottom: 1px solid var(--border); padding-bottom: 5px; display: flex; align-items: center; gap: 5px; }
-        #statusLog { background: #2b2101; color: var(--primary); padding: 8px; font-size: 11px; border-radius: 6px; display: none; margin-bottom: 10px; border: 1px solid var(--primary); }
-        #adminArea, #walkerArea, #inversorArea { display: none; }
-        canvas { max-height: 100px; } /* Minimizado como pediste */
+        .btn-red { background: var(--red); color: white; }
+        .btn-blue { background: var(--blue); color: white; }
+        .input-box { background: #000; border: 1px solid var(--border); color: #fff; padding: 14px; border-radius: 8px; width: 100%; box-sizing: border-box; text-align: center; margin-bottom: 10px; font-size: 16px; }
+        .val { font-size: 32px; font-weight: bold; color: var(--primary); text-align: center; }
+        .label { font-size: 10px; color: #848e9c; text-transform: uppercase; letter-spacing: 1px; }
+        .badge { padding: 4px 10px; border-radius: 6px; font-size: 12px; font-weight: 700; display: inline-block; }
+        #log { position: fixed; bottom: 0; left:0; right:0; background: #f0b90b; color: black; font-size: 12px; padding: 10px; display:none; text-align: center; font-weight: bold; z-index: 1000; }
+        /* Control de Visibilidad */
+        #investorView, #walkerPanelView, #adminPanelView { display: none; }
     </style>
 </head>
 <body>
 
-    <h3 style="text-align: center; margin: 10px 0;">🚀 MILIMAR <span style="color:var(--primary)">TURBO</span></h3>
+    <h2 style="text-align: center; margin-top: 10px;">🚀 MILIMAR <span style="color: var(--primary);">TURBO</span></h2>
+    <p id="userAddr" style="text-align: center; font-size: 10px; color: #848e9c; margin-bottom: 20px;">VINCULADO: NO CONECTADO</p>
+
     <button id="btnConnect" class="btn btn-gold">🔗 VINCULAR BILLETERA</button>
-    <div id="statusLog"></div>
 
-    <!-- SECCIÓN 1: ESTADO GLOBAL (MINIMIZADO) -->
-    <div class="card" id="globalStats">
-        <div class="grid" style="text-align: center;">
-            <div><span class="label">CAPITAL TOTAL</span><br><span id="valTVL" style="font-size: 16px;">$0</span></div>
-            <div><span class="label">SHARE PRICE</span><br><span id="valShare" style="font-size: 16px;">1.0000</span></div>
-        </div>
-        <canvas id="miniChart"></canvas>
-    </div>
-
-    <!-- SECCIÓN 2: EL INVERSOR (CENTRO DE CARGA) -->
-    <div id="inversorArea" class="card">
-        <div class="section-title">👤 MI PORTAFOLIO</div>
-        <div style="text-align:center; margin-bottom:15px;">
-            <span class="label">SALDO DISPONIBLE</span><br>
-            <div id="userBalance" style="font-size: 30px; font-weight: bold; color: var(--primary);">0.00 USDT</div>
-        </div>
-        
-        <div class="grid">
-            <div class="stat-box" style="background:#000; padding:8px; border-radius:8px; text-align:center;">
-                <span class="label">ESTADO PROFIT</span><br><b id="stQualy" style="font-size:11px;">...</b>
-            </div>
-            <div class="stat-box" style="background:#000; padding:8px; border-radius:8px; text-align:center;">
-                <span class="label">RETIRO GRATIS</span><br><b id="stLock" style="font-size:11px;">...</b>
+    <!-- ÁREA 1: EL INVERSIONISTA -->
+    <div id="investorView" class="card">
+        <div style="text-align:center;">
+            <span class="label">Balance de mi Portafolio</span>
+            <div id="userBalance" class="val">0.00 USDT</div>
+            <div style="margin: 10px 0;">
+                <span id="stQualy" class="badge">SISTEMA OFF</span>
             </div>
         </div>
 
-        <input type="number" id="amtOp" class="input-box" placeholder="Monto USDT">
+        <input type="number" id="amtOp" class="input-box" placeholder="Monto USDT (Mín 50)">
+        <button id="btnIn" class="btn btn-gold">INYECTAR CAPITAL</button>
+        <button id="btnOut" class="btn btn-outline">SOLICITAR RETIRO</button>
+        <p id="msgWithdraw" style="font-size: 10px; color: #848e9c; text-align:center;"></p>
+
+        <!-- SUBSECCION BONO LIDER -->
+        <div style="background: #161b22; padding: 12px; border-radius: 10px; border: 1px solid var(--blue); margin-top: 15px;">
+            <span class="label" style="color:var(--blue);">Bono Líder Directo (8%)</span>
+            <div id="userRef" style="font-size: 20px; font-weight:bold; color:var(--blue);">0.00 USDT</div>
+            <button id="btnClaim" class="btn btn-blue" style="padding: 10px; font-size:12px;">RETIRAR MIS COMISIONES</button>
+        </div>
+    </div>
+
+    <!-- ÁREA 2: WALKER / REPORTES DEL BOT -->
+    <div id="walkerPanelView" class="card" style="border: 2px solid #b58900; background: #261b01;">
+        <h4 style="margin: 0; color:#b58900;">🤖 PANEL DE REPORTES (OPERATIVO)</h4>
+        <p class="label">Monto para informar al contrato</p>
+        <input type="number" id="amtReport" class="input-box" placeholder="Ganancia/Pérdida en USDT">
+        <div style="display:flex; gap: 10px;">
+            <button id="btnProfit" class="btn btn-gold">PROFIT (+)</button>
+            <button id="btnLoss" class="btn btn-red">PÉRDIDA (-)</button>
+        </div>
+        <hr style="border-color: var(--border); margin:15px 0;">
+        <p class="label">Traer dinero del trading al contrato</p>
+        <button id="btnReturn" class="btn btn-outline" style="border-color:#b58900; color:#b58900;">↩️ LIQUIDAR CAPITAL HACIA CONTRATO</button>
+    </div>
+
+    <!-- ÁREA 3: ADMINISTRADOR (EL DUEÑO) -->
+    <div id="adminPanelView" class="card" style="border: 2px solid var(--green); background: #012b15;">
+        <h4 style="margin: 0; color:var(--green);">🔱 PANEL MASTER ADMINISTRACIÓN</h4>
+        <div style="display:flex; justify-content:space-between; margin:10px 0;">
+            <div style="text-align:left"><span class="label">En Bóveda:</span><br><b id="admBoveda">0</b></div>
+            <div style="text-align:right"><span class="label">En Mercado:</span><br><b id="admMkt">0</b></div>
+        </div>
+        <input type="number" id="amtToTrading" class="input-box" placeholder="Cantidad para Operar">
+        <button id="btnToTrading" class="btn btn-green">🚀 MANDAR A BINANCE</button>
         
-        <div class="grid">
-            <button id="btnIn" class="btn btn-gold">DEPOSITAR</button>
-            <button id="btnOut" class="btn btn-outline">RETIRAR CAPITAL</button>
+        <div style="display:flex; gap:10px;">
+            <button onclick="changeParams()" class="btn btn-outline" style="font-size:9px;">PARAMETROS</button>
+            <button id="btnWithdrawCompany" class="btn btn-blue" style="font-size:9px;">FONDOS EMPRESA</button>
         </div>
-        <p id="msgOut" style="font-size:9px; color:#848e9c; text-align:center;"></p>
     </div>
 
-    <!-- SECCIÓN 3: RESIDUAL LÍDER (COBRO DE RED) -->
-    <div id="leaderArea" class="card" style="border-left: 5px solid var(--blue); display:none;">
-        <div class="section-title" style="color:var(--blue);">👥 MIS COMISIONES (8%)</div>
-        <div class="val" id="userRef" style="color:var(--blue); font-size:24px;">0.00 USDT</div>
-        <button id="btnClaim" class="btn btn-blue">COBRAR AHORA</button>
-        <p class="label" style="margin-top:5px;">Requiere membresía V5 activa para retirar.</p>
-    </div>
-
-    <!-- SECCIÓN 4: PANEL WALKER (REPORTES DEL BOT) -->
-    <div id="walkerArea" class="card" style="border: 1px solid #b58900; background: #221a00;">
-        <div class="section-title">🤖 CONSOLA DE REPORTES (BOT)</div>
-        <input type="number" id="amtProfit" class="input-box" placeholder="Monto Ganancia/Pérdida">
-        <div class="grid">
-            <button id="btnP" class="btn btn-gold">REPORTAR PROFIT (+)</button>
-            <button id="btnL" class="btn btn-red">REPORTAR LOSS (-)</button>
-        </div>
-        <hr style="border-color:var(--border)">
-        <input type="number" id="amtReturn" class="input-box" placeholder="USDT devuelto de Binance">
-        <button id="btnReturn" class="btn btn-outline">↩️ REGRESAR CAPITAL AL CONTRATO</button>
-    </div>
-
-    <!-- SECCIÓN 5: PANEL ADMIN MASTER (INYECCIÓN Y TESORERÍA) -->
-    <div id="adminArea" class="card" style="border: 1px solid var(--green); background: #001a08;">
-        <div class="section-title" style="color:#238636;">🔱 MANDO MAESTRO (ADMIN)</div>
-        <div class="grid" style="font-size:11px; margin-bottom:10px;">
-            <span>En Mercado: <b id="admMkt">0</b></span>
-            <span>Mínimo: <b id="admMin">0</b></span>
-        </div>
-        <input type="number" id="amtTrading" class="input-box" placeholder="Cantidad para Trading">
-        <button id="btnSend" class="btn btn-green">🚀 MANDAR A BINANCE</button>
-        
-        <div class="grid">
-            <button id="btnSetP" class="btn btn-outline" style="font-size:9px;">AJUSTAR LÍMITES</button>
-            <button id="btnSetB" class="btn btn-outline" style="font-size:9px;">ACTUALIZAR BINANCE ADDR</button>
-        </div>
-        <hr style="border-color:var(--border)">
-        <div class="grid">
-            <button id="btnT1" class="btn btn-blue" style="font-size:10px;">PEDIR RETIRO EMPRESA</button>
-            <button id="btnT2" class="btn btn-green" style="font-size:10px;">EJECUTAR RETIRO ADM</button>
-        </div>
-    </div>
+    <div id="log"></div>
 
     <script>
-        const ADDR = "0xc4158596B8F8E1cE337861dE0eCDc0c3045DbE88";
-        const USDT = "0x55d398326f99059fF775485246999027B3197955";
-        const ROLE_ALLOC = "0x7cf3a903332501a3036a7e0d37e641772eb5d7422204a08573216896174a7a8e";
-        const ROLE_ADMIN = "0x0000000000000000000000000000000000000000000000000000000000000000";
+        const CONTRACT_ADDR = "0xc4158596B8F8E1cE337861dE0eCDc0c3045DbE88";
+        const USDT_ADDR = "0x55d398326f99059fF775485246999027B3197955";
+        const R_ALLOC = "0x7cf3a903332501a3036a7e0d37e641772eb5d7422204a08573216896174a7a8e";
+        const R_ADMIN = "0x0000000000000000000000000000000000000000000000000000000000000000";
 
         const abi = [
             "function getVaultDashboard(address) view returns (uint256, uint256, bool, uint256, uint256)",
             "function totalAssets() view returns (uint256)",
             "function capitalEnTrading() view returns (uint256)",
-            "function minimoDeposito() view returns (uint256)",
             "function hasRole(bytes32, address) view returns (bool)",
             "function deposit(uint256, address) returns (uint256)",
             "function withdraw(uint256, address, address) returns (uint256)",
-            "function claimLeaderRewards() external",
             "function reportProfit(uint256, address) external",
             "function reportLoss(uint256) external",
             "function enviarATrading(uint256) external",
             "function registrarRegresoCapital(uint256) external",
             "function configurarParametros(uint256, uint256, uint256, uint256) external",
-            "function setBotAddress(address) external",
-            "function solicitarRetiroTesoreria(address, uint256, bool) external",
-            "function ejecutarRetiroTesoreria() external"
+            "function claimLeaderRewards() external"
         ];
         const abiUSDT = ["function approve(address, uint256) returns (bool)"];
-        let signer, contract, usdt, uAddr;
+
+        let provider, signer, contract, usdt, userAddress;
 
         async function init() {
-            if (!window.ethereum) return alert("Abre en navegador de billetera");
-            const provider = new ethers.BrowserProvider(window.ethereum);
+            if (!window.ethereum) return alert("Por favor usa la Web3 Wallet.");
+            provider = new ethers.BrowserProvider(window.ethereum);
             const accounts = await provider.send("eth_requestAccounts", []);
-            uAddr = accounts[0];
+            userAddress = accounts[0];
             signer = await provider.getSigner();
-            contract = new ethers.Contract(ADDR, abi, signer);
-            usdt = new ethers.Contract(USDT, abiUSDT, signer);
+            contract = new ethers.Contract(CONTRACT_ADDR, abi, signer);
+            usdt = new ethers.Contract(USDT_ADDR, abiUSDT, signer);
 
             document.getElementById('btnConnect').style.display = "none";
-            document.getElementById('inversorArea').style.display = "block";
-            document.getElementById('leaderArea').style.display = "block";
+            document.getElementById('userAddr').innerText = "VINCULADO: " + userAddress;
 
+            // ANALISIS DE ROLES - Esta es la parte magica Andrew
             const [isAdmin, isWalker] = await Promise.all([
-                contract.hasRole(ROLE_ADMIN, uAddr),
-                contract.hasRole(ROLE_ALLOC, uAddr)
+                contract.hasRole(ROLE_ADMIN, userAddress),
+                contract.hasRole(ROLE_ALLOC, userAddress)
             ]);
 
-            if(isAdmin) document.getElementById('adminArea').style.display = "block";
-            if(isWalker) document.getElementById('walkerArea').style.display = "block";
+            document.getElementById('investorView').style.display = "block"; // Siempre visible
+            if (isWalker) document.getElementById('walkerPanelView').style.display = "block";
+            if (isAdmin) document.getElementById('adminPanelView').style.display = "block";
 
-            refresh();
-            initChart();
-            setInterval(refresh, 20000);
+            refreshData();
+            setInterval(refreshData, 20000);
         }
 
-        async function refresh() {
+        async function refreshData() {
             try {
-                const [d, tvl, mkt, mindep] = await Promise.all([
-                    contract.getVaultDashboard(uAddr),
+                const [dash, totalTVL, marketAmt] = await Promise.all([
+                    contract.getVaultDashboard(userAddress),
                     contract.totalAssets(),
-                    contract.capitalEnTrading(),
-                    contract.minimoDeposito()
+                    contract.capitalEnTrading()
                 ]);
 
-                document.getElementById('userBalance').innerText = parseFloat(ethers.formatUnits(d[0], 18)).toFixed(2) + " USDT";
-                document.getElementById('userRef').innerText = parseFloat(ethers.formatUnits(d[1], 18)).toFixed(2) + " USDT";
-                document.getElementById('stQualy').innerText = d[2] ? "SISTEMA OPERANDO ✅" : "FASE MADURACIÓN ⌛";
-                document.getElementById('stQualy').style.color = d[2] ? "#238636" : "#f0b90b";
+                // Update de Balances (Usuario)
+                const bal = Number(ethers.formatUnits(dash[0], 18));
+                document.getElementById('userBalance').innerText = bal.toFixed(2) + " USDT";
+                document.getElementById('userRef').innerText = Number(ethers.formatUnits(dash[1], 18)).toFixed(2) + " USDT";
                 
-                const sec = Number(d[3]);
-                document.getElementById('stLock').innerText = sec > 0 ? Math.floor(sec/86400) + "d " + Math.floor((sec%86400)/3600) + "h" : "LIBRE ✅";
-                document.getElementById('msgOut').innerText = sec > 0 ? "⚠️ Retirar hoy implica 10% multa y 24h espera." : "💰 Puedes retirar gratis.";
+                // Estados (Maduración y Tiempo)
+                const isActive = dash[2];
+                const badge = document.getElementById('stQualy');
+                badge.innerText = isActive ? "✅ CALIFICADO" : "⏳ MADURANDO (24H)";
+                badge.style.background = isActive ? "#238636" : "#b58900";
 
-                document.getElementById('valTVL').innerText = "$" + parseFloat(ethers.formatUnits(tvl, 18)).toLocaleString();
-                document.getElementById('valShare').innerText = parseFloat(ethers.formatUnits(d[4], 18)).toFixed(4);
+                const secRemaining = Number(dash[3]);
+                document.getElementById('msgWithdraw').innerText = secRemaining > 0 
+                    ? `⚠️ Te quedan ${Math.floor(secRemaining/3600)} horas de bloqueo. Si retiras hoy, pagas multa de 10% y el bot liquida en 24h.`
+                    : "💎 Capital libre. Puedes retirar al instante y gratis.";
 
-                if(document.getElementById('adminArea').style.display === "block"){
-                    document.getElementById('admMkt').innerText = parseFloat(ethers.formatUnits(mkt, 18)).toFixed(2);
-                    document.getElementById('admMin').innerText = parseFloat(ethers.formatUnits(mindep, 18)).toFixed(0) + " USDT";
+                // Admin Stats
+                if (document.getElementById('adminPanelView').style.display === "block") {
+                    document.getElementById('admMkt').innerText = Number(ethers.formatUnits(marketAmt, 18)).toLocaleString();
+                    document.getElementById('admBoveda').innerText = Number(ethers.formatUnits(totalTVL, 18) - ethers.formatUnits(marketAmt, 18)).toLocaleString();
                 }
-            } catch (e) { console.error(e); }
+            } catch (e) { console.log(e); }
         }
 
-        // ACCIONES DE USUARIO
+        // LÓGICA DE BOTONES ACCIÓN
         document.getElementById('btnIn').onclick = async () => {
             const v = document.getElementById('amtOp').value;
             const w = ethers.parseUnits(v, 18);
             try {
-                msg("Autorizando USDT...");
-                const ap = await usdt.approve(ADDR, w); await ap.wait();
-                msg("Confirmando Inyección...");
-                const tx = await contract.deposit(w, uAddr); await tx.wait();
-                msg("🏆 ¡Listo!"); refresh();
-            } catch (e) { msg("❌ Error: Verifica Saldo/Membresía"); }
+                msg("Autorizando contrato...");
+                const ap = await usdt.approve(CONTRACT_ADDR, w); await ap.wait();
+                msg("Inyectando capital...");
+                const tx = await contract.deposit(w, userAddress); await tx.wait();
+                msg("✅ Inyección Exitosa");
+                refreshData();
+            } catch (e) { msg("❌ Error al procesar"); }
         };
 
-        document.getElementById('btnOut').onclick = async () => {
-            const v = document.getElementById('amtOp').value;
-            if(!v) return msg("Monto requerido");
-            const w = ethers.parseUnits(v, 18);
+        // ADMIN: MANDAR A BINANCE
+        document.getElementById('btnToTrading').onclick = async () => {
+            const v = document.getElementById('amtToTrading').value;
             try {
-                msg("⚙️ Solicitando retiro...");
-                const tx = await contract.withdraw(w, uAddr, uAddr);
-                await tx.wait();
-                msg("✅ Retiro exitoso."); refresh();
-            } catch (e) { msg("❌ Fallo en retiro"); }
+                const tx = await contract.enviarATrading(ethers.parseUnits(v, 18));
+                msg("Mandando capital a Binance..."); await tx.wait();
+                msg("🚀 Capital en trading!"); refreshData();
+            } catch (e) { msg("Error: Fondos insuficientes"); }
         };
 
-        document.getElementById('btnClaim').onclick = async () => {
-            try {
-                const tx = await contract.claimLeaderRewards();
-                msg("Cosechando bono..."); await tx.wait(); msg("✅ Bono enviado!"); refresh();
-            } catch (e) { msg("❌ Debes renovar membresía V5."); }
-        };
-
-        // REPORTES WALKER
-        document.getElementById('btnP').onclick = async () => {
-            const v = document.getElementById('amtProfit').value;
-            const tx = await contract.reportProfit(ethers.parseUnits(v, 18), uAddr);
-            msg("Reportando ganancia..."); await tx.wait(); refresh();
-        };
-
-        // ADMIN TOOLS
-        document.getElementById('btnSend').onclick = async () => {
-            const v = document.getElementById('amtTrading').value;
-            const tx = await contract.enviarATrading(ethers.parseUnits(v, 18));
-            msg("Enviando a Binance..."); await tx.wait(); refresh();
-        };
-
-        // Funciones Prompt para facilidad en movil
-        window.setParamsPrompt = async () => {
-            const min = prompt("Depósito Mínimo (ej: 50):");
-            const mult = prompt("Multa (%) (ej: 10):");
-            const risk = prompt("Riesgo Máx (%) (ej: 80):");
-            const maxS = prompt("Máximo por Envío (ej: 1000):");
-            if(min && mult && risk && maxS){
-                const tx = await contract.configurarParametros(ethers.parseUnits(min,18), mult, risk, ethers.parseUnits(maxS,18));
-                msg("Ajustando parámetros..."); await tx.wait(); refresh();
-            }
-        };
-
-        function msg(t) {
-            const l = document.getElementById('statusLog');
-            l.innerText = t; l.style.display = "block";
-            setTimeout(() => l.style.display="none", 6000);
-        }
-
-        function initChart() {
-            const ctx = document.getElementById('miniChart').getContext('2d');
-            new Chart(ctx, { type: 'line', data: { labels: ['S1','S2','S3','S4'], datasets: [{ data: [1.0, 1.05, 1.03, 1.15], borderColor: '#f0b90b', tension:0.4, borderWidth:2, pointRadius:0 }] }, options: { plugins:{legend:{display:false}}, scales:{x:{display:false},y:{display:false}} } });
+        function msg(m) {
+            const l = document.getElementById('log');
+            l.innerText = m; l.style.display = "block";
+            setTimeout(()=> l.style.display = "none", 5000);
         }
 
         document.getElementById('btnConnect').onclick = init;
