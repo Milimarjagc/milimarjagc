@@ -199,6 +199,11 @@
             color: white;
             box-shadow: 0 0 20px #238636;
         }
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            pointer-events: none;
+        }
         .input-box {
             background: rgba(0,0,0,0.6);
             border: 1px solid #00ffff;
@@ -517,8 +522,8 @@
                     <!-- Área dinámica de retiro (aquí se mostrará la tarjeta) -->
                     <div id="retiroOpciones" style="margin-top: 10px;"></div>
 
-                    <!-- Botón de retiro dinámico -->
-                    <button id="btnWithdrawAction" class="btn btn-outline" style="display: none;">RETIRAR</button>
+                    <!-- Botón de retiro dinámico (siempre visible) -->
+                    <button id="btnWithdrawAction" class="btn btn-outline" style="display: block; margin-top: 10px;" disabled>RETIRAR</button>
 
                     <!-- Botón de depósito -->
                     <button id="btnDeposit" class="btn btn-gold" style="margin-top: 10px;">🏦 APORTAR CAPITAL</button>
@@ -747,6 +752,61 @@
             return `${d}d ${h}h ${m}m`;
         }
 
+        // Función que actualiza las opciones de retiro (tarjeta y botón)
+        function actualizarOpcionesRetiro() {
+            const amt = parseFloat(amtOp.value);
+            const montoValido = !isNaN(amt) && amt >= 5;
+
+            if (!montoValido) {
+                retiroOpciones.innerHTML = '';
+                btnWithdrawAction.disabled = true;
+                btnWithdrawAction.innerText = 'RETIRAR (monto inválido)';
+                btnWithdrawAction.className = 'btn btn-outline';
+                return;
+            }
+
+            if (lockSecActual > 0) {
+                const montoNeto = amt * 0.9;
+                retiroOpciones.innerHTML = `
+                    <div class="express-notice">
+                        <strong>⚡ RETIRO EXPRESS ⚡</strong><br>
+                        <span>Comisión: 10%</span><br>
+                        <span class="highlight">Recibirás: ${montoNeto.toFixed(2)} USDT</span><br>
+                        <span style="font-size:0.8rem;">El retiro se procesará de inmediato.</span>
+                    </div>
+                `;
+                btnWithdrawAction.disabled = false;
+                btnWithdrawAction.innerText = 'RETIRAR EXPRESS (10%)';
+                btnWithdrawAction.className = 'btn btn-red';
+                btnWithdrawAction.onclick = () => realizarRetiro(amt);
+            } else {
+                retiroOpciones.innerHTML = `
+                    <div class="free-notice">
+                        <strong>✅ RETIRO SIN COMISIÓN</strong><br>
+                        <span class="highlight">Recibirás: ${amt.toFixed(2)} USDT</span><br>
+                        <span style="font-size:0.8rem;">El retiro se procesará de inmediato.</span>
+                    </div>
+                `;
+                btnWithdrawAction.disabled = false;
+                btnWithdrawAction.innerText = 'RETIRAR SIN COMISIÓN';
+                btnWithdrawAction.className = 'btn btn-green';
+                btnWithdrawAction.onclick = () => realizarRetiro(amt);
+            }
+        }
+
+        async function realizarRetiro(amt) {
+            try {
+                const wei = ethers.parseUnits(amt.toString(), 18);
+                addLog('⏳ Procesando retiro...');
+                const tx = await contract.withdraw(wei, userAddress, userAddress);
+                await tx.wait();
+                addLog('✅ Retiro completado');
+                refresh();
+            } catch (e) {
+                showToast('❌ Error: ' + e.message, true);
+            }
+        }
+
         async function refresh() {
             if (!contract || !userAddress) return;
             try {
@@ -780,6 +840,7 @@
                 lockSecActual = Number(data[3]);
                 document.getElementById('stTimer').innerText = lockSecActual > 0 ? formatTime(lockSecActual) : 'AHORA LIBRE ✅';
 
+                // Actualizar opciones de retiro después de obtener los datos
                 actualizarOpcionesRetiro();
 
                 const minDep = await contract.minimoDeposito();
@@ -811,56 +872,9 @@
                     document.getElementById('pendingAmount').innerText = '0';
                     document.getElementById('pendingReadyAt').innerText = '--';
                 }
-            } catch (e) { console.error('Error en refresh:', e); }
-        }
-
-        function actualizarOpcionesRetiro() {
-            const amt = parseFloat(amtOp.value);
-            if (isNaN(amt) || amt <= 0) {
-                retiroOpciones.innerHTML = '';
-                btnWithdrawAction.style.display = 'none';
-                return;
+            } catch (e) {
+                console.error('Error en refresh:', e);
             }
-
-            if (lockSecActual > 0) {
-                const montoNeto = amt * 0.9;
-                retiroOpciones.innerHTML = `
-                    <div class="express-notice">
-                        <strong>⚡ RETIRO EXPRESS ⚡</strong><br>
-                        <span>Comisión: 10%</span><br>
-                        <span class="highlight">Recibirás: ${montoNeto.toFixed(2)} USDT</span><br>
-                        <span style="font-size:0.8rem;">El retiro se procesará de inmediato.</span>
-                    </div>
-                `;
-                btnWithdrawAction.style.display = 'block';
-                btnWithdrawAction.innerText = 'RETIRAR EXPRESS (10%)';
-                btnWithdrawAction.className = 'btn btn-red';
-                btnWithdrawAction.onclick = () => realizarRetiro(amt);
-            } else {
-                retiroOpciones.innerHTML = `
-                    <div class="free-notice">
-                        <strong>✅ RETIRO SIN COMISIÓN</strong><br>
-                        <span class="highlight">Recibirás: ${amt.toFixed(2)} USDT</span><br>
-                        <span style="font-size:0.8rem;">El retiro se procesará de inmediato.</span>
-                    </div>
-                `;
-                btnWithdrawAction.style.display = 'block';
-                btnWithdrawAction.innerText = 'RETIRAR SIN COMISIÓN';
-                btnWithdrawAction.className = 'btn btn-green';
-                btnWithdrawAction.onclick = () => realizarRetiro(amt);
-            }
-        }
-
-        async function realizarRetiro(amt) {
-            if (amt < 5) { showToast('⚠️ Monto mínimo 5 USDT', true); return; }
-            try {
-                const wei = ethers.parseUnits(amt.toString(), 18);
-                addLog('⏳ Procesando retiro...');
-                const tx = await contract.withdraw(wei, userAddress, userAddress);
-                await tx.wait();
-                addLog('✅ Retiro completado');
-                refresh();
-            } catch (e) { showToast('❌ Error: ' + e.message, true); }
         }
 
         async function loadRoles() {
@@ -949,6 +963,7 @@
             } catch (e) { showToast('❌ Error: ' + e.message, true); }
         };
 
+        // Vincular evento input para actualizar en tiempo real
         amtOp.addEventListener('input', actualizarOpcionesRetiro);
 
         document.getElementById('btnReportProfit').onclick = async () => {
