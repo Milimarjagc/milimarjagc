@@ -3,120 +3,221 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Milimar Turbo - Business Console</title>
+    <title>Milimar Turbo Vault - Pro Console</title>
     <script src="https://unpkg.com/ethers@6.7.0/dist/ethers.umd.min.js"></script>
     <style>
-        body { font-family: 'Inter', sans-serif; background-color: #0b0e11; color: white; padding: 20px; }
-        .card { background: #1e2329; border-radius: 12px; padding: 15px; margin: 10px auto; max-width: 500px; border: 1px solid #474d57; }
-        .admin-section { background: #002b36; border: 2px solid #2aa198; display: none; } /* Oculto por defecto */
-        .walker-section { background: #2b1d00; border: 2px solid #b58900; display: none; }
-        .btn { background-color: #f0b90b; color: black; border: none; padding: 10px; border-radius: 6px; cursor: pointer; width: 100%; font-weight: bold; margin: 5px 0; }
-        .btn-red { background-color: #e15555; color: white; }
-        .btn-green { background-color: #238636; color: white; }
-        .input-box { background: #0b0e11; border: 1px solid #474d57; color: white; padding: 8px; border-radius: 6px; width: 90%; margin: 5px 0; text-align: center; }
-        .val { font-size: 24px; color: #f0b90b; font-weight: bold; }
-        #log { font-size: 12px; color: #848e9c; padding: 10px; }
+        :root { --primary: #f0b90b; --bg: #0b0e11; --card: #1e2329; --border: #474d57; --text: #eaecef; }
+        body { font-family: 'Inter', sans-serif; background-color: var(--bg); color: var(--text); padding: 15px; margin: 0; }
+        .card { background: var(--card); border-radius: 12px; padding: 15px; margin: 10px auto; max-width: 500px; border: 1px solid var(--border); }
+        .grid-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
+        .stat-box { background: #0b0e11; padding: 10px; border-radius: 8px; text-align: center; border: 1px solid var(--border); }
+        .btn { border: none; padding: 12px; border-radius: 6px; cursor: pointer; width: 100%; font-weight: bold; margin: 5px 0; transition: 0.3s; }
+        .btn-gold { background: var(--primary); color: black; }
+        .btn-blue { background: #58a6ff; color: white; }
+        .btn-red { background: #f85149; color: white; }
+        .btn-outline { background: transparent; border: 1px solid var(--primary); color: var(--primary); }
+        .input-pro { background: #0b0e11; border: 1px solid var(--border); color: white; padding: 10px; border-radius: 6px; width: 92%; font-size: 16px; margin: 5px 0; text-align: center; }
+        .label-sm { font-size: 11px; color: #848e9c; text-transform: uppercase; }
+        .val { font-size: 20px; color: var(--primary); font-weight: bold; }
+        .badge { padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: bold; }
+        #log { font-size: 12px; padding: 10px; border-radius: 6px; background: #2b2101; color: #f0b90b; display: none; margin: 10px auto; max-width: 500px; }
+        /* Secciones ocultas */
+        #adminPanel, #walkerPanel, #inversorCard { display: none; }
     </style>
 </head>
 <body>
 
-    <h1>🚀 MILIMAR TURBO VAULT</h1>
-    <div id="userArea">
-        <button id="btnConnect" class="btn">🔌 CONECTAR BILLETERA</button>
-        <p id="addrInfo" style="font-size:12px; color:#848e9c;"></p>
-    </div>
-
-    <!-- ÁREA PÚBLICA INVERSOR -->
-    <div id="inversionistaCard" class="card" style="display:none;">
-        <p>Mi Capital Total</p>
-        <div id="txtBalance" class="val">0.00 USDT</div>
-        <input type="number" id="amtInvest" class="input-box" placeholder="Monto USDT">
-        <button id="btnInvest" class="btn">DEPÓSITAR (INVEST)</button>
-    </div>
-
-    <!-- ÁREA EXCLUSIVA: ADMINISTRADOR (TÚ) -->
-    <div id="adminPanel" class="card admin-section">
-        <h3>🔱 PANEL MAESTRO (ADMIN)</h3>
-        <p style="font-size: 11px;">Mover capital acumulado del contrato a Binance</p>
-        <input type="number" id="amtToTrading" class="input-box" placeholder="Monto para Trading">
-        <button id="btnToTrading" class="btn-green btn">🚀 MANDAR A BINANCE</button>
-        <hr>
-        <button id="btnTesoreria" class="btn">🏦 PEDIR RETIRO EMPRESA</button>
-    </div>
-
-    <!-- ÁREA EXCLUSIVA: WALKER (REPORTES) -->
-    <div id="walkerPanel" class="card walker-section">
-        <h3>🤖 PANEL DEL BOT (WALKER)</h3>
-        <p>Reportar Resultados de Binance</p>
-        <input type="number" id="profitAmt" class="input-box" placeholder="Ganancia Neta USDT">
-        <button id="btnReportProfit" class="btn">💰 REPORTAR GANANCIA (+)</button>
-        <button id="btnReportLoss" class="btn btn-red">📉 REPORTAR PÉRDIDA (-)</button>
+    <h2 style="text-align: center;">🚀 MILIMAR <span style="color: var(--primary);">TURBO</span></h2>
+    
+    <div id="connSection" class="card">
+        <button id="btnConnect" class="btn btn-gold">🔌 CONECTAR BILLETERA</button>
+        <p id="addrDisplay" style="text-align:center; font-size: 12px; color: #848e9c;"></p>
     </div>
 
     <div id="log"></div>
 
+    <!-- 1. SECCIÓN INVERSOR (Lo que ven tus hijas y clientes) -->
+    <div id="inversorCard" class="card">
+        <span class="label-sm">Mi Inversión Total</span>
+        <div id="txtTotal" class="val" style="font-size: 32px;">0.00 USDT</div>
+        
+        <div class="grid-stats">
+            <div class="stat-box">
+                <span class="label-sm">Estado Profit</span><br>
+                <span id="txtQualified" class="badge" style="background:#238636;">Verificando...</span>
+            </div>
+            <div class="stat-box">
+                <span class="label-sm">Bloqueo 7 Días</span><br>
+                <b id="txtLock" style="font-size: 14px;">---</b>
+            </div>
+        </div>
+
+        <hr style="border: 0.5px solid var(--border); margin: 15px 0;">
+        
+        <span class="label-sm">Gestionar Fondos</span>
+        <input type="number" id="amtUser" class="input-pro" placeholder="Monto USDT">
+        <div class="grid-stats">
+            <button id="btnInvest" class="btn btn-gold">DEPOSITAR</button>
+            <button id="btnWithdraw" class="btn btn-outline">RETIRAR</button>
+        </div>
+
+        <!-- Bono de Líder dentro de la misma vista -->
+        <div style="background: #161b22; padding: 10px; border-radius: 8px; margin-top: 15px;">
+            <span class="label-sm">Bono Líder (8% Ganado por Red)</span>
+            <div id="txtReferral" class="val" style="color: #58a6ff;">0.00 USDT</div>
+            <button id="btnClaimRef" class="btn btn-blue" style="font-size:12px; padding: 8px;">RECLAMAR COMISIÓN</button>
+        </div>
+    </div>
+
+    <!-- 2. PANEL MASTER (Solo lo ves TÚ) -->
+    <div id="adminPanel" class="card" style="border: 1px solid #238636;">
+        <h4 style="color:#238636; margin: 0 0 10px 0;">🔱 PANEL ADMINISTRADOR</h4>
+        
+        <span class="label-sm">Liquidez Disponible: <span id="txtTVL" style="color:white">0</span> USDT</span><br>
+        <span class="label-sm">En Mercado: <span id="txtMercado" style="color:white">0</span> USDT</span>
+        
+        <input type="number" id="amtAdmin" class="input-pro" placeholder="Monto para Operar">
+        <button id="btnToTrading" class="btn btn-gold">🚀 MANDAR A BINANCE</button>
+        
+        <div class="grid-stats">
+            <button id="btnTesoreriaReq" class="btn btn-outline" style="font-size: 12px;">PEDIR RETIRO ADM</button>
+            <button id="btnTesoreriaExec" class="btn btn-blue" style="font-size: 12px;">EJECUTAR RETIRO</button>
+        </div>
+    </div>
+
+    <!-- 3. PANEL WALKER (Para reportes del BOT o manuales) -->
+    <div id="walkerPanel" class="card" style="border: 1px solid var(--primary);">
+        <h4 style="color: var(--primary); margin: 0 0 10px 0;">🤖 CONSOLA DE OPERACIONES</h4>
+        
+        <input type="number" id="amtProfit" class="input-pro" placeholder="Valor Profit/Loss">
+        <div class="grid-stats">
+            <button id="btnProfit" class="btn btn-gold">REPORTAR (+) PROFIT</button>
+            <button id="btnLoss" class="btn btn-red">REPORTAR (-) LOSS</button>
+        </div>
+        <hr style="border: 0.5px solid var(--border);">
+        <input type="number" id="amtReturn" class="input-pro" placeholder="Monto que regresa de Binance">
+        <button id="btnReturn" class="btn btn-outline">↩️ REGRESAR CAPITAL AL CONTRATO</button>
+    </div>
+
     <script>
         const contractAddress = "0xc4158596B8F8E1cE337861dE0eCDc0c3045DbE88";
+        const USDT_ADDR = "0x55d398326f99059fF775485246999027B3197955";
+        
         const ROLE_ALLOCATOR = "0x7cf3a903332501a3036a7e0d37e641772eb5d7422204a08573216896174a7a8e";
         const ROLE_ADMIN = "0x0000000000000000000000000000000000000000000000000000000000000000";
 
         const abi = [
             "function getVaultDashboard(address) view returns (uint256, uint256, bool, uint256, uint256)",
+            "function totalAssets() view returns (uint256)",
+            "function capitalEnTrading() view returns (uint256)",
             "function hasRole(bytes32, address) view returns (bool)",
-            "function enviarATrading(uint256) external",
+            "function deposit(uint256, address) returns (uint256)",
+            "function withdraw(uint256, address, address) returns (uint256)",
+            "function claimLeaderRewards() external",
             "function reportProfit(uint256, address) external",
             "function reportLoss(uint256) external",
-            "function deposit(uint256, address) returns (uint256)"
+            "function enviarATrading(uint256) external",
+            "function registrarRegresoCapital(uint256) external",
+            "function solicitarRetiroTesoreria(address, uint256, bool) external",
+            "function ejecutarRetiroTesoreria() external"
         ];
+        
+        const abiUSDT = ["function approve(address, uint256) returns (bool)", "function allowance(address, address) view returns (uint256)"];
 
-        let signer, contract, userAddress;
+        let provider, signer, contract, userAddress, usdt;
 
-        async function init() {
-            if (!window.ethereum) return alert("Usa tu wallet");
-            const provider = new ethers.BrowserProvider(window.ethereum);
+        async function connect() {
+            if (!window.ethereum) return alert("Instala una Wallet Web3");
+            provider = new ethers.BrowserProvider(window.ethereum);
             const accounts = await provider.send("eth_requestAccounts", []);
+            userAddress = accounts[0];
             signer = await provider.getSigner();
-            userAddress = await signer.getAddress();
             contract = new ethers.Contract(contractAddress, abi, signer);
+            usdt = new ethers.Contract(USDT_ADDR, abiUSDT, signer);
 
-            document.getElementById('btnConnect').style.display = "none";
-            document.getElementById('addrInfo').innerText = "Conectado: " + userAddress;
-            document.getElementById('inversionistaCard').style.display = "block";
+            document.getElementById('connSection').style.display = "none";
+            document.getElementById('inversorCard').style.display = "block";
+            
+            // Detección de roles en caliente
+            const [isAdmin, isWalker] = await Promise.all([
+                contract.hasRole(ROLE_ADMIN, userAddress),
+                contract.hasRole(ROLE_ALLOCATOR, userAddress)
+            ]);
 
-            // Lógica de detección de Roles
-            const isMainAdmin = await contract.hasRole(ROLE_ADMIN, userAddress);
-            const isWalker = await contract.hasRole(ROLE_ALLOCATOR, userAddress);
-
-            if (isMainAdmin) document.getElementById('adminPanel').style.display = "block";
+            if (isAdmin) document.getElementById('adminPanel').style.display = "block";
             if (isWalker) document.getElementById('walkerPanel').style.display = "block";
 
-            updateBalances();
+            document.getElementById('addrDisplay').innerText = "Viculado: " + userAddress.substring(0,10) + "...";
+            refreshData();
         }
 
-        async function updateBalances() {
-            const data = await contract.getVaultDashboard(userAddress);
-            document.getElementById('txtBalance').innerText = ethers.formatUnits(data[0], 18) + " USDT";
+        async function refreshData() {
+            try {
+                const [dash, tvl, mercado] = await Promise.all([
+                    contract.getVaultDashboard(userAddress),
+                    contract.totalAssets(),
+                    contract.capitalEnTrading()
+                ]);
+
+                // DASHBOARD USUARIO
+                document.getElementById('txtTotal').innerText = Number(ethers.formatUnits(dash[0], 18)).toFixed(2) + " USDT";
+                document.getElementById('txtReferral').innerText = Number(ethers.formatUnits(dash[1], 18)).toFixed(2) + " USDT";
+                
+                const qualified = dash[2];
+                document.getElementById('txtQualified').innerText = qualified ? "ACTIVO ✅" : "MADURANDO (24h) ⏳";
+                document.getElementById('txtQualified').style.background = qualified ? "#238636" : "#b58900";
+                
+                const sec = Number(dash[3]);
+                document.getElementById('txtLock').innerText = sec > 0 ? Math.floor(sec/86400) + "d " + Math.floor((sec%86400)/3600) + "h" : "LIBRE 🟢";
+
+                // DASHBOARD ADMIN
+                if(document.getElementById('adminPanel').style.display === "block") {
+                    document.getElementById('txtTVL').innerText = Number(ethers.formatUnits(tvl, 18)).toFixed(2);
+                    document.getElementById('txtMercado').innerText = Number(ethers.formatUnits(mercado, 18)).toFixed(2);
+                }
+            } catch (e) { console.error(e); }
         }
 
-        // ACCIÓN: ADMIN MANDA DINERO A BINANCE
+        // LÓGICA DE BOTONES (REMIX EN TU WEB)
+        document.getElementById('btnInvest').onclick = async () => {
+            try {
+                const val = document.getElementById('amtUser').value;
+                const wei = ethers.parseUnits(val, 18);
+                showMsg("Paso 1: Autorizando USDT...");
+                const apr = await usdt.approve(contractAddress, wei);
+                await apr.wait();
+                showMsg("Paso 2: Enviando al Turbo...");
+                const tx = await contract.deposit(wei, userAddress);
+                await tx.wait();
+                showMsg("🏆 ¡Depósito Exitoso!");
+                refreshData();
+            } catch (e) { showMsg("Error en transacción"); }
+        };
+
+        document.getElementById('btnProfit').onclick = async () => {
+            const val = document.getElementById('amtProfit').value;
+            const tx = await contract.reportProfit(ethers.parseUnits(val, 18), userAddress);
+            showMsg("Procesando reporte de ganancia...");
+            await tx.wait();
+            showMsg("✅ Ganancia repartida satisfactoriamente.");
+            refreshData();
+        };
+
         document.getElementById('btnToTrading').onclick = async () => {
-            const amt = document.getElementById('amtToTrading').value;
-            const tx = await contract.enviarATrading(ethers.parseUnits(amt, 18));
+            const val = document.getElementById('amtAdmin').value;
+            const tx = await contract.enviarATrading(ethers.parseUnits(val, 18));
             await tx.wait();
-            alert("Capital enviado a tu dirección de Binance.");
+            showMsg("🚀 USDT enviados a tu Binance.");
+            refreshData();
         };
 
-        // ACCIÓN: WALKER REPORTA GANANCIA
-        document.getElementById('btnReportProfit').onclick = async () => {
-            const amt = document.getElementById('profitAmt').value;
-            // Usamos la cuenta propia del worker como disparador
-            const tx = await contract.reportProfit(ethers.parseUnits(amt, 18), userAddress);
-            await tx.wait();
-            alert("Profit repartido. ¡Todos ganaron hoy!");
-            updateBalances();
-        };
+        function showMsg(m) {
+            const l = document.getElementById('log');
+            l.innerText = m;
+            l.style.display = "block";
+        }
 
-        document.getElementById('btnConnect').onclick = init;
+        document.getElementById('btnConnect').onclick = connect;
     </script>
 </body>
 </html>
