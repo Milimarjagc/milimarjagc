@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
-    <title>Milimar Turbo · Organizado</title>
+    <title>Milimar Turbo · Definitivo</title>
     <!-- Fuentes -->
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
     <!-- Font Awesome -->
@@ -15,9 +15,7 @@
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        /* ========== ESTILOS NEGRO TOTAL CON NEÓN ========== */
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        
         body {
             font-family: 'Inter', sans-serif;
             background: #000000;
@@ -443,20 +441,6 @@
             border: 2px solid #00ffff;
             box-shadow: 0 0 30px rgba(0, 255, 255, 0.3);
             margin-bottom: 20px;
-            transition: all 0.3s;
-            cursor: pointer;
-        }
-        
-        .chart-container.expandido {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            z-index: 1000;
-            border-radius: 0;
-            border: none;
-            box-shadow: none;
         }
         
         .chart-tag-flotante {
@@ -593,7 +577,6 @@
             text-align: center;
         }
 
-        /* Estilo para penalización */
         .penalty-warning {
             border: 2px solid #ff00ff;
             background: rgba(255, 0, 255, 0.1);
@@ -606,6 +589,21 @@
         .penalty-warning strong {
             color: #ff00ff;
             font-size: 1.2rem;
+        }
+
+        .progress-bar {
+            height: 8px;
+            background: #333;
+            border-radius: 4px;
+            margin: 10px 0;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #00ffff, #00ff00);
+            border-radius: 4px;
+            transition: width 0.3s;
         }
     </style>
 </head>
@@ -631,104 +629,63 @@
             </div>
         </div>
 
-        <!-- ===== SECCIONES INFORMATIVAS EXTENDIDAS (como al principio) ===== -->
+        <!-- SECCIONES INFORMATIVAS EXTENDIDAS -->
         <div id="infoSection">
             <div class="space-y-4">
-                <!-- Enlaces a BSCScan -->
                 <details class="card" open>
                     <summary style="color:#00ffff; font-weight:bold; list-style:none; display:flex; justify-content:space-between;">
                         📌 CONTRATOS EN BSCSCAN <span style="color:#00ffff;">▼</span>
                     </summary>
                     <div class="mt-4 space-y-3">
                         <p><i class="fas fa-file-contract" style="color:#ff00ff;"></i> <a href="https://bscscan.com/address/0x35425E6416f799C30938cBc159523B43C1c358B2" target="_blank" style="color:#00ffff;">📜 Contrato Milimar V5</a></p>
-                        <p><i class="fas fa-file-contract" style="color:#ff00ff;"></i> <a href="https://bscscan.com/address/0xAe49C14d63524B813b8ED0b49d7CFddDDE5ACAC7" target="_blank" style="color:#00ffff;">⚡ Bóveda Turbo V13.2 Titan</a></p>
+                        <p><i class="fas fa-file-contract" style="color:#ff00ff;"></i> <a href="https://bscscan.com/address/0xAe49C14d63524B813b8ED0b49d7CFddDDE5ACAC7" target="_blank" style="color:#00ffff;">⚡ Bóveda Turbo V13.2</a></p>
                         <p><i class="fas fa-coins" style="color:#ff00ff;"></i> <a href="https://bscscan.com/address/0x55d398326f99059fF775485246999027B3197955" target="_blank" style="color:#00ffff;">💵 USDT (BSC)</a></p>
                     </div>
                 </details>
 
-                <!-- Características Milimar V5 - EXTENDIDAS -->
                 <details class="card">
                     <summary style="color:#00ffff; font-weight:bold; list-style:none; display:flex; justify-content:space-between;">
-                        🌱 PLAN DE CRECIMIENTO COLECTIVO · MILIMAR V5 <span style="color:#00ffff;">▼</span>
+                        🌱 PLAN DE CRECIMIENTO COLECTIVO <span style="color:#00ffff;">▼</span>
                     </summary>
                     <div class="mt-4 space-y-4">
                         <div style="background:#0a0a0a; border:1px solid #00ffff; padding:15px; border-radius:16px;">
                             <h3 style="color:#00ffff;">📊 Recompensas por niveles</h3>
-                            <p style="color:#ffffff;">5 niveles de comisión: <strong>25%, 17%, 10%, 6%, 3%</strong> (61% total para la red).</p>
-                            <p style="color:#ffffff; margin-top:5px;">Bono especial de <strong style="color:#00ff00;">5 USDT</strong> al alcanzar 64 personas en tu nivel 3.</p>
+                            <p style="color:#ffffff;">5 niveles: 25%, 17%, 10%, 6%, 3%. Bono especial de 5 USDT al alcanzar 64 personas en nivel 3.</p>
                         </div>
                         <div style="background:#0a0a0a; border:1px solid #ff00ff; padding:15px; border-radius:16px;">
                             <h3 style="color:#ff00ff;">💰 Fondos de recompensa colectiva</h3>
-                            <p style="color:#ffffff;"><strong style="color:#00ffff;">Pool de liderazgo (3%)</strong> - Para bonos y recompensas especiales a líderes destacados.</p>
-                            <p style="color:#ffffff;"><strong style="color:#00ffff;">Fondo de solidaridad (1%)</strong> - Asistencia comunitaria y apoyo a miembros.</p>
+                            <p style="color:#ffffff;">Pool de liderazgo (3%) y fondo de solidaridad (1%).</p>
                         </div>
                         <div style="background:#0a0a0a; border:1px solid #00ff00; padding:15px; border-radius:16px;">
                             <h3 style="color:#00ff00;">📈 Requisitos de retiro</h3>
                             <ul style="color:#ffffff; padding-left:20px;">
-                                <li>Mínimo: <strong>10 USDT</strong></li>
-                                <li>Máximo por transacción: <strong>1000 USDT</strong></li>
-                                <li>Requiere: <strong>4 directos activos</strong> en tu red</li>
+                                <li>Mínimo: 10 USDT</li>
+                                <li>Máximo: 1000 USDT</li>
+                                <li>Requiere: 4 directos activos</li>
                             </ul>
-                        </div>
-                        <div style="background:#0a0a0a; border:1px solid #ffff00; padding:15px; border-radius:16px;">
-                            <h3 style="color:#ffff00;">🎓 Tutorial rápido</h3>
-                            <ol style="color:#ffffff; padding-left:20px;">
-                                <li><strong>Autoriza USDT</strong> (botón AUTORIZAR) - Aprueba el contrato para usar tus USDT</li>
-                                <li><strong>Activa con 10 USDT</strong> (necesitas enlace de quien te invitó)</li>
-                                <li><strong>Renueva cada 30 días</strong> para mantener tu membresía activa</li>
-                                <li><strong>Comparte tu enlace</strong> para crecer tu red y ganar comisiones</li>
-                                <li><strong>Retira ganancias</strong> cuando alcances los requisitos</li>
-                            </ol>
                         </div>
                     </div>
                 </details>
 
-                <!-- Características Turbo - EXTENDIDAS -->
                 <details class="card">
                     <summary style="color:#00ffff; font-weight:bold; list-style:none; display:flex; justify-content:space-between;">
-                        ⚡ BÓVEDA TURBO V13.2 · BENEFICIOS Y RIESGOS <span style="color:#00ffff;">▼</span>
+                        ⚡ BÓVEDA TURBO V13.2 <span style="color:#00ffff;">▼</span>
                     </summary>
                     <div class="mt-4 space-y-4">
                         <div style="background:#0a0a0a; border:1px solid #00ff00; padding:15px; border-radius:16px;">
                             <h3 style="color:#00ff00;">📈 BENEFICIOS</h3>
                             <ul style="color:#ffffff; padding-left:20px;">
-                                <li><strong style="color:#00ffff;">Rendimiento histórico simulado:</strong> +12% a +18% mensual</li>
-                                <li><strong style="color:#00ffff;">Copy trading automático</strong> con exchanges autorizados</li>
-                                <li><strong style="color:#00ffff;">Recompensas por liderazgo:</strong> 8% de las ganancias generadas</li>
-                                <li><strong style="color:#00ffff;">Depósito mínimo:</strong> 50 USDT</li>
-                                <li><strong style="color:#00ffff;">Retiros flexibles:</strong> Sin comisión después del periodo de bloqueo</li>
-                                <li><strong style="color:#00ffff;">Transparencia total:</strong> Todas las operaciones son visibles en la blockchain</li>
+                                <li>Rendimiento histórico: +12% a +18% mensual</li>
+                                <li>Copy trading automático</li>
+                                <li>Recompensas líder: 8%</li>
                             </ul>
                         </div>
                         <div style="background:#0a0a0a; border:1px solid #ff0000; padding:15px; border-radius:16px;">
                             <h3 style="color:#ff0000;">⚠️ RIESGOS</h3>
                             <ul style="color:#ffffff; padding-left:20px;">
-                                <li><strong style="color:#ff0000;">Pérdidas parciales o totales</strong> del capital invertido</li>
-                                <li><strong style="color:#ff0000;">Máxima pérdida por evento:</strong> 5000 USDT</li>
-                                <li><strong style="color:#ff0000;">Cooldown entre pérdidas:</strong> 1 hora</li>
-                                <li><strong style="color:#ff0000;">Retiro anticipado:</strong> penalización del 10%</li>
-                                <li><strong style="color:#ff0000;">Valor de participación variable</strong> según rendimiento del mercado</li>
-                                <li><strong style="color:#ff0000;">Requiere membresía activa</strong> en Milimar V5</li>
-                            </ul>
-                        </div>
-                        <div style="background:#0a0a0a; border:1px solid #ff00ff; padding:15px; border-radius:16px;">
-                            <h3 style="color:#ff00ff;">⚙️ Mecánica de funcionamiento</h3>
-                            <ul style="color:#ffffff; padding-left:20px;">
-                                <li>Los fondos se asignan a exchanges autorizados para trading</li>
-                                <li>El bot (walker) reporta ganancias y pérdidas automáticamente</li>
-                                <li>Las ganancias se distribuyen: 70% vault, 8% líder, 2% eventos, 20% administración</li>
-                                <li>Sistema de heartbeat para verificar que el bot esté activo</li>
-                                <li>Modo pánico y emergency multisig para máxima seguridad</li>
-                            </ul>
-                        </div>
-                        <div style="background:#0a0a0a; border:1px solid #00ffff; padding:15px; border-radius:16px;">
-                            <h3 style="color:#00ffff;">🔒 Seguridad</h3>
-                            <ul style="color:#ffffff; padding-left:20px;">
-                                <li>Contrato auditado con múltiples roles de seguridad</li>
-                                <li>Emergency committee con timelock de 24h</li>
-                                <li>Límites diarios de retiro por usuario y global</li>
-                                <li>Circuit breakers por pérdidas consecutivas</li>
-                                <li>Multisig para acciones críticas</li>
+                                <li>Pérdidas parciales o totales</li>
+                                <li>Máx pérdida por evento: 5000 USDT</li>
+                                <li>Retiro anticipado: 10% penalización</li>
                             </ul>
                         </div>
                     </div>
@@ -744,7 +701,7 @@
                 <div class="main-tab" data-main="turbo">⚡ BÓVEDA TURBO</div>
             </div>
 
-            <!-- SECCIÓN MILIMAR V5 (sin cambios, ya está correcta) -->
+            <!-- SECCIÓN MILIMAR V5 -->
             <div id="seccionV5" class="main-content">
                 <div class="sub-tabs">
                     <div class="sub-tab active" data-sub="v5Dashboard">📊 Dashboard</div>
@@ -759,16 +716,10 @@
                         <span class="section-tag">📊 DASHBOARD</span>
                         <div id="membresiaBadge" class="membresia-badge membresia-inactiva">🔍 Verificando membresía...</div>
                         <div class="stats-grid">
-                            <div class="stat-item"><span class="stat-label">Ganancias disponibles</span><span id="valSaldo" class="stat-value">0.00</span></div>
+                            <div class="stat-item"><span class="stat-label">Ganancias</span><span id="valSaldo" class="stat-value">0.00</span></div>
                             <div class="stat-item"><span class="stat-label">Días activos</span><span id="valDias" class="stat-value">0</span></div>
-                            <div class="stat-item"><span class="stat-label">Invitados directos</span><span id="valDirectos" class="stat-value">0</span></div>
-                            <div class="stat-item"><span class="stat-label">Comunidad total</span><span id="valRedTotal" class="stat-value">0</span></div>
-                        </div>
-                        <div class="stats-grid">
-                            <div class="stat-item"><span class="stat-label">Total ganado</span><span id="valTotalGanado" class="stat-value">0.00</span></div>
-                            <div class="stat-item"><span class="stat-label">Total retirado</span><span id="valTotalRetirado" class="stat-value">0.00</span></div>
-                            <div class="stat-item"><span class="stat-label">Pool Liderazgo</span><span id="poolLiderazgo" class="stat-value">0.00</span></div>
-                            <div class="stat-item"><span class="stat-label">Fondo Solidaridad</span><span id="fondoSolidaridad" class="stat-value">0.00</span></div>
+                            <div class="stat-item"><span class="stat-label">Directos</span><span id="valDirectos" class="stat-value">0</span></div>
+                            <div class="stat-item"><span class="stat-label">Comunidad</span><span id="valRedTotal" class="stat-value">0</span></div>
                         </div>
                     </div>
                 </div>
@@ -777,7 +728,6 @@
                 <div id="v5Red" class="sub-content hidden">
                     <div class="card">
                         <span class="section-tag">🌐 MI COMUNIDAD</span>
-                        <div class="bar-chart" id="barChart"></div>
                         <div class="flex flex-wrap justify-center gap-2 mb-4">
                             <div id="n1" class="node node-empty">N1<br><span>0</span></div>
                             <div id="n2" class="node node-empty">N2<br><span>0</span></div>
@@ -823,9 +773,8 @@
                 </div>
             </div>
 
-            <!-- ===== SECCIÓN TURBO REESTRUCTURADA ===== -->
+            <!-- SECCIÓN TURBO REESTRUCTURADA -->
             <div id="seccionTurbo" class="main-content hidden">
-                <!-- Subpestañas de Turbo - NUEVA ORGANIZACIÓN -->
                 <div class="sub-tabs">
                     <div class="sub-tab active" data-sub="turboDashboard">📈 Dashboard</div>
                     <div class="sub-tab" data-sub="turboCopyTrading">📊 Copy Trading</div>
@@ -837,19 +786,18 @@
                     <div class="sub-tab" data-sub="turboWalker" id="turboWalkerTab" style="display:none;">🤖 Walker</div>
                 </div>
 
-                <!-- DASHBOARD (vista general) -->
+                <!-- DASHBOARD -->
                 <div id="turboDashboard" class="sub-content">
                     <div class="card">
                         <span class="section-tag">📈 DASHBOARD</span>
                         <div id="turboMembresiaBadge" class="membresia-badge membresia-inactiva">🔍 Verificando membresía...</div>
                         
-                        <!-- Panel STATUS (estrategia actual) -->
                         <div id="liveTradeInfo" style="border:2px solid #ff00ff; border-radius:16px; padding:20px; margin-bottom:20px;">
-                            <span class="section-tag" style="border-color:#ff00ff; color:#ff00ff;">⚡ STATUS DE TRADING</span>
+                            <span class="section-tag" style="border-color:#ff00ff; color:#ff00ff;">⚡ STATUS</span>
                             <div style="display: flex; justify-content: space-between; align-items: center; margin-top:15px;">
                                 <div>
-                                    <span class="stat-label">ESTRATEGIA ACTUAL</span>
-                                    <div style="font-size:1.3rem; font-weight:bold;" id="tradeStatus">📡 ESPERANDO SEÑAL...</div>
+                                    <span class="stat-label">ESTRATEGIA</span>
+                                    <div style="font-size:1.3rem; font-weight:bold;" id="tradeStatus">📡 ESPERANDO...</div>
                                 </div>
                                 <div style="text-align:right;">
                                     <span class="stat-label">RIESGO</span>
@@ -858,30 +806,17 @@
                             </div>
                         </div>
 
-                        <!-- Datos principales del usuario -->
                         <div class="val-large" id="turboUserBal">0.00 USDT</div>
                         <div class="stats-grid">
-                            <div class="stat-item">
-                                <span class="stat-label">Recompensas líder</span>
-                                <span id="turboLeaderBal" class="stat-value">0.00</span>
-                            </div>
-                            <div class="stat-item">
-                                <span class="stat-label">Valor participación</span>
-                                <span id="turboSharePrice" class="stat-value">1.0000</span>
-                            </div>
-                            <div class="stat-item">
-                                <span class="stat-label">Calificado</span>
-                                <span id="turboCalificado" class="stat-value">⏳</span>
-                            </div>
-                            <div class="stat-item">
-                                <span class="stat-label">Bloqueo</span>
-                                <span id="turboLockTime" class="stat-value">0s</span>
-                            </div>
+                            <div class="stat-item"><span class="stat-label">Recompensas</span><span id="turboLeaderBal" class="stat-value">0.00</span></div>
+                            <div class="stat-item"><span class="stat-label">Valor share</span><span id="turboSharePrice" class="stat-value">1.0000</span></div>
+                            <div class="stat-item"><span class="stat-label">Calificado</span><span id="turboCalificado" class="stat-value">⏳</span></div>
+                            <div class="stat-item"><span class="stat-label">Bloqueo</span><span id="turboLockTime" class="stat-value">0s</span></div>
                         </div>
                     </div>
                 </div>
 
-                <!-- COPY TRADING (TODO lo relacionado con el trader) -->
+                <!-- COPY TRADING EN VIVO (CON DATOS REALES) -->
                 <div id="turboCopyTrading" class="sub-content hidden">
                     <div class="card">
                         <span class="section-tag" style="border-color:#ff00ff;">📊 COPY TRADING EN VIVO</span>
@@ -891,26 +826,22 @@
                             <div style="display:flex; justify-content:space-between; align-items:center;">
                                 <div>
                                     <span class="stat-label">TRADER ACTIVO</span>
-                                    <div style="font-size:1.5rem; color:#00ffff; font-weight:bold;" id="traderNombre">CryptoWhale</div>
-                                    <div style="margin-top:5px;">
-                                        <span class="stat-label">Win Rate</span> <span style="color:#00ff00;">68%</span> | 
-                                        <span class="stat-label">Operaciones</span> <span style="color:#00ffff;">142</span>
-                                    </div>
+                                    <div style="font-size:1.5rem; color:#00ffff; font-weight:bold;" id="traderNombre">Milimar Bot</div>
                                 </div>
                                 <div style="text-align:right;">
                                     <span class="stat-label">ESTADO</span>
-                                    <div id="traderEstado" style="color:#00ff00; font-weight:bold; font-size:1.2rem;">OPERANDO</div>
+                                    <div id="traderEstado" style="color:#00ff00; font-weight:bold;">OPERANDO</div>
                                 </div>
                             </div>
                         </div>
                         
-                        <!-- Gráfico de mercado GRANDE -->
-                        <div class="chart-container" id="copyChartContainer" style="height:400px; margin-bottom:15px;">
+                        <!-- Gráfico -->
+                        <div class="chart-container" style="height:400px; margin-bottom:15px;">
                             <div class="chart-tag-flotante">📈 MERCADO EN VIVO</div>
                             <div id="copy_chart" style="height:100%; width:100%;"></div>
                         </div>
                         
-                        <!-- Selectores de par y temporalidad -->
+                        <!-- Selectores -->
                         <div style="margin-bottom:15px;">
                             <div class="flex-row" style="justify-content:center; gap:5px; margin-bottom:10px;">
                                 <button class="btn btn-outline btn-small pair-btn active" data-pair="BTCUSDT" onclick="changeCopyPair('BINANCE:BTCUSDT')">BTC</button>
@@ -928,47 +859,47 @@
                             </div>
                         </div>
                         
-                        <!-- Operación actual del trader -->
+                        <!-- Operación actual -->
                         <div style="background:#0a0a0a; border:1px solid #ff00ff; border-radius:16px; padding:15px; margin-bottom:20px;">
                             <h4 style="color:#00ffff; margin-bottom:10px;">📊 OPERACIÓN ACTUAL</h4>
                             <div class="stats-grid">
                                 <div class="stat-item">
                                     <span class="stat-label">PAR</span>
-                                    <span id="operacionPar" style="color:#00ffff; font-size:1.3rem;">BTC/USDT</span>
+                                    <span id="operacionPar" style="color:#00ffff; font-size:1.3rem;">---</span>
                                 </div>
                                 <div class="stat-item">
                                     <span class="stat-label">DIRECCIÓN</span>
-                                    <span id="operacionDireccion" style="color:#00ff00;">LONG</span>
+                                    <span id="operacionDireccion">---</span>
                                 </div>
                                 <div class="stat-item">
                                     <span class="stat-label">ENTRADA</span>
-                                    <span id="operacionEntrada">68,420</span>
+                                    <span id="operacionEntrada">---</span>
                                 </div>
                                 <div class="stat-item">
                                     <span class="stat-label">ACTUAL</span>
-                                    <span id="operacionActual">69,150</span>
+                                    <span id="operacionActual">---</span>
                                 </div>
                             </div>
                             
-                            <!-- Profit en vivo -->
                             <div style="display:flex; justify-content:space-between; align-items:center; margin:15px 0;">
-                                <span class="stat-label">PROFIT ACTUAL</span>
-                                <span id="operacionProfit" style="font-size:2rem; color:#00ff00; font-weight:bold;">+730 USDT</span>
+                                <span class="stat-label">PROFIT</span>
+                                <span id="operacionProfit" style="font-size:2rem; font-weight:bold;">0 USDT</span>
                             </div>
                             
-                            <!-- Barra de progreso -->
-                            <div>
-                                <div style="display:flex; justify-content:space-between;">
-                                    <span class="stat-label">Entrada: 68,420</span>
-                                    <span class="stat-label">Objetivo: 70,000</span>
-                                </div>
-                                <div style="height:10px; background:#333; border-radius:5px; margin-top:5px;">
-                                    <div style="height:100%; width:75%; background:linear-gradient(90deg, #00ffff, #00ff00); border-radius:5px;"></div>
-                                </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" id="profitProgress" style="width:0%"></div>
                             </div>
                         </div>
                         
-                        <!-- Últimas operaciones del trader -->
+                        <!-- Estadísticas -->
+                        <div class="stats-grid" style="margin-bottom:15px;">
+                            <div class="stat-item"><span class="stat-label">WIN RATE</span><span id="statWinRate" class="stat-value">0%</span></div>
+                            <div class="stat-item"><span class="stat-label">OPERACIONES</span><span id="statTrades" class="stat-value">0</span></div>
+                            <div class="stat-item"><span class="stat-label">PROFIT TOTAL</span><span id="statTotalProfit" class="stat-value">0</span></div>
+                            <div class="stat-item"><span class="stat-label">FACTOR</span><span id="statFactor" class="stat-value">0</span></div>
+                        </div>
+                        
+                        <!-- Historial -->
                         <h4 style="color:#00ffff; margin:15px 0 10px;">📋 ÚLTIMAS OPERACIONES</h4>
                         <table class="dynamic-table">
                             <thead>
@@ -981,174 +912,139 @@
                                 </tr>
                             </thead>
                             <tbody id="ultimasOperaciones">
-                                <tr><td>BTC</td><td style="color:#00ff00;">LONG</td><td>68,420</td><td>69,150</td><td style="color:#00ff00;">+730</td></tr>
-                                <tr><td>ETH</td><td style="color:#ff0000;">SHORT</td><td>3,520</td><td>3,480</td><td style="color:#00ff00;">+40</td></tr>
-                                <tr><td>SOL</td><td style="color:#00ff00;">LONG</td><td>172</td><td>178</td><td style="color:#00ff00;">+6</td></tr>
+                                <tr><td colspan="5" style="text-align:center;">Sin operaciones</td></tr>
                             </tbody>
                         </table>
-                        
-                        <p class="text-center" style="color:#aaa; font-size:0.7rem; margin-top:10px;">
-                            * Las operaciones se copian automáticamente del trader seleccionado
-                        </p>
                     </div>
                 </div>
 
-                <!-- DATOS DEL CONTRATO (métricas reales) -->
+                <!-- DATOS CONTRATO -->
                 <div id="turboContrato" class="sub-content hidden">
                     <div class="card">
-                        <span class="section-tag" style="border-color:#00ffff;">📊 DATOS DEL CONTRATO TURBO</span>
-                        
-                        <!-- Métricas principales -->
+                        <span class="section-tag">📊 DATOS CONTRATO</span>
                         <div class="stats-grid">
-                            <div class="stat-item">
-                                <span class="stat-label">TOTAL ACTIVOS</span>
-                                <span id="contratoTotalAssets" class="stat-value">0.00 USDT</span>
-                            </div>
-                            <div class="stat-item">
-                                <span class="stat-label">CAPITAL TRADING</span>
-                                <span id="contratoCapitalTrading" class="stat-value">0.00 USDT</span>
-                            </div>
-                            <div class="stat-item">
-                                <span class="stat-label">EN BÓVEDA</span>
-                                <span id="contratoEnBoveda" class="stat-value">0.00 USDT</span>
-                            </div>
-                            <div class="stat-item">
-                                <span class="stat-label">PROFIT TOTAL</span>
-                                <span id="contratoProfit" class="stat-value">0.00 USDT</span>
-                            </div>
+                            <div class="stat-item"><span class="stat-label">TOTAL ACTIVOS</span><span id="contratoTotalAssets" class="stat-value">0.00</span></div>
+                            <div class="stat-item"><span class="stat-label">CAPITAL TRADING</span><span id="contratoCapitalTrading" class="stat-value">0.00</span></div>
+                            <div class="stat-item"><span class="stat-label">EN BÓVEDA</span><span id="contratoEnBoveda" class="stat-value">0.00</span></div>
+                            <div class="stat-item"><span class="stat-label">PROFIT</span><span id="contratoProfit" class="stat-value">0.00</span></div>
                         </div>
-                        
-                        <!-- Métricas de reservas -->
-                        <h4 class="text-cyan-300" style="margin:15px 0 10px;">💰 FONDOS DE RESERVA</h4>
+                        <h4 class="text-cyan-300">💰 FONDOS DE RESERVA</h4>
                         <div class="stats-grid">
-                            <div class="stat-item">
-                                <span class="stat-label">EVENTOS</span>
-                                <span id="contratoEventos" class="stat-value">0.00 USDT</span>
-                            </div>
-                            <div class="stat-item">
-                                <span class="stat-label">ADMIN</span>
-                                <span id="contratoAdmin" class="stat-value">0.00 USDT</span>
-                            </div>
-                            <div class="stat-item">
-                                <span class="stat-label">REFERIDOS</span>
-                                <span id="contratoReferidos" class="stat-value">0.00 USDT</span>
-                            </div>
+                            <div class="stat-item"><span class="stat-label">EVENTOS</span><span id="contratoEventos" class="stat-value">0.00</span></div>
+                            <div class="stat-item"><span class="stat-label">ADMIN</span><span id="contratoAdmin" class="stat-value">0.00</span></div>
+                            <div class="stat-item"><span class="stat-label">REFERIDOS</span><span id="contratoReferidos" class="stat-value">0.00</span></div>
                         </div>
-                        
-                        <!-- Gráfico de distribución -->
-                        <h4 class="text-cyan-300" style="margin:20px 0 10px;">📈 DISTRIBUCIÓN DE CAPITAL</h4>
-                        <div style="height:150px; margin-bottom:15px;">
+                        <div style="height:150px;">
                             <canvas id="capitalDistributionChart"></canvas>
                         </div>
-                        
-                        <!-- Última actualización -->
                         <div style="background:#0a0a0a; border:1px solid #00ffff; border-radius:16px; padding:10px; margin-top:10px;">
                             <span class="stat-label">ÚLTIMA ACTUALIZACIÓN</span>
-                            <span id="contratoLastUpdate" class="stat-value" style="font-size:0.9rem;">--</span>
+                            <span id="contratoLastUpdate" class="stat-value">--</span>
                         </div>
-                        
-                        <p class="text-center" style="color:#aaa; font-size:0.7rem; margin-top:10px;">
-                            * Datos actualizados en tiempo real desde el contrato
-                        </p>
                     </div>
                 </div>
 
-                <!-- OPERACIONES (Depósitos/Retiros con penalización) -->
+                <!-- OPERACIONES -->
                 <div id="turboOperaciones" class="sub-content hidden">
                     <div class="card">
                         <span class="section-tag">⚡ OPERACIONES</span>
-                        
-                        <input type="number" id="turboAmount" class="input-box" placeholder="Monto USDT (mín. 50)" step="0.01">
-                        
-                        <!-- Panel de penalización (se muestra cuando hay bloqueo) -->
+                        <input type="number" id="turboAmount" class="input-box" placeholder="Monto USDT (mín. 50)">
                         <div id="penaltyPanel" class="penalty-warning" style="display:none;">
-                            <i class="fas fa-exclamation-triangle" style="color:#ff00ff; font-size:1.5rem;"></i>
-                            <p><strong>RETIRO ANTICIPADO</strong></p>
-                            <p style="color:#ffffff;">Si retiras antes de que termine el bloqueo, se aplicará una <strong style="color:#ff00ff;">penalización del 10%</strong></p>
-                            <p id="penaltyAmount" style="color:#ff00ff; font-size:1.2rem;">0.00 USDT</p>
+                            <p><strong>⚠️ RETIRO ANTICIPADO</strong></p>
+                            <p>Penalización del <strong style="color:#ff00ff;">10%</strong>: <span id="penaltyAmount">0.00</span> USDT</p>
                         </div>
-                        
                         <div id="turboWithdrawOptions" class="my-4"></div>
-                        
                         <button id="turboBtnDeposit" class="btn btn-gold turbo-required">🏦 DEPOSITAR</button>
                         <button id="turboBtnWithdraw" class="btn btn-outline mt-2 turbo-required" disabled>RETIRAR</button>
-                        
-                        <p class="text-center" style="color:#aaa; font-size:0.7rem; margin-top:15px;">
-                            <i class="fas fa-info-circle"></i> El retiro anticipado tiene una penalización del 10%. 
-                            El bloqueo es de <span id="lockTimeDisplay">7 días</span> después del depósito.
-                        </p>
                     </div>
                 </div>
 
-                <!-- RECOMPENSAS (se mantiene) -->
+                <!-- RECOMPENSAS -->
                 <div id="turboRecompensas" class="sub-content hidden">
                     <div class="card">
                         <span class="section-tag">💰 RECOMPENSAS</span>
                         <div class="val-large" id="turboLeaderBal2">0.00 USDT</div>
-                        <button id="turboBtnClaim" class="btn btn-blue turbo-required">💰 COSECHAR RECOMPENSAS</button>
+                        <button id="turboBtnClaim" class="btn btn-blue turbo-required">💰 COSECHAR</button>
                     </div>
                 </div>
 
-                <!-- ESTADÍSTICAS (histórico) -->
+                <!-- ESTADÍSTICAS -->
                 <div id="turboEstadisticas" class="sub-content hidden">
                     <div class="card">
-                        <span class="section-tag" style="border-color:#00ffaa;">📊 ESTADÍSTICAS</span>
-                        
-                        <div class="stats-grid">
-                            <div class="stat-item"><span class="stat-label">WIN RATE</span><span class="stat-value" style="color:#00ff00;">68%</span></div>
-                            <div class="stat-item"><span class="stat-label">OPERACIONES</span><span class="stat-value">316</span></div>
-                            <div class="stat-item"><span class="stat-label">PROFIT TOTAL</span><span class="stat-value" style="color:#00ff00;">+45,678</span></div>
-                            <div class="stat-item"><span class="stat-label">FACTOR</span><span class="stat-value">2.34</span></div>
-                        </div>
-                        
-                        <div style="height:200px; margin:20px 0;">
+                        <span class="section-tag">📊 ESTADÍSTICAS</span>
+                        <div style="height:200px;">
                             <canvas id="equityChart"></canvas>
                         </div>
-                        
-                        <table class="dynamic-table">
-                            <thead><tr><th>FECHA</th><th>PAR</th><th>TIPO</th><th>PROFIT</th></tr></thead>
-                            <tbody>
-                                <tr><td>15/03</td><td>BTC</td><td style="color:#00ff00;">LONG</td><td style="color:#00ff00;">+730</td></tr>
-                                <tr><td>14/03</td><td>ETH</td><td style="color:#ff0000;">SHORT</td><td style="color:#00ff00;">+40</td></tr>
-                                <tr><td>14/03</td><td>SOL</td><td style="color:#00ff00;">LONG</td><td style="color:#00ff00;">+6</td></tr>
-                                <tr><td>13/03</td><td>BNB</td><td style="color:#ff0000;">SHORT</td><td style="color:#ff0000;">-5</td></tr>
-                            </tbody>
-                        </table>
                     </div>
                 </div>
 
-                <!-- ADMIN (solo visible para admin) -->
+                <!-- ADMIN -->
                 <div id="turboAdmin" class="sub-content hidden">
                     <div class="card">
-                        <span class="section-tag">🔱 ADMIN TURBO</span>
+                        <span class="section-tag">🔱 ADMIN</span>
                         <div class="admin-section">
-                            <p style="color:gold;">🔑 Funciones exclusivas de administrador</p>
-                            <!-- Aquí van las funciones admin existentes -->
+                            <p style="color:gold;">🔑 Funciones admin</p>
                         </div>
                     </div>
                 </div>
 
-                <!-- WALKER (control de status) -->
+                <!-- WALKER (CON CONTROLES DE TRADING) -->
                 <div id="turboWalker" class="sub-content hidden">
                     <div class="card">
                         <span class="section-tag" style="border-color:#f59e0b;">🤖 WALKER</span>
                         <div class="walker-section">
-                            <div class="card" style="border-color:#ff00ff;">
-                                <span class="section-tag" style="border-color:#ff00ff;">🎮 CONTROL DE STATUS</span>
+                            <!-- Control de Status (existente) -->
+                            <div class="card" style="border-color:#ff00ff; margin-bottom:20px;">
+                                <span class="section-tag" style="border-color:#ff00ff;">🎮 CONTROL STATUS</span>
                                 <select id="tradeMoneda" class="input-box">
-                                    <option value="BTC">BTC</option><option value="ETH">ETH</option>
-                                    <option value="SOL">SOL</option><option value="BNB">BNB</option>
+                                    <option value="BTC">BTC</option>
+                                    <option value="ETH">ETH</option>
+                                    <option value="SOL">SOL</option>
+                                    <option value="BNB">BNB</option>
                                 </select>
                                 <select id="tradeAccion" class="input-box">
-                                    <option value="espera">🟡 En espera</option>
-                                    <option value="long">🟢 LONG (Compra)</option>
-                                    <option value="short">🔴 SHORT (Venta)</option>
+                                    <option value="espera">🟡 Espera</option>
+                                    <option value="long">🟢 LONG</option>
+                                    <option value="short">🔴 SHORT</option>
                                 </select>
                                 <select id="tradeLeverage" class="input-box">
-                                    <option value="5X">5X</option><option value="10X" selected>10X</option><option value="20X">20X</option>
+                                    <option value="5X">5X</option>
+                                    <option value="10X" selected>10X</option>
+                                    <option value="20X">20X</option>
                                 </select>
-                                <button id="btnUpdateTradeStatus" class="btn btn-gold">📢 PUBLICAR STATUS</button>
-                                <p class="text-xs" style="color:#aaa; margin-top:10px;">* Todos los usuarios verán este mensaje</p>
+                                <button id="btnUpdateTradeStatus" class="btn btn-gold">📢 PUBLICAR</button>
+                            </div>
+
+                            <!-- NUEVO: Control de Trading -->
+                            <div class="card" style="border-color:#00ffff;">
+                                <span class="section-tag" style="border-color:#00ffff;">📊 CONTROL DE TRADING</span>
+                                
+                                <h4 class="text-cyan-300">📢 Reportar nueva posición</h4>
+                                <select id="reportPair" class="input-box">
+                                    <option value="BTC/USDT">BTC/USDT</option>
+                                    <option value="ETH/USDT">ETH/USDT</option>
+                                    <option value="SOL/USDT">SOL/USDT</option>
+                                    <option value="BNB/USDT">BNB/USDT</option>
+                                </select>
+                                <select id="reportDirection" class="input-box">
+                                    <option value="LONG">🟢 LONG</option>
+                                    <option value="SHORT">🔴 SHORT</option>
+                                </select>
+                                <input type="number" id="reportEntry" class="input-box" placeholder="Precio entrada">
+                                <input type="number" id="reportSize" class="input-box" placeholder="Tamaño (USDT)">
+                                <button id="btnReportPosition" class="btn btn-gold">📢 ABRIR POSICIÓN</button>
+                                
+                                <h4 class="text-cyan-300" style="margin-top:15px;">💰 Cerrar posición</h4>
+                                <input type="number" id="reportExit" class="input-box" placeholder="Precio salida">
+                                <button id="btnClosePosition" class="btn btn-red">🔴 CERRAR POSICIÓN</button>
+                                
+                                <h4 class="text-cyan-300" style="margin-top:15px;">📊 Actualizar precio</h4>
+                                <input type="number" id="updatePrice" class="input-box" placeholder="Nuevo precio">
+                                <button id="btnUpdatePrice" class="btn btn-outline">🔄 ACTUALIZAR</button>
+                                
+                                <p class="text-xs" style="color:#aaa; margin-top:10px;">
+                                    * Los cambios afectan a todos los usuarios en tiempo real
+                                </p>
                             </div>
                         </div>
                     </div>
@@ -1158,12 +1054,12 @@
 
         <!-- Eventos -->
         <div class="card">
-            <span class="section-tag">📡 EVENTOS RECIENTES</span>
+            <span class="section-tag">📡 EVENTOS</span>
             <div id="eventFeed" style="background:#0a0a0a; border:1px solid #00ffff; padding:10px; border-radius:16px; height:100px; overflow-y:auto;"></div>
         </div>
     </div>
 
-    <footer>⚡ MILIMAR TURBO · VERSIÓN ORGANIZADA ⚡</footer>
+    <footer>⚡ MILIMAR TURBO · VERSIÓN DEFINITIVA ⚡</footer>
 
     <script>
         // ========== CONFIGURACIÓN ==========
@@ -1175,10 +1071,65 @@
         const DEFAULT_ADMIN_ROLE = "0x0000000000000000000000000000000000000000000000000000000000000000";
         const ALLOCATOR_ROLE = "0x7cf3a903332501a3036a7e0d37e641772eb5d7422204a08573216896174a7a8e";
 
-        // ABIs COMPLETOS (igual que antes)
-        const abiMilimar = [ /* ... mismo ABI ... */ ];
-        const abiTurbo = [ /* ... mismo ABI ... */ ];
-        const usdtAbi = [ /* ... mismo ABI ... */ ];
+        // ABIs COMPLETOS
+        const abiMilimar = [
+            "function usuarios(address) view returns (bool registrado, address patrocinador, uint256 saldoPendiente, uint256 totalGanado, uint256 totalRetirado, uint256 contadorDirectos, uint256 redTotal, uint256[5] conteoNiveles, uint256 cuposExtraAdmin, uint256 vencimiento, uint256[5] gananciasNiveles, bool bonoN3Reclamado, uint256 fechaRegistro, uint256 ultimaActividad, bool activo)",
+            "function consultarEstado(address) view returns (uint256 saldoPendiente, uint256 totalGanado, uint256 totalRetirado, uint256 directos, uint256 redTotal, uint256 diasRestantes, bool activo)",
+            "function verDetalleRed(address) view returns (uint256[5] memory)",
+            "function verDetalleGanancias(address) view returns (uint256[5] memory)",
+            "function poolLiderazgo() view returns (uint256)",
+            "function fondoSolidaridad() view returns (uint256)",
+            "function precioSuscripcion() view returns (uint256)",
+            "function porcentajes(uint256) view returns (uint256)",
+            "function bonoNivel3() view returns (uint256)",
+            "function bonosRecurrentesActivados() view returns (bool)",
+            "function unirse(address) external",
+            "function renovarSuscripcion() external",
+            "function retirarGanancias() external",
+            "function owner() view returns (address)",
+            "function togglePausa() external",
+            "function activateEmergencyMode() external",
+            "function actualizarPrecio(uint256) external",
+            "function actualizarBonoNivel3(uint256) external",
+            "function premiarLider(address,uint256) external",
+            "function otorgarCuposExtra(address,uint256) external",
+            "function setBonosRecurrentesActivados(bool) external"
+        ];
+
+        const abiTurbo = [
+            "function DEFAULT_ADMIN_ROLE() view returns (bytes32)",
+            "function ALLOCATOR_ROLE() view returns (bytes32)",
+            "function hasRole(bytes32 role, address account) view returns (bool)",
+            "function getVaultDashboard(address) view returns (uint256 capitalUsdt, uint256 residualLider, bool calificado, uint256 cronometroLock, uint256 sharePrice)",
+            "function saldoRecompensasLider(address) view returns (uint256)",
+            "function balanceOf(address) view returns (uint256)",
+            "function deposit(uint256 assets, address receiver) returns (uint256)",
+            "function withdraw(uint256 assets, address receiver, address owner) returns (uint256)",
+            "function claimLeaderRewards() external",
+            "function minimoDeposito() view returns (uint256)",
+            "function earlyExitFee() view returns (uint256)",
+            "function totalAssets() view returns (uint256)",
+            "function capitalEnTrading() view returns (uint256)",
+            "function maxLossPerReport() view returns (uint256)",
+            "function totalSupply() view returns (uint256)",
+            "function reportProfit(uint256 _amount, address _userTrigger) external",
+            "function reportLoss(uint256 _amount) external",
+            "function registrarRegresoCapital(uint256 _amt, address exchange) external",
+            "function enviarATrading(uint256 _amt, address exchange) external",
+            "function configurarParametros(uint256 _min, uint256 _multa, uint256 _risk, uint256 _maxSend) external",
+            "function setBotAddress(address _bot) external",
+            "function pause() external",
+            "function unpause() external",
+            "function acumuladoEventos() view returns (uint256)",
+            "function acumuladoAdministracion() view returns (uint256)",
+            "function acumuladoParaReferidos() view returns (uint256)"
+        ];
+
+        const usdtAbi = [
+            "function approve(address spender, uint256 amount) returns (bool)",
+            "function balanceOf(address) view returns (uint256)",
+            "function allowance(address owner, address spender) view returns (uint256)"
+        ];
 
         // ========== VARIABLES GLOBALES ==========
         let provider, signer, userAddress;
@@ -1197,10 +1148,221 @@
         let equityChart = null;
         let capitalChart = null;
 
-        // Cache
-        let cacheDatos = { milimar: null, turbo: null, timestamp: 0 };
+        // ========== SISTEMA DE TRADING EN VIVO ==========
+        let tradingState = {
+            activeTrader: "Milimar Bot",
+            currentPosition: null,
+            history: [],
+            stats: {
+                winRate: 0,
+                totalTrades: 0,
+                totalProfit: 0,
+                factor: 1.0
+            }
+        };
 
-        function isCacheValido() { return (Date.now() - cacheDatos.timestamp) < 10000; }
+        function loadTradingState() {
+            const saved = localStorage.getItem('tradingState');
+            if (saved) {
+                try {
+                    tradingState = JSON.parse(saved);
+                } catch (e) {}
+            }
+            updateCopyTradingUI();
+        }
+
+        function saveTradingState() {
+            localStorage.setItem('tradingState', JSON.stringify(tradingState));
+        }
+
+        function reportNewPosition(pair, direction, entryPrice, size) {
+            if (!isWalkerTurbo) {
+                showToast('❌ Solo walker puede reportar posiciones', true);
+                return;
+            }
+            
+            tradingState.currentPosition = {
+                pair,
+                direction,
+                entryPrice,
+                currentPrice: entryPrice,
+                size,
+                timestamp: Date.now()
+            };
+            saveTradingState();
+            updateCopyTradingUI();
+            addEvent(`🆕 Nueva posición: ${direction} ${pair} a ${entryPrice}`, 'info');
+            showToast('✅ Posición reportada');
+        }
+
+        function updateCurrentPrice(pair, currentPrice) {
+            if (!isWalkerTurbo) {
+                showToast('❌ Solo walker puede actualizar precios', true);
+                return;
+            }
+            
+            if (tradingState.currentPosition && tradingState.currentPosition.pair === pair) {
+                tradingState.currentPosition.currentPrice = currentPrice;
+                saveTradingState();
+                updateCopyTradingUI();
+                showToast('✅ Precio actualizado');
+            }
+        }
+
+        function closePosition(exitPrice) {
+            if (!isWalkerTurbo) {
+                showToast('❌ Solo walker puede cerrar posiciones', true);
+                return;
+            }
+            
+            if (!tradingState.currentPosition) {
+                showToast('❌ No hay posición abierta', true);
+                return;
+            }
+            
+            const pos = tradingState.currentPosition;
+            let profit = 0;
+            
+            if (pos.direction === 'LONG') {
+                profit = ((exitPrice - pos.entryPrice) / pos.entryPrice) * pos.size;
+            } else {
+                profit = ((pos.entryPrice - exitPrice) / pos.entryPrice) * pos.size;
+            }
+            
+            tradingState.history.unshift({
+                pair: pos.pair,
+                direction: pos.direction,
+                entry: pos.entryPrice,
+                exit: exitPrice,
+                profit: profit,
+                timestamp: Date.now()
+            });
+            
+            if (tradingState.history.length > 10) tradingState.history.pop();
+            
+            // Actualizar estadísticas
+            const wins = tradingState.history.filter(t => t.profit > 0).length;
+            tradingState.stats.totalTrades = tradingState.history.length;
+            tradingState.stats.winRate = tradingState.history.length > 0 ? Math.round((wins / tradingState.history.length) * 100) : 0;
+            tradingState.stats.totalProfit = tradingState.history.reduce((sum, t) => sum + t.profit, 0);
+            
+            // Calcular factor (profit promedio / pérdida promedio)
+            const avgWin = tradingState.history.filter(t => t.profit > 0).reduce((sum, t) => sum + t.profit, 0) / (wins || 1);
+            const avgLoss = Math.abs(tradingState.history.filter(t => t.profit < 0).reduce((sum, t) => sum + t.profit, 0) / ((tradingState.history.length - wins) || 1));
+            tradingState.stats.factor = avgLoss > 0 ? (avgWin / avgLoss).toFixed(2) : wins > 0 ? '3.0' : '1.0';
+            
+            tradingState.currentPosition = null;
+            saveTradingState();
+            updateCopyTradingUI();
+            addEvent(`✅ Posición cerrada: ${profit > 0 ? '+' : ''}${profit.toFixed(2)} USDT`, 'success');
+            showToast('✅ Posición cerrada');
+        }
+
+        function updateCopyTradingUI() {
+            // Trader nombre
+            document.getElementById('traderNombre').innerText = tradingState.activeTrader;
+            
+            // Estadísticas
+            document.getElementById('statWinRate').innerText = tradingState.stats.winRate + '%';
+            document.getElementById('statTrades').innerText = tradingState.stats.totalTrades;
+            document.getElementById('statTotalProfit').innerText = tradingState.stats.totalProfit.toFixed(2);
+            document.getElementById('statFactor').innerText = tradingState.stats.factor;
+            
+            // Posición actual
+            if (tradingState.currentPosition) {
+                const pos = tradingState.currentPosition;
+                document.getElementById('operacionPar').innerText = pos.pair;
+                document.getElementById('operacionDireccion').innerText = pos.direction;
+                document.getElementById('operacionDireccion').style.color = pos.direction === 'LONG' ? '#00ff00' : '#ff0000';
+                document.getElementById('operacionEntrada').innerText = pos.entryPrice.toLocaleString();
+                document.getElementById('operacionActual').innerText = pos.currentPrice.toLocaleString();
+                
+                let profit = 0;
+                if (pos.direction === 'LONG') {
+                    profit = ((pos.currentPrice - pos.entryPrice) / pos.entryPrice) * pos.size;
+                } else {
+                    profit = ((pos.entryPrice - pos.currentPrice) / pos.entryPrice) * pos.size;
+                }
+                
+                document.getElementById('operacionProfit').innerText = (profit > 0 ? '+' : '') + profit.toFixed(2) + ' USDT';
+                document.getElementById('operacionProfit').style.color = profit >= 0 ? '#00ff00' : '#ff0000';
+                
+                // Barra de progreso (simulada)
+                const targetPrice = pos.direction === 'LONG' ? pos.entryPrice * 1.02 : pos.entryPrice * 0.98;
+                const progress = Math.min(100, Math.abs((pos.currentPrice - pos.entryPrice) / (targetPrice - pos.entryPrice) * 100));
+                document.getElementById('profitProgress').style.width = progress + '%';
+            } else {
+                document.getElementById('operacionPar').innerText = '---';
+                document.getElementById('operacionDireccion').innerText = '---';
+                document.getElementById('operacionEntrada').innerText = '---';
+                document.getElementById('operacionActual').innerText = '---';
+                document.getElementById('operacionProfit').innerText = '0 USDT';
+                document.getElementById('profitProgress').style.width = '0%';
+            }
+            
+            // Historial
+            const tbody = document.getElementById('ultimasOperaciones');
+            if (tbody) {
+                if (tradingState.history.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;">Sin operaciones</td></tr>';
+                } else {
+                    tbody.innerHTML = tradingState.history.map(t => `
+                        <tr>
+                            <td>${t.pair}</td>
+                            <td style="color:${t.direction === 'LONG' ? '#00ff00' : '#ff0000'};">${t.direction}</td>
+                            <td>${t.entry}</td>
+                            <td>${t.exit}</td>
+                            <td style="color:${t.profit >= 0 ? '#00ff00' : '#ff0000'};">${t.profit > 0 ? '+' : ''}${t.profit.toFixed(2)}</td>
+                        </tr>
+                    `).join('');
+                }
+            }
+        }
+
+        // ========== FUNCIÓN DE DEPURACIÓN PARA MEMBRESÍA ==========
+        async function debugMembresia() {
+            if (!contratoMilimar || !userAddress) {
+                console.log('❌ Contrato o usuario no disponible');
+                return;
+            }
+            
+            try {
+                console.log('🔍 ===== DEPURANDO MEMBRESÍA =====');
+                console.log('📌 Dirección usuario:', userAddress);
+                console.log('📌 Contrato Milimar:', DIR_MILIMAR);
+                
+                // Probar usuarios() primero
+                try {
+                    const user = await contratoMilimar.usuarios(userAddress);
+                    console.log('📦 usuarios():', user);
+                    console.log('  - registrado:', user[0]);
+                    console.log('  - patrocinador:', user[1]);
+                    console.log('  - vencimiento:', user[9]?.toString());
+                    console.log('  - activo:', user[14]);
+                } catch (e) {
+                    console.log('❌ usuarios() falló:', e.message);
+                }
+                
+                // Probar consultarEstado
+                try {
+                    const estado = await contratoMilimar.consultarEstado(userAddress);
+                    console.log('📦 consultarEstado():', estado);
+                    console.log('  - [0] saldoPendiente:', estado[0]?.toString());
+                    console.log('  - [1] totalGanado:', estado[1]?.toString());
+                    console.log('  - [2] totalRetirado:', estado[2]?.toString());
+                    console.log('  - [3] directos:', estado[3]?.toString());
+                    console.log('  - [4] redTotal:', estado[4]?.toString());
+                    console.log('  - [5] diasRestantes:', estado[5]?.toString());
+                    console.log('  - [6] activo (BOOL):', estado[6]);
+                } catch (e) {
+                    console.log('❌ consultarEstado() falló:', e.message);
+                }
+                
+                console.log('🔍 ===== FIN DEPURACIÓN =====');
+            } catch (error) {
+                console.error('❌ Error en depuración:', error);
+            }
+        }
 
         // ========== FUNCIONES AUXILIARES ==========
         function showToast(msg, isError = false) {
@@ -1250,8 +1412,14 @@
         async function checkMembresiaActiva() {
             if (!contratoMilimar || !userAddress) return false;
             try {
+                console.log('🔍 Verificando membresía...');
                 const estado = await contratoMilimar.consultarEstado(userAddress);
+                console.log('📦 Estado completo:', estado);
+                
+                // ÍNDICE [6] = activo
                 const activo = estado[6] === true;
+                console.log('✅ ¿Activo?', activo);
+                
                 tieneMembresia = activo;
                 
                 const badge1 = document.getElementById('membresiaBadge');
@@ -1269,7 +1437,7 @@
                 enableTurboButtons(activo);
                 return activo;
             } catch (error) {
-                console.error('Error en membresía:', error);
+                console.error('❌ Error en membresía:', error);
                 return false;
             }
         }
@@ -1326,12 +1494,11 @@
                 
                 turboLockSec = lockSec;
                 
-                // Mostrar/ocultar panel de penalización
                 const penaltyPanel = document.getElementById('penaltyPanel');
                 if (lockSec > 0) {
                     penaltyPanel.style.display = 'block';
                     const amount = parseFloat(document.getElementById('turboAmount')?.value || 0);
-                    document.getElementById('penaltyAmount').innerText = (amount * 0.1).toFixed(2) + ' USDT';
+                    document.getElementById('penaltyAmount').innerText = (amount * 0.1).toFixed(2);
                 } else {
                     penaltyPanel.style.display = 'none';
                 }
@@ -1340,10 +1507,9 @@
             } catch(e){ console.log('Error cargando Turbo:', e); }
         }
 
-        // ========== FUNCIONES DE GRÁFICO COPY TRADING ==========
+        // ========== FUNCIONES DE GRÁFICO ==========
         function loadCopyChart() {
             if (copyWidget) return;
-            
             if (typeof TradingView === 'undefined') {
                 const script = document.createElement('script');
                 script.src = "https://s3.tradingview.com/tv.js";
@@ -1402,7 +1568,7 @@
             }
         }
 
-        // ========== GRÁFICO DE ESTADÍSTICAS ==========
+        // ========== GRÁFICOS DE ESTADÍSTICAS ==========
         function initEquityChart() {
             const ctx = document.getElementById('equityChart')?.getContext('2d');
             if (!ctx) return;
@@ -1423,13 +1589,10 @@
             });
         }
 
-        // ========== FUNCIÓN PARA DATOS DEL CONTRATO ==========
+        // ========== DATOS DEL CONTRATO ==========
         async function loadContratoData() {
             if (!contratoTurbo) return;
-            
             try {
-                console.log('📊 Cargando datos del contrato...');
-                
                 const totalAssets = await contratoTurbo.totalAssets();
                 const totalAssetsNum = parseFloat(ethers.utils.formatUnits(totalAssets, 18));
                 
@@ -1437,7 +1600,6 @@
                 const capitalTradingNum = parseFloat(ethers.utils.formatUnits(capitalTrading, 18));
                 
                 const enBoveda = totalAssetsNum - capitalTradingNum;
-                
                 const valorInicial = 100000;
                 const profitEstimado = totalAssetsNum - valorInicial;
                 
@@ -1460,38 +1622,24 @@
                 
                 document.getElementById('contratoLastUpdate').innerText = new Date().toLocaleString();
                 
-                updateCapitalDistributionChart(totalAssetsNum, capitalTradingNum, enBoveda);
-                
-            } catch (error) {
-                console.error('Error cargando datos del contrato:', error);
-            }
-        }
-
-        function updateCapitalDistributionChart(total, trading, boveda) {
-            const ctx = document.getElementById('capitalDistributionChart')?.getContext('2d');
-            if (!ctx) return;
-            
-            if (capitalChart) capitalChart.destroy();
-            
-            capitalChart = new Chart(ctx, {
-                type: 'doughnut',
-                data: {
-                    labels: ['En Trading', 'En Bóveda'],
-                    datasets: [{
-                        data: [trading, boveda],
-                        backgroundColor: ['#ff00ff', '#00ffff'],
-                        borderColor: '#000000',
-                        borderWidth: 2
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: { labels: { color: 'white' } }
-                    }
+                const ctx = document.getElementById('capitalDistributionChart')?.getContext('2d');
+                if (ctx) {
+                    if (capitalChart) capitalChart.destroy();
+                    capitalChart = new Chart(ctx, {
+                        type: 'doughnut',
+                        data: {
+                            labels: ['En Trading', 'En Bóveda'],
+                            datasets: [{
+                                data: [capitalTradingNum, enBoveda],
+                                backgroundColor: ['#ff00ff', '#00ffff'],
+                                borderColor: '#000000',
+                                borderWidth: 2
+                            }]
+                        },
+                        options: { responsive: true, maintainAspectRatio: false }
+                    });
                 }
-            });
+            } catch(e){ console.log('Error cargando contrato:', e); }
         }
 
         // ========== STATUS DE TRADING ==========
@@ -1503,7 +1651,7 @@
             let color = "#00ffff", texto = "", emoji = "📡";
             if (accion === "long") { color = "#00ff00"; emoji = "🟢"; texto = `LONG ${moneda}`; }
             else if (accion === "short") { color = "#ff0000"; emoji = "🔴"; texto = `SHORT ${moneda}`; }
-            else { color = "#ffaa00"; emoji = "🟡"; texto = `EN ESPERA - ${moneda}`; }
+            else { color = "#ffaa00"; emoji = "🟡"; texto = `ESPERA ${moneda}`; }
             
             status.innerHTML = `${emoji} ${texto}`;
             status.style.color = color;
@@ -1517,7 +1665,7 @@
             if (saved) try { const d = JSON.parse(saved); updateTradeStatus(d.moneda, d.accion, d.leverage); } catch(e){}
         }
 
-        // ========== RETIRO TURBO CON PENALIZACIÓN ==========
+        // ========== RETIRO TURBO ==========
         function actualizarOpcionesRetiro() {
             const amt = parseFloat(document.getElementById('turboAmount')?.value || 0);
             const div = document.getElementById('turboWithdrawOptions');
@@ -1539,19 +1687,19 @@
                 const penalizacion = amt * 0.1;
                 div.innerHTML = `<div style="border:2px solid #ff00ff; padding:15px; border-radius:16px; text-align:center;">
                     <strong style="color:#ff00ff;">⚡ RETIRO EXPRESS</strong><br>
-                    <span style="color:#ffffff;">Recibirás: ${montoNeto.toFixed(2)} USDT</span><br>
+                    <span>Recibirás: ${montoNeto.toFixed(2)} USDT</span><br>
                     <small style="color:#ff00ff;">Penalización: ${penalizacion.toFixed(2)} USDT (10%)</small>
                 </div>`;
                 btn.disabled = false;
                 btn.innerText = 'RETIRAR EXPRESS (10%)';
                 if (penaltyPanel) {
                     penaltyPanel.style.display = 'block';
-                    penaltyAmount.innerText = penalizacion.toFixed(2) + ' USDT';
+                    penaltyAmount.innerText = penalizacion.toFixed(2);
                 }
             } else {
                 div.innerHTML = `<div style="border:2px solid #00ff00; padding:15px; border-radius:16px; text-align:center;">
                     <strong style="color:#00ff00;">✅ RETIRO SIN COMISIÓN</strong><br>
-                    <span style="color:#ffffff;">Recibirás: ${amt.toFixed(2)} USDT</span>
+                    <span>Recibirás: ${amt.toFixed(2)} USDT</span>
                 </div>`;
                 btn.disabled = false;
                 btn.innerText = 'RETIRAR';
@@ -1591,15 +1739,24 @@
                     isWalkerTurbo = await contratoTurbo.hasRole(ALLOCATOR_ROLE, userAddress);
                     document.getElementById('turboAdminTab').style.display = isAdminTurbo ? 'block' : 'none';
                     document.getElementById('turboWalkerTab').style.display = isWalkerTurbo ? 'block' : 'none';
+                    
+                    if (isWalkerTurbo) {
+                        console.log('🤖 Modo walker activado');
+                        addEvent('🤖 Modo walker activado', 'info');
+                    }
                 } catch(e){}
                 
                 document.getElementById('refLink').value = window.location.href.split('?')[0] + '?ref=' + userAddress;
+                
+                // DEPURAR MEMBRESÍA
+                await debugMembresia();
                 
                 await checkMembresiaActiva();
                 await loadUserDataV5(true);
                 await loadTurboData(true);
                 await loadContratoData();
                 
+                loadTradingState();
                 loadSavedTradeStatus();
                 initEquityChart();
                 
@@ -1622,6 +1779,7 @@
         // ========== EVENT LISTENERS ==========
         document.getElementById('btnConnect').addEventListener('click', initConnection);
         
+        // Status update
         document.getElementById('btnUpdateTradeStatus')?.addEventListener('click', ()=>{
             if (!isWalkerTurbo) { showToast('❌ Solo walker', true); return; }
             updateTradeStatus(
@@ -1632,12 +1790,32 @@
             showToast('✅ Status actualizado');
         });
         
+        // Trading controls
+        document.getElementById('btnReportPosition')?.addEventListener('click', ()=>{
+            reportNewPosition(
+                document.getElementById('reportPair').value,
+                document.getElementById('reportDirection').value,
+                parseFloat(document.getElementById('reportEntry').value),
+                parseFloat(document.getElementById('reportSize').value)
+            );
+        });
+        
+        document.getElementById('btnClosePosition')?.addEventListener('click', ()=>{
+            closePosition(parseFloat(document.getElementById('reportExit').value));
+        });
+        
+        document.getElementById('btnUpdatePrice')?.addEventListener('click', ()=>{
+            updateCurrentPrice(
+                tradingState.currentPosition?.pair,
+                parseFloat(document.getElementById('updatePrice').value)
+            );
+        });
+        
         document.getElementById('turboAmount')?.addEventListener('input', function() {
             actualizarOpcionesRetiro();
-            // Actualizar penalización en tiempo real
             const amt = parseFloat(this.value || 0);
             if (turboLockSec > 0) {
-                document.getElementById('penaltyAmount').innerText = (amt * 0.1).toFixed(2) + ' USDT';
+                document.getElementById('penaltyAmount').innerText = (amt * 0.1).toFixed(2);
             }
         });
 
@@ -1669,7 +1847,7 @@
             });
         });
 
-        // Subpestañas Turbo - NUEVA ORGANIZACIÓN
+        // Subpestañas Turbo
         const turboSubTabs = document.querySelectorAll('#seccionTurbo .sub-tab');
         const turboSubContents = {
             turboDashboard: document.getElementById('turboDashboard'),
@@ -1695,7 +1873,7 @@
             });
         });
 
-        // Botones básicos (se mantienen igual)
+        // Botones básicos
         document.getElementById('btnApprove')?.addEventListener('click', async ()=>{
             try { 
                 await (await contratoUSDT.approve(DIR_MILIMAR, ethers.utils.parseUnits("1000",18))).wait();
